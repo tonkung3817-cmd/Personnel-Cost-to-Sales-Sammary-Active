@@ -271,6 +271,31 @@ table.etbl tr.res td{background:var(--yeL)}
 #pgPersonnel .pfootnote{padding:9px 15px;font-size:11px;line-height:1.5;color:var(--pink3);
  border-top:1px solid var(--pline);background:#FCFDFE;margin-top:auto}
 
+/* ===== แถว KPI =====
+   สีพื้นใช้เฉด CP AXTRA · ตรวจ contrast ตัวอักษรแล้วทุกใบ
+   Blue #306FC7 + ขาว 4.97:1 · Lotus เข้ม #347570 + ขาว 5.35:1
+   Makro #DA3832 + ขาว 4.57:1 · Yellow #F6C24A ใช้ตัวอักษรเข้ม #12161C 11.00:1 */
+#pgPersonnel .pkrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(272px,1fr));gap:16px;
+ margin-bottom:20px}
+#pgPersonnel .pk{border-radius:14px;padding:17px 20px 15px;color:#fff;
+ box-shadow:0 2px 6px rgba(18,22,28,.10),0 1px 2px rgba(18,22,28,.06);display:flex;
+ flex-direction:column;min-width:0}
+#pgPersonnel .pk.bl{background:#306FC7}
+#pgPersonnel .pk.gr{background:#347570}
+#pgPersonnel .pk.rd{background:#DA3832}
+#pgPersonnel .pk.ye{background:#F6C24A;color:#12161C}
+#pgPersonnel .pk .pkt{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+ opacity:.95;line-height:1.3}
+#pgPersonnel .pk .pkv{font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin:6px 0 11px;
+ font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+#pgPersonnel .pk .pkchips{display:flex;gap:9px;flex-wrap:wrap}
+#pgPersonnel .pk .pkchip{background:rgba(255,255,255,.22);border-radius:7px;padding:6px 10px;
+ font-size:11.5px;line-height:1.4;font-weight:500;min-width:0}
+#pgPersonnel .pk.ye .pkchip{background:rgba(18,22,28,.13)}
+#pgPersonnel .pk .pkchip b{font-weight:700;font-family:"IBM Plex Mono",monospace;
+ font-variant-numeric:tabular-nums}
+#pgPersonnel .pk .pkf{font-size:11.5px;opacity:.85;margin-top:11px;line-height:1.45}
+
 /* ===== ชุดสไตล์ร่วมของหน้า Control Tower O2O และหน้า OT =====
    สีมาร์คในกราฟใช้เฉด CP AXTRA ที่ขยับความสว่าง/อิ่มสีให้ผ่านเกณฑ์ contrast
    และ colour-vision-deficiency แล้ว (คงค่า hue เดิมของแบรนด์ไว้ทุกสี) */
@@ -608,6 +633,8 @@ table.etbl tr.res td{background:var(--yeL)}
    <button id="pTgtUp" title="เพิ่มเป้า 0.05%">+</button></div></div>
  <button id="pClearBtn" class="pghost">ล้าง filter</button>
 </div>
+<div class="pkrow" id="pKRow"></div>
+
 <div class="pgrid3">
 
 <div class="pcard" id="cardBranch">
@@ -1351,6 +1378,53 @@ const fmtPct = v => v==null ? '<span class="pdim">-</span>' : pc(v,2);
 const fmtRec = v => v==null ? '<span class="pdim">-</span>' : (v>0 ? `<span style="color:var(--rd)">${nf(v,0)}</span>` : '<span class="pdim">0</span>');
 const fmtInc = v => v==null ? '<span class="pdim">-</span>' : (v>0 ? `<span style="color:var(--bl)">${nf(v,0)}</span>` : '<span class="pdim">0</span>');
 
+/* ---------- แถว KPI ----------
+   คำนวณจากแถวที่ผ่านตัวกรองของหน้านี้ เปลี่ยนตาม filter ทุกช่อง
+   Permanent ไม่มีเป็นฟิลด์ในข้อมูล จึงนิยามเป็น Active หักตำแหน่ง
+   Temporary และ Outsource ออก (ระบุไว้ในบรรทัดล่างการ์ด) */
+const PIDX_OUT = PPOS.indexOf('17. Outsource');
+const PIDX_TMP = PPOS.indexOf('15. Temporary');
+function renderPKRow(){
+ let act=0, bud=0, out=0, tmp=0;
+ const stSet = new Set();
+ for(const row of PRAW){
+  if(!pMatch(row)) continue;
+  act += row[4]; bud += (row[5]||0); stSet.add(row[0]);
+  if(row[3]===PIDX_OUT) out += row[4];
+  if(row[3]===PIDX_TMP) tmp += row[4];
+ }
+ const perm = act - out - tmp;
+ // ค่าจ้างและยอดขายมีที่ระดับสาขา จึงรวมจากสาขาที่ยังอยู่ในผลกรอง
+ let sales=0, wage=0, hasS=false;
+ stSet.forEach(sn=>{ const sm=pStoreMap[sn]; if(!sm) return;
+  if(sm.sales!=null){ sales+=sm.sales; hasS=true; }
+  if(sm.wage!=null) wage+=sm.wage; });
+ const pct = (hasS && sales>0) ? wage/sales*100 : null;
+ const onTgt = pct!=null && pct<=PTARGET;
+ const p = (a,b) => b>0 ? nf(a/b*100,0)+'%' : '—';
+ const cards = [
+  {c:'bl', t:'พนักงาน Active', v:nf(act,0),
+   chips:[`Permanent <b>${nf(perm,0)}</b> (${p(perm,act)})`,
+          `ไม่ประจำ <b>${nf(out+tmp,0)}</b> (${p(out+tmp,act)})`],
+   f:`จาก Budget ${nf(bud,0)} อัตรา · บรรจุ ${p(act,bud)} · ${stSet.size} สาขา`},
+  {c:pct==null?'bl':(onTgt?'gr':'rd'), t:'Personnel Cost to Sales', v:pct==null?'—':pc(pct,2),
+   chips:[`ค่าจ้าง <b>${nf(wage,2)}</b> ลบ.`, `ยอดขาย <b>${nf(sales,1)}</b> ลบ.`],
+   f:pct==null?'ไม่มีข้อมูลยอดขายในผลกรองนี้'
+     :`เทียบเป้า ${pc(PTARGET,2)} · ${onTgt?'ต่ำกว่าเป้า':'สูงกว่าเป้า'} ${nf(Math.abs(pct-PTARGET),2)} จุด`},
+  {c:'gr', t:'พนักงาน Permanent', v:nf(perm,0),
+   chips:[`<b>${p(perm,act)}</b> ของ Active`,
+          `${PPOS.length-2} ตำแหน่งประจำ`],
+   f:'Active หักตำแหน่ง Temporary และ Outsource ออก'},
+  {c:'ye', t:'พนักงาน Outsource', v:nf(out,0),
+   chips:[`<b>${p(out,act)}</b> ของ Active`, `Temporary <b>${nf(tmp,0)}</b> (${p(tmp,act)})`],
+   f:`รวมพนักงานไม่ประจำ ${nf(out+tmp,0)} คน`},
+ ];
+ document.getElementById('pKRow').innerHTML = cards.map(k=>
+  `<div class="pk ${k.c}"><div class="pkt">${k.t}</div><div class="pkv">${k.v}</div>
+   <div class="pkchips">${k.chips.map(x=>`<span class="pkchip">${x}</span>`).join('')}</div>
+   <div class="pkf">${k.f}</div></div>`).join('');
+}
+
 /* ---------- Branch Summary ---------- */
 let branchSort={k:'stNo',dir:1};
 function renderBranch(cur){
@@ -1424,6 +1498,7 @@ document.getElementById('btnToggleAll').onclick=()=>{
 /* ---------- filters ---------- */
 function pRenderAll(){
  const cur = pRecompute();
+ renderPKRow();
  renderBranch(cur);
  renderPosition(cur);
  renderStructure(cur);
