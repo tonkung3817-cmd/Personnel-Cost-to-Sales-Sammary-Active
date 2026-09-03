@@ -137,40 +137,139 @@ table.etbl tr.res td{background:var(--yeL)}
 .fgProb{background:#D5E5F6;color:var(--blD)}.fgPass{background:var(--grL);color:var(--grD)}
 .fgLeft{background:#F1F3F6;color:var(--ink2)}
 .tbempty{padding:34px;text-align:center;color:var(--ink3);font-size:13px}
-#pgPersonnel{--pblue:#3255a4;--pblue2:#eef2fb;--pgreen:#1f7a4d;--pgreen2:#eaf7ee;--pnavy:#232c5c;
---pline:#e4e7ee;--pink:#1c2130;--pink2:#5b6373;--pink3:#8891a0;font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Thai",sans-serif;color:var(--pink)}
-#pgPersonnel h1{font-size:18px;margin:0 0 16px;color:var(--pink)}
-#pgPersonnel .pgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
-@media(max-width:1200px){#pgPersonnel .pgrid3{grid-template-columns:1fr}}
-#pgPersonnel .pcard{background:#fff;border:1px solid var(--pline);border-radius:6px;overflow:hidden;box-shadow:0 1px 2px rgba(20,25,45,.04)}
-#pgPersonnel .phd{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;font-weight:700;font-size:12.5px;letter-spacing:.2px}
-#pgPersonnel .phd.blue{background:var(--pblue2);color:var(--pblue)}
-#pgPersonnel .phd.green{background:var(--pgreen2);color:var(--pgreen)}
-#pgPersonnel .phd.navy{background:var(--pnavy);color:#fff}
+/* ===== Personnel Summary — ชุดสี CP AXTRA, ฟอนต์เดียวกับหน้า Simulator ===== */
+#pgPersonnel{
+ --pbl:#306FC7;--pblL:#E9F0FA;--pblD:#1E4A85;   /* CP AXTRA Blue  → BRANCH   */
+ --pgr:#43938F;--pgrL:#E9F3F2;--pgrD:#2A605D;   /* Lotus Green    → POSITION */
+ --pye:#F6C24A;--pyeL:#FEF6E4;                  /* CP AXTRA Yellow → เป้า    */
+ --prd:#DA3832;--prdL:#FCEBEA;                  /* Makro Red      → เกินเป้า */
+ --pline:#E4E8ED;--pline2:#EFF1F5;
+ --pink:#12161C;--pink2:#4C5563;--pink3:#8B94A1;--pbg:#F4F6F8;
+ font-family:"IBM Plex Sans Thai",system-ui,sans-serif;font-size:13px;line-height:1.45;color:var(--pink);
+ background:var(--pbg)}
+
+/* ---- โครงหน้า: เดิม .pwrap ไม่มี padding เลย เนื้อหาจึงชิดขอบจอ ---- */
+#pgPersonnel .pwrap{max-width:1900px;margin:0 auto;padding:22px 24px 30px}
+#pgPersonnel h1{font-size:21px;font-weight:600;letter-spacing:-.015em;margin:0;color:var(--pink)}
+#pgPersonnel .psub{font-size:12.5px;color:var(--pink2);margin-top:3px}
+#pgPersonnel .num,#pgPersonnel td.num,#pgPersonnel tbody td.l.num{
+ font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;
+ font-feature-settings:"tnum" 1;letter-spacing:-.01em}
+
+/* ---- แถบตัวกรอง: ยกเข้ากล่องการ์ด แทนที่จะลอยอยู่บนพื้น ---- */
+#pgPersonnel .pfilterbar{background:#fff;border:1px solid var(--pline);border-radius:10px;
+ padding:13px 16px;box-shadow:0 1px 2px rgba(18,22,28,.04)}
+#pgPersonnel .pflabel{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+ color:var(--pink3);margin-bottom:5px;white-space:nowrap}
+#pgPersonnel .pfsel{font:inherit;font-size:12.5px;padding:7px 9px;border:1px solid var(--pline);
+ border-radius:7px;background:#fff;color:var(--pink);cursor:pointer;transition:border-color .12s}
+#pgPersonnel .pfsel:hover{border-color:#C9D2DE}
+#pgPersonnel .pfsel:focus{outline:2px solid var(--pbl);outline-offset:1px;border-color:var(--pbl)}
+#pgPersonnel .pstep{display:flex;align-items:center;border:1px solid var(--pline);border-radius:7px;
+ overflow:hidden;background:#fff}
+#pgPersonnel .pstep button{border:0;background:#fff;width:30px;height:33px;font:inherit;font-size:16px;
+ font-weight:600;color:var(--pbl);cursor:pointer;transition:background .12s}
+#pgPersonnel .pstep button:hover{background:var(--pblL)}
+#pgPersonnel .pstep input{border:0;width:54px;text-align:center;background:var(--pyeL);
+ font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;font-size:13.5px;
+ font-weight:600;color:var(--pink);padding:8px 0}
+#pgPersonnel .pstep input:focus{outline:none;background:#fff}
+#pgPersonnel .pghost{padding:8px 13px;border:1px solid var(--pline);border-radius:7px;background:#fff;
+ font:inherit;font-size:12.5px;font-weight:500;color:var(--pink2);cursor:pointer;white-space:nowrap;
+ transition:background .12s,border-color .12s,color .12s}
+#pgPersonnel .pghost:hover{background:var(--pbg);border-color:#C9D2DE;color:var(--pink)}
+
+/* ---- การ์ดตาราง ---- */
+/* 3 คอลัมน์เมื่อจอกว้างพอ · จอกลาง BRANCH กินเต็มแถว (ตารางหลัก 7 คอลัมน์ 169 แถว)
+   แล้ว POSITION กับ STRUCTURE วางคู่กันด้านล่าง · จอแคบเรียงเดี่ยว */
+#pgPersonnel .pgrid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start}
+@media(max-width:1700px){
+ #pgPersonnel .pgrid3{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #pgPersonnel .pgrid3 #cardBranch{grid-column:1/-1}}
+@media(max-width:1180px){
+ #pgPersonnel .pgrid3{grid-template-columns:1fr}
+ #pgPersonnel .pgrid3 #cardBranch{grid-column:auto}}
+#pgPersonnel .pcard{background:#fff;border:1px solid var(--pline);border-radius:10px;overflow:hidden;
+ box-shadow:0 1px 3px rgba(18,22,28,.06),0 1px 2px rgba(18,22,28,.03);display:flex;flex-direction:column}
+
+/* หัวการ์ด: ทั้ง 3 ใบใช้ทรงเดียวกัน ต่างกันแค่สีแบรนด์ ไม่ผสมอ่อน/เข้มอย่างเดิม */
+#pgPersonnel .phd{display:flex;align-items:center;justify-content:space-between;gap:10px;
+ padding:0 15px;min-height:46px;font-weight:600;font-size:12px;text-transform:uppercase;
+ letter-spacing:.075em;color:#fff}
+#pgPersonnel .phd.blue{background:var(--pbl)}
+#pgPersonnel .phd.green{background:var(--pgr)}
+#pgPersonnel .phd.navy{background:var(--pblD)}
 #pgPersonnel .phd .pbtns{display:flex;gap:8px;align-items:center}
-#pgPersonnel .piconbtn{cursor:pointer;background:none;border:none;padding:2px;color:inherit;opacity:.75;display:flex}
-#pgPersonnel .piconbtn:hover{opacity:1}
-#pgPersonnel .ptoggleall{font-size:10.5px;font-weight:700;letter-spacing:.4px;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.08);color:#fff;border-radius:3px;padding:3px 8px;cursor:pointer}
-#pgPersonnel .ptoggleall:hover{background:rgba(255,255,255,.18)}
-#pgPersonnel .ptblwrap{max-height:560px;overflow:auto}
-#pgPersonnel table{width:100%;border-collapse:collapse;font-size:12.5px}
-#pgPersonnel thead th{position:sticky;top:0;background:#fbfbfd;border-bottom:1px solid var(--pline);text-align:right;padding:7px 10px;font-weight:700;color:var(--pink2);cursor:pointer;white-space:nowrap;user-select:none}
+#pgPersonnel .piconbtn{cursor:pointer;background:rgba(255,255,255,.14);border:0;border-radius:5px;
+ width:24px;height:22px;color:#fff;display:flex;align-items:center;justify-content:center;
+ font-size:13px;line-height:1;transition:background .12s}
+#pgPersonnel .piconbtn:hover{background:rgba(255,255,255,.3)}
+#pgPersonnel .ptoggleall{font:inherit;font-size:10px;font-weight:600;letter-spacing:.07em;
+ border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.12);color:#fff;border-radius:5px;
+ padding:4px 9px;cursor:pointer;transition:background .12s}
+#pgPersonnel .ptoggleall:hover{background:rgba(255,255,255,.28)}
+
+/* ---- ตาราง ---- */
+#pgPersonnel .ptblwrap{max-height:600px;overflow:auto;scrollbar-width:thin;
+ scrollbar-color:#CDD5E0 transparent}
+#pgPersonnel .ptblwrap::-webkit-scrollbar{width:9px;height:9px}
+#pgPersonnel .ptblwrap::-webkit-scrollbar-thumb{background:#CDD5E0;border-radius:5px;
+ border:2px solid #fff}
+#pgPersonnel .ptblwrap::-webkit-scrollbar-thumb:hover{background:#B3BECD}
+/* table-layout:fixed — ความกว้างคอลัมน์คงที่ตามสัดส่วน ไม่ให้ข้อมูลยาว ๆ
+   (เช่น "06. Asst Food shop / Fresh shop / CloudK manager") ดันตารางจนล้นกรอบ */
+#pgPersonnel table{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;font-size:12.5px}
+#pgPersonnel thead th{position:sticky;top:0;z-index:2;background:#F7F9FB;
+ border-bottom:1px solid var(--pline);text-align:right;padding:9px 10px;font-weight:600;font-size:10.5px;
+ line-height:1.3;text-transform:uppercase;letter-spacing:.03em;color:var(--pink2);cursor:pointer;
+ vertical-align:bottom;user-select:none;transition:background .12s,color .12s}
 #pgPersonnel thead th.l{text-align:left}
-#pgPersonnel thead th:hover{color:var(--pink)}
-#pgPersonnel thead th .parr{font-size:9px;margin-left:3px;opacity:.55}
-#pgPersonnel tbody td{padding:6px 10px;border-bottom:1px solid #f0f1f5;text-align:right;white-space:nowrap}
-#pgPersonnel tbody td.l{text-align:left}
-#pgPersonnel tbody tr:hover{background:#f7f8fc}
+#pgPersonnel thead th:hover{background:#EDF1F6;color:var(--pbl)}
+#pgPersonnel thead th .parr{font-size:8.5px;margin-left:4px;color:var(--pbl)}
+#pgPersonnel tbody td{padding:8px 10px;border-bottom:1px solid var(--pline2);text-align:right;
+ white-space:nowrap;vertical-align:top}
+/* คอลัมน์ชื่อตัดบรรทัดได้ (ไม่ตัดข้อความหาย) · คอลัมน์ตัวเลขห้ามตัดบรรทัด */
+#pgPersonnel tbody td.l{text-align:left;white-space:normal;overflow-wrap:break-word}
+#pgPersonnel tbody td.num{white-space:nowrap}
+
+/* สัดส่วนคอลัมน์ */
+#pgPersonnel #cardBranch th:nth-child(1){width:8%}
+#pgPersonnel #cardBranch th:nth-child(2){width:17%}
+#pgPersonnel #cardBranch th:nth-child(3){width:11%}
+#pgPersonnel #cardBranch th:nth-child(4){width:10%}
+#pgPersonnel #cardBranch th:nth-child(5){width:22%}
+#pgPersonnel #cardBranch th:nth-child(6){width:15%}
+#pgPersonnel #cardBranch th:nth-child(7){width:17%}
+#pgPersonnel #cardPosition th:nth-child(1),
+#pgPersonnel #cardStructure th:nth-child(1){width:32%}
+#pgPersonnel #cardPosition th:nth-child(2),
+#pgPersonnel #cardStructure th:nth-child(2){width:13%}
+#pgPersonnel #cardPosition th:nth-child(3),
+#pgPersonnel #cardStructure th:nth-child(3){width:22%}
+#pgPersonnel #cardPosition th:nth-child(4),
+#pgPersonnel #cardStructure th:nth-child(4){width:15%}
+#pgPersonnel #cardPosition th:nth-child(5),
+#pgPersonnel #cardStructure th:nth-child(5){width:18%}
+#pgPersonnel tbody tr:last-child td{border-bottom:0}
+#pgPersonnel tbody tr:first-child td{border-top:0}
+#pgPersonnel tbody tr:hover{background:var(--pblL)}
 #pgPersonnel .pdim{color:var(--pink3)}
-#pgPersonnel .prowname{font-weight:500}
-#pgPersonnel .pdivrow{cursor:pointer;background:#fafbfd;font-weight:700}
-#pgPersonnel .pdivrow:hover{background:#f1f3fa}
-#pgPersonnel .pdivrow td{border-bottom:1px solid var(--pline)}
-#pgPersonnel .pdeptrow td.l{padding-left:30px;color:var(--pblue)}
+#pgPersonnel .prowname{font-weight:500;color:var(--pink)}
+
+/* ลำดับชั้น Division → Department ให้อ่านออกด้วยตาเปล่า */
+#pgPersonnel .pdivrow{cursor:pointer;background:#F7F9FB;font-weight:600}
+#pgPersonnel .pdivrow:hover{background:#EDF1F6}
+#pgPersonnel .pdivrow td{border-top:1px solid var(--pline);border-bottom:1px solid var(--pline);
+ color:var(--pink)}
+#pgPersonnel .pdeptrow td.l{padding-left:34px;color:var(--pink2);position:relative}
+#pgPersonnel .pdeptrow td.l::before{content:"";position:absolute;left:19px;top:0;bottom:0;
+ border-left:1px solid var(--pline)}
 #pgPersonnel .pdeptrow.hide{display:none}
-#pgPersonnel .pcaret{display:inline-block;width:14px;text-align:center;margin-right:4px;color:var(--pink3);font-size:10px;transition:transform .15s}
+#pgPersonnel .pcaret{display:inline-block;width:13px;text-align:center;margin-right:5px;
+ color:var(--pbl);font-size:9px;transition:transform .15s}
 #pgPersonnel .pcaret.open{transform:rotate(90deg)}
-#pgPersonnel .pfootnote{padding:8px 14px;font-size:11px;color:var(--pink3);border-top:1px solid var(--pline)}
+#pgPersonnel .pfootnote{padding:9px 15px;font-size:11px;line-height:1.5;color:var(--pink3);
+ border-top:1px solid var(--pline);background:#FCFDFE;margin-top:auto}
 
 
 .pagenav{display:flex;gap:8px;padding:10px 22px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
@@ -291,26 +390,23 @@ table.etbl tr.res td{background:var(--yeL)}
 </div>
 <div id="pgPersonnel" style="display:none">
 <div class="pwrap">
-<div class="refreshhd" style="margin:0 0 16px"><h1 style="margin:0">Personnel Summary</h1>
-<button class="refreshbtn" id="pRefresh" title="คืนค่าตัวกรองทุกช่อง เป้า % การจัดเรียงคอลัมน์ และการย่อ/ขยาย Division กลับเป็นค่าเริ่มต้น แล้วคำนวณใหม่ทั้ง 3 ตาราง (ไม่ต้องล็อกอินใหม่)"><span class="rico">&#10227;</span>Refresh</button></div>
-<div class="pfilterbar" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px">
- <div><div style="font-size:10.5px;color:var(--pink3);margin-bottom:3px">ST No. / ST Name</div>
-  <select id="pStoreSel" style="padding:6px 8px;border:1px solid var(--pline);border-radius:5px;font:inherit;font-size:12.5px;min-width:220px"></select></div>
- <div><div style="font-size:10.5px;color:var(--pink3);margin-bottom:3px">Region</div>
-  <select id="pRegSel" style="padding:6px 8px;border:1px solid var(--pline);border-radius:5px;font:inherit;font-size:12.5px"></select></div>
- <div><div style="font-size:10.5px;color:var(--pink3);margin-bottom:3px">Division</div>
-  <select id="pDivSel" style="padding:6px 8px;border:1px solid var(--pline);border-radius:5px;font:inherit;font-size:12.5px"></select></div>
- <div><div style="font-size:10.5px;color:var(--pink3);margin-bottom:3px">Department</div>
-  <select id="pDeptSel" style="padding:6px 8px;border:1px solid var(--pline);border-radius:5px;font:inherit;font-size:12.5px"></select></div>
- <div><div style="font-size:10.5px;color:var(--pink3);margin-bottom:3px">Position</div>
-  <select id="pPosSel" style="padding:6px 8px;border:1px solid var(--pline);border-radius:5px;font:inherit;font-size:12.5px"></select></div>
- <div><div style="font-size:10.5px;color:var(--pink3);margin-bottom:3px">เป้า Personnel Cost to Sales (%)</div>
-  <div style="display:flex;align-items:center;gap:4px">
-   <button id="pTgtDn" style="width:28px;height:32px;border:1px solid var(--pline);border-radius:5px;background:#f4f6f8;font:inherit;font-size:14px;cursor:pointer">−</button>
-   <input id="pTgtIn" type="text" value="2.50" style="width:56px;text-align:center;padding:6px 4px;border:1px solid var(--pline);border-radius:5px;font:inherit;font-size:12.5px">
-   <button id="pTgtUp" style="width:28px;height:32px;border:1px solid var(--pline);border-radius:5px;background:#f4f6f8;font:inherit;font-size:14px;cursor:pointer">+</button>
-  </div></div>
- <button id="pClearBtn" style="padding:7px 12px;border:1px solid var(--pline);border-radius:5px;background:#f4f6f8;font:inherit;font-size:12.5px;cursor:pointer">ล้าง filter</button>
+<div class="refreshhd" style="margin:0 0 16px">
+ <div><h1>Personnel Summary</h1>
+  <div class="psub">กำลังคน Active เทียบยอดขายรายสาขา แยกตามตำแหน่งและโครงสร้างองค์กร · ยอดขาย Jul-26 · ค่าจ้าง Aug-26 · เทียบเป้าที่ตั้งไว้ด้านล่าง</div></div>
+ <button class="refreshbtn" id="pRefresh" title="คืนค่าตัวกรองทุกช่อง เป้า % การจัดเรียงคอลัมน์ และการย่อ/ขยาย Division กลับเป็นค่าเริ่มต้น แล้วคำนวณใหม่ทั้ง 3 ตาราง (ไม่ต้องล็อกอินใหม่)"><span class="rico">&#10227;</span>Refresh</button></div>
+<div class="pfilterbar" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:18px">
+ <div><div class="pflabel">ST No. / ST Name</div>
+  <select id="pStoreSel" class="pfsel" style="min-width:224px"></select></div>
+ <div><div class="pflabel">Region</div><select id="pRegSel" class="pfsel"></select></div>
+ <div><div class="pflabel">Division</div><select id="pDivSel" class="pfsel"></select></div>
+ <div><div class="pflabel">Department</div><select id="pDeptSel" class="pfsel"></select></div>
+ <div><div class="pflabel">Position</div><select id="pPosSel" class="pfsel"></select></div>
+ <div style="border-left:1px solid var(--pline);padding-left:14px;margin-left:2px">
+  <div class="pflabel">เป้า % to sales</div>
+  <div class="pstep"><button id="pTgtDn" title="ลดเป้า 0.05%">&minus;</button>
+   <input id="pTgtIn" type="text" value="2.50">
+   <button id="pTgtUp" title="เพิ่มเป้า 0.05%">+</button></div></div>
+ <button id="pClearBtn" class="pghost">ล้าง filter</button>
 </div>
 <div class="pgrid3">
 
@@ -324,12 +420,12 @@ table.etbl tr.res td{background:var(--yeL)}
    <th data-k="sales" data-t="n">Sales<span class="parr"></span></th>
    <th data-k="active" data-t="n">Active<span class="parr"></span></th>
    <th data-k="costPct" data-t="n">Personnel Cost<br>to Sales (%)<span class="parr"></span></th>
-   <th data-k="rec" data-t="n">แนะนำลด<br>จำนวนคน<span class="parr"></span></th>
-   <th data-k="inc" data-t="n">แนะนำเพิ่ม<br>จำนวนคน<span class="parr"></span></th>
+   <th data-k="rec" data-t="n">แนะนำลด<br>(คน)<span class="parr"></span></th>
+   <th data-k="inc" data-t="n">แนะนำเพิ่ม<br>(คน)<span class="parr"></span></th>
   </tr></thead>
   <tbody id="branchBody"></tbody>
  </table></div>
- <div class="pfootnote">ยอดขายหน่วย ล้านบาท (ลบ.) · Personnel Cost to Sales, แนะนำลด/เพิ่มจำนวนคน ประมาณจากค่าจ้างเฉลี่ยต่อคนของสาขา เทียบเป้า 2.50% · คลิกหัวคอลัมน์เพื่อจัดเรียง</div>
+ <div class="pfootnote">Sales หน่วยล้านบาท (ลบ.) · แนะนำลด/เพิ่มจำนวนคน ประมาณจากค่าจ้างเฉลี่ยต่อคนของสาขา เทียบเป้าที่ตั้งไว้ด้านบน · คลิกหัวคอลัมน์เพื่อจัดเรียง</div>
 </div>
 
 <div class="pcard" id="cardPosition">
@@ -340,8 +436,8 @@ table.etbl tr.res td{background:var(--yeL)}
    <th class="l" data-k="position" data-t="s">M_Position<span class="parr"></span></th>
    <th data-k="active" data-t="n">Active<span class="parr"></span></th>
    <th data-k="costPct" data-t="n">Personnel Cost<br>to Sales (%)<span class="parr"></span></th>
-   <th data-k="rec" data-t="n">แนะนำลด<br>จำนวนคน<span class="parr"></span></th>
-   <th data-k="inc" data-t="n">แนะนำเพิ่ม<br>จำนวนคน<span class="parr"></span></th>
+   <th data-k="rec" data-t="n">แนะนำลด<br>(คน)<span class="parr"></span></th>
+   <th data-k="inc" data-t="n">แนะนำเพิ่ม<br>(คน)<span class="parr"></span></th>
   </tr></thead>
   <tbody id="positionBody"></tbody>
  </table></div>
@@ -357,12 +453,12 @@ table.etbl tr.res td{background:var(--yeL)}
    <th class="l">Division / Department</th>
    <th>Active</th>
    <th>Personnel Cost<br>to Sales (%)</th>
-   <th>แนะนำลด<br>จำนวนคน</th>
-   <th>แนะนำเพิ่ม<br>จำนวนคน</th>
+   <th>แนะนำลด<br>(คน)</th>
+   <th>แนะนำเพิ่ม<br>(คน)</th>
   </tr></thead>
   <tbody id="structureBody"></tbody>
  </table></div>
- <div class="pfootnote">คลิกแถว Division เพื่อขยาย/ย่อรายการ Department</div>
+ <div class="pfootnote">คลิกแถว Division เพื่อขยาย/ย่อรายการ Department · ปุ่ม TOGGLE ALL ย่อ/กางทั้งหมด</div>
 </div>
 
 </div>
