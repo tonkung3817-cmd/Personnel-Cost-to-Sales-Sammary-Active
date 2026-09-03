@@ -271,10 +271,10 @@ table.etbl tr.res td{background:var(--yeL)}
 #pgPersonnel .pfootnote{padding:9px 15px;font-size:11px;line-height:1.5;color:var(--pink3);
  border-top:1px solid var(--pline);background:#FCFDFE;margin-top:auto}
 
-/* ===== Control Tower · O2O =====
+/* ===== ชุดสไตล์ร่วมของหน้า Control Tower O2O และหน้า OT =====
    สีมาร์คในกราฟใช้เฉด CP AXTRA ที่ขยับความสว่าง/อิ่มสีให้ผ่านเกณฑ์ contrast
    และ colour-vision-deficiency แล้ว (คงค่า hue เดิมของแบรนด์ไว้ทุกสี) */
-#pgO2O{
+:is(#pgO2O,#pgOT){
  --cbl:#3270c7;                                            /* Blue #306FC7 → มาร์คหลัก */
  --cr1:#8FB3E0;--cr2:#6494D0;--cr3:#3E76C2;--cr4:#2A5A9E;--cr5:#1B3D69;  /* ramp ไล่เฉด */
  --cgd:#1a9691;--cgdL:#E7F3F2;                             /* Lotus #43938F → ดี */
@@ -284,150 +284,150 @@ table.etbl tr.res td{background:var(--yeL)}
  --cbg:#F4F6F8;--cblL:#E9F0FA;
  font-family:"IBM Plex Sans Thai",system-ui,sans-serif;font-size:13px;line-height:1.45;
  color:var(--cink);background:var(--cbg)}
-#pgO2O .cwrap{max-width:1900px;margin:0 auto;padding:22px 24px 30px}
-#pgO2O h1{font-size:21px;font-weight:600;letter-spacing:-.015em;margin:0}
-#pgO2O .csub{font-size:12.5px;color:var(--cink2);margin-top:3px}
-#pgO2O .n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;
+:is(#pgO2O,#pgOT) .cwrap{max-width:1900px;margin:0 auto;padding:22px 24px 30px}
+:is(#pgO2O,#pgOT) h1{font-size:21px;font-weight:600;letter-spacing:-.015em;margin:0}
+:is(#pgO2O,#pgOT) .csub{font-size:12.5px;color:var(--cink2);margin-top:3px}
+:is(#pgO2O,#pgOT) .n{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;
  letter-spacing:-.01em}
 
 /* แถบตัวกรอง */
-#pgO2O .cfbar{background:#fff;border:1px solid var(--cline);border-radius:10px;padding:13px 16px;
+:is(#pgO2O,#pgOT) .cfbar{background:#fff;border:1px solid var(--cline);border-radius:10px;padding:13px 16px;
  box-shadow:0 1px 2px rgba(18,22,28,.04);display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;
  margin-bottom:18px}
-#pgO2O .cflabel{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+:is(#pgO2O,#pgOT) .cflabel{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
  color:var(--cink3);margin-bottom:5px;white-space:nowrap}
-#pgO2O .cfsel,#pgO2O .cfinp{font:inherit;font-size:12.5px;padding:7px 9px;border:1px solid var(--cline);
+:is(#pgO2O,#pgOT) .cfsel,:is(#pgO2O,#pgOT) .cfinp{font:inherit;font-size:12.5px;padding:7px 9px;border:1px solid var(--cline);
  border-radius:7px;background:#fff;color:var(--cink)}
-#pgO2O .cfsel{cursor:pointer}
-#pgO2O .cfsel:hover,#pgO2O .cfinp:hover{border-color:#C9D2DE}
-#pgO2O .cfsel:focus,#pgO2O .cfinp:focus{outline:2px solid var(--cbl);outline-offset:1px;border-color:var(--cbl)}
-#pgO2O .cstep{display:flex;align-items:center;border:1px solid var(--cline);border-radius:7px;
+:is(#pgO2O,#pgOT) .cfsel{cursor:pointer}
+:is(#pgO2O,#pgOT) .cfsel:hover,:is(#pgO2O,#pgOT) .cfinp:hover{border-color:#C9D2DE}
+:is(#pgO2O,#pgOT) .cfsel:focus,:is(#pgO2O,#pgOT) .cfinp:focus{outline:2px solid var(--cbl);outline-offset:1px;border-color:var(--cbl)}
+:is(#pgO2O,#pgOT) .cstep{display:flex;align-items:center;border:1px solid var(--cline);border-radius:7px;
  overflow:hidden;background:#fff}
-#pgO2O .cstep button{border:0;background:#fff;width:30px;height:33px;font:inherit;font-size:16px;
+:is(#pgO2O,#pgOT) .cstep button{border:0;background:#fff;width:30px;height:33px;font:inherit;font-size:16px;
  font-weight:600;color:var(--cbl);cursor:pointer}
-#pgO2O .cstep button:hover{background:var(--cblL)}
-#pgO2O .cstep input{border:0;width:56px;text-align:center;background:#FEF6E4;
+:is(#pgO2O,#pgOT) .cstep button:hover{background:var(--cblL)}
+:is(#pgO2O,#pgOT) .cstep input{border:0;width:56px;text-align:center;background:#FEF6E4;
  font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;font-size:13.5px;
  font-weight:600;color:var(--cink);padding:8px 0}
-#pgO2O .cstep input:focus{outline:none;background:#fff}
-#pgO2O .cghost{padding:8px 13px;border:1px solid var(--cline);border-radius:7px;background:#fff;
+:is(#pgO2O,#pgOT) .cstep input:focus{outline:none;background:#fff}
+:is(#pgO2O,#pgOT) .cghost{padding:8px 13px;border:1px solid var(--cline);border-radius:7px;background:#fff;
  font:inherit;font-size:12.5px;font-weight:500;color:var(--cink2);cursor:pointer;white-space:nowrap}
-#pgO2O .cghost:hover{background:var(--cbg);border-color:#C9D2DE;color:var(--cink)}
+:is(#pgO2O,#pgOT) .cghost:hover{background:var(--cbg);border-color:#C9D2DE;color:var(--cink)}
 
 /* KPI */
-#pgO2O .ckpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:14px;
+:is(#pgO2O,#pgOT) .ckpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));gap:14px;
  margin-bottom:18px}
-#pgO2O .ckpi{background:#fff;border:1px solid var(--cline);border-radius:10px;padding:14px 16px;
+:is(#pgO2O,#pgOT) .ckpi{background:#fff;border:1px solid var(--cline);border-radius:10px;padding:14px 16px;
  box-shadow:0 1px 2px rgba(18,22,28,.04)}
-#pgO2O .ckpi .k{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
+:is(#pgO2O,#pgOT) .ckpi .k{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;
  color:var(--cink3)}
-#pgO2O .ckpi .v{font-size:27px;font-weight:600;letter-spacing:-.03em;margin-top:2px;line-height:1.1}
-#pgO2O .ckpi .d{font-size:11.5px;color:var(--cink2);margin-top:3px}
-#pgO2O .ckpi.hero .v{font-size:40px}
-#pgO2O .ckpi.good{border-color:#BFDEDC;background:var(--cgdL)}
-#pgO2O .ckpi.good .v{color:#146F6B}
-#pgO2O .ckpi.warn{border-color:#EDD9A6;background:var(--cwnL)}
-#pgO2O .ckpi.warn .v{color:#8A6500}
-#pgO2O .ckpi.crit{border-color:#F1C8C6;background:var(--ccrL)}
-#pgO2O .ckpi.crit .v{color:#A5231E}
+:is(#pgO2O,#pgOT) .ckpi .v{font-size:27px;font-weight:600;letter-spacing:-.03em;margin-top:2px;line-height:1.1}
+:is(#pgO2O,#pgOT) .ckpi .d{font-size:11.5px;color:var(--cink2);margin-top:3px}
+:is(#pgO2O,#pgOT) .ckpi.hero .v{font-size:40px}
+:is(#pgO2O,#pgOT) .ckpi.good{border-color:#BFDEDC;background:var(--cgdL)}
+:is(#pgO2O,#pgOT) .ckpi.good .v{color:#146F6B}
+:is(#pgO2O,#pgOT) .ckpi.warn{border-color:#EDD9A6;background:var(--cwnL)}
+:is(#pgO2O,#pgOT) .ckpi.warn .v{color:#8A6500}
+:is(#pgO2O,#pgOT) .ckpi.crit{border-color:#F1C8C6;background:var(--ccrL)}
+:is(#pgO2O,#pgOT) .ckpi.crit .v{color:#A5231E}
 
 /* การ์ด */
-#pgO2O .cgrid{display:grid;gap:18px;align-items:start;margin-bottom:18px}
-#pgO2O .cg2{grid-template-columns:repeat(2,minmax(0,1fr))}
-#pgO2O .cg3{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media(max-width:1280px){#pgO2O .cg2,#pgO2O .cg3{grid-template-columns:1fr}}
-#pgO2O .ccard{background:#fff;border:1px solid var(--cline);border-radius:10px;overflow:hidden;
+:is(#pgO2O,#pgOT) .cgrid{display:grid;gap:18px;align-items:start;margin-bottom:18px}
+:is(#pgO2O,#pgOT) .cg2{grid-template-columns:repeat(2,minmax(0,1fr))}
+:is(#pgO2O,#pgOT) .cg3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:1280px){:is(#pgO2O,#pgOT) .cg2,:is(#pgO2O,#pgOT) .cg3{grid-template-columns:1fr}}
+:is(#pgO2O,#pgOT) .ccard{background:#fff;border:1px solid var(--cline);border-radius:10px;overflow:hidden;
  box-shadow:0 1px 3px rgba(18,22,28,.06),0 1px 2px rgba(18,22,28,.03)}
-#pgO2O .chd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 15px;
+:is(#pgO2O,#pgOT) .chd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 15px;
  min-height:46px;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.075em;color:#fff}
-#pgO2O .chd.bl{background:#306FC7}
-#pgO2O .chd.gr{background:#43938F}
-#pgO2O .chd.nv{background:#1E4A85}
-#pgO2O .ciconbtn{cursor:pointer;background:rgba(255,255,255,.14);border:0;border-radius:5px;width:24px;
+:is(#pgO2O,#pgOT) .chd.bl{background:#306FC7}
+:is(#pgO2O,#pgOT) .chd.gr{background:#43938F}
+:is(#pgO2O,#pgOT) .chd.nv{background:#1E4A85}
+:is(#pgO2O,#pgOT) .ciconbtn{cursor:pointer;background:rgba(255,255,255,.14);border:0;border-radius:5px;width:24px;
  height:22px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;line-height:1}
-#pgO2O .ciconbtn:hover{background:rgba(255,255,255,.3)}
-#pgO2O .cbody{padding:15px 17px}
-#pgO2O .cnote{padding:9px 15px;font-size:11px;line-height:1.5;color:var(--cink3);
+:is(#pgO2O,#pgOT) .ciconbtn:hover{background:rgba(255,255,255,.3)}
+:is(#pgO2O,#pgOT) .cbody{padding:15px 17px}
+:is(#pgO2O,#pgOT) .cnote{padding:9px 15px;font-size:11px;line-height:1.5;color:var(--cink3);
  border-top:1px solid var(--cline);background:#FCFDFE}
-#pgO2O .clegend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:11.5px;
+:is(#pgO2O,#pgOT) .clegend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:11.5px;
  color:var(--cink2);margin-bottom:12px}
-#pgO2O .clegend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;
+:is(#pgO2O,#pgOT) .clegend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;
  vertical-align:-1px}
 
 /* กราฟแท่งนอน */
-#pgO2O .hb{display:flex;flex-direction:column;gap:9px}
-#pgO2O .hbrow{display:grid;grid-template-columns:132px 1fr 74px;gap:11px;align-items:center;
+:is(#pgO2O,#pgOT) .hb{display:flex;flex-direction:column;gap:9px}
+:is(#pgO2O,#pgOT) .hbrow{display:grid;grid-template-columns:132px 1fr 74px;gap:11px;align-items:center;
  font-size:12.5px}
-#pgO2O .hbrow.wide{grid-template-columns:158px 1fr 96px}
-#pgO2O .hbname{color:var(--cink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#pgO2O .hbtrk{height:20px;background:#F1F3F6;border-radius:4px;position:relative;overflow:hidden}
-#pgO2O .hbfill{height:100%;border-radius:0 4px 4px 0;transition:width .25s}
-#pgO2O .hbtgt{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--cink);opacity:.45}
-#pgO2O .hbval{text-align:right;font-weight:600;font-family:"IBM Plex Mono",monospace;
+:is(#pgO2O,#pgOT) .hbrow.wide{grid-template-columns:158px 1fr 96px}
+:is(#pgO2O,#pgOT) .hbname{color:var(--cink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:is(#pgO2O,#pgOT) .hbtrk{height:20px;background:#F1F3F6;border-radius:4px;position:relative;overflow:hidden}
+:is(#pgO2O,#pgOT) .hbfill{height:100%;border-radius:0 4px 4px 0;transition:width .25s}
+:is(#pgO2O,#pgOT) .hbtgt{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--cink);opacity:.45}
+:is(#pgO2O,#pgOT) .hbval{text-align:right;font-weight:600;font-family:"IBM Plex Mono",monospace;
  font-variant-numeric:tabular-nums}
 
 /* histogram */
-#pgO2O .hist{display:flex;align-items:flex-end;gap:10px;height:186px;padding-top:22px}
-#pgO2O .hcol{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;
+:is(#pgO2O,#pgOT) .hist{display:flex;align-items:flex-end;gap:10px;height:186px;padding-top:22px}
+:is(#pgO2O,#pgOT) .hcol{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;
  position:relative;cursor:pointer}
-#pgO2O .hcol:hover .hbar{filter:brightness(.92)}
-#pgO2O .hcol.sel .hbar{outline:2px solid var(--cink);outline-offset:2px}
-#pgO2O .hlist{margin-top:14px;border-top:1px solid var(--cline);padding-top:11px}
-#pgO2O .hlhd{font-size:12px;font-weight:600;margin-bottom:8px;display:flex;justify-content:space-between;
+:is(#pgO2O,#pgOT) .hcol:hover .hbar{filter:brightness(.92)}
+:is(#pgO2O,#pgOT) .hcol.sel .hbar{outline:2px solid var(--cink);outline-offset:2px}
+:is(#pgO2O,#pgOT) .hlist{margin-top:14px;border-top:1px solid var(--cline);padding-top:11px}
+:is(#pgO2O,#pgOT) .hlhd{font-size:12px;font-weight:600;margin-bottom:8px;display:flex;justify-content:space-between;
  align-items:center;gap:10px}
-#pgO2O .hlclose{border:1px solid var(--cline);background:#fff;border-radius:6px;font:inherit;
+:is(#pgO2O,#pgOT) .hlclose{border:1px solid var(--cline);background:#fff;border-radius:6px;font:inherit;
  font-size:11px;padding:3px 9px;cursor:pointer;color:var(--cink2)}
-#pgO2O .hlclose:hover{background:var(--cbg)}
-#pgO2O .hlrows{max-height:196px;overflow:auto;display:grid;
+:is(#pgO2O,#pgOT) .hlclose:hover{background:var(--cbg)}
+:is(#pgO2O,#pgOT) .hlrows{max-height:196px;overflow:auto;display:grid;
  grid-template-columns:repeat(auto-fill,minmax(186px,1fr));gap:0 16px;scrollbar-width:thin}
-#pgO2O .hlrow{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;padding:3px 0;
+:is(#pgO2O,#pgOT) .hlrow{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;padding:3px 0;
  border-bottom:1px solid var(--cline2)}
-#pgO2O .hlrow span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#pgO2O .hlhint{font-size:11px;color:var(--cink3);margin-top:9px}
-#pgO2O .hbar{border-radius:4px 4px 0 0;min-height:2px;transition:height .25s}
-#pgO2O .hcnt{position:absolute;top:-19px;left:0;right:0;text-align:center;font-size:12px;
+:is(#pgO2O,#pgOT) .hlrow span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+:is(#pgO2O,#pgOT) .hlhint{font-size:11px;color:var(--cink3);margin-top:9px}
+:is(#pgO2O,#pgOT) .hbar{border-radius:4px 4px 0 0;min-height:2px;transition:height .25s}
+:is(#pgO2O,#pgOT) .hcnt{position:absolute;top:-19px;left:0;right:0;text-align:center;font-size:12px;
  font-weight:600;font-family:"IBM Plex Mono",monospace}
-#pgO2O .hxlab{display:flex;gap:10px;margin-top:7px;border-top:1px solid var(--cline);padding-top:6px}
-#pgO2O .hxlab div{flex:1;text-align:center;font-size:10.5px;color:var(--cink3);
+:is(#pgO2O,#pgOT) .hxlab{display:flex;gap:10px;margin-top:7px;border-top:1px solid var(--cline);padding-top:6px}
+:is(#pgO2O,#pgOT) .hxlab div{flex:1;text-align:center;font-size:10.5px;color:var(--cink3);
  font-family:"IBM Plex Mono",monospace}
 
 /* scatter */
-#pgO2O .scat{width:100%;height:auto;display:block;overflow:visible}
-#pgO2O .scat .gl{stroke:var(--cline);stroke-width:1}
-#pgO2O .scat .ax{stroke:#C9D2DE;stroke-width:1}
-#pgO2O .scat text{font-family:"IBM Plex Mono",monospace;font-size:9.5px;fill:var(--cink3)}
-#pgO2O .scat .axt{font-family:"IBM Plex Sans Thai",sans-serif;font-size:10.5px;fill:var(--cink2);
+:is(#pgO2O,#pgOT) .scat{width:100%;height:auto;display:block;overflow:visible}
+:is(#pgO2O,#pgOT) .scat .gl{stroke:var(--cline);stroke-width:1}
+:is(#pgO2O,#pgOT) .scat .ax{stroke:#C9D2DE;stroke-width:1}
+:is(#pgO2O,#pgOT) .scat text{font-family:"IBM Plex Mono",monospace;font-size:9.5px;fill:var(--cink3)}
+:is(#pgO2O,#pgOT) .scat .axt{font-family:"IBM Plex Sans Thai",sans-serif;font-size:10.5px;fill:var(--cink2);
  font-weight:500}
-#pgO2O .scat circle{stroke:#fff;stroke-width:2;cursor:pointer}
-#pgO2O .scat .slab{font-family:"IBM Plex Mono",monospace;font-size:8.5px;font-weight:500;
+:is(#pgO2O,#pgOT) .scat circle{stroke:#fff;stroke-width:2;cursor:pointer}
+:is(#pgO2O,#pgOT) .scat .slab{font-family:"IBM Plex Mono",monospace;font-size:8.5px;font-weight:500;
  fill:var(--cink2);pointer-events:none;paint-order:stroke;stroke:#fff;stroke-width:2.6px;
  stroke-linejoin:round}
-#pgO2O .scat circle:hover{stroke:var(--cink);stroke-width:2}
-#pgO2O .scat .tgl{stroke:var(--cink);stroke-width:1.5;stroke-dasharray:4 3;opacity:.4}
+:is(#pgO2O,#pgOT) .scat circle:hover{stroke:var(--cink);stroke-width:2}
+:is(#pgO2O,#pgOT) .scat .tgl{stroke:var(--cink);stroke-width:1.5;stroke-dasharray:4 3;opacity:.4}
 
 /* ตาราง */
-#pgO2O .ctblfilter{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;padding:12px 15px;
+:is(#pgO2O,#pgOT) .ctblfilter{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;padding:12px 15px;
  border-bottom:1px solid var(--cline);background:#FCFDFE}
-#pgO2O .ctblcount{margin-left:auto;align-self:center;font-size:12px;color:var(--cink2)}
-#pgO2O .ctblwrap{max-height:620px;overflow:auto;scrollbar-width:thin;scrollbar-color:#CDD5E0 transparent}
-#pgO2O .ctblwrap::-webkit-scrollbar{width:9px;height:9px}
-#pgO2O .ctblwrap::-webkit-scrollbar-thumb{background:#CDD5E0;border-radius:5px;border:2px solid #fff}
-#pgO2O table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
-#pgO2O thead th{position:sticky;top:0;z-index:2;background:#F7F9FB;border-bottom:1px solid var(--cline);
+:is(#pgO2O,#pgOT) .ctblcount{margin-left:auto;align-self:center;font-size:12px;color:var(--cink2)}
+:is(#pgO2O,#pgOT) .ctblwrap{max-height:620px;overflow:auto;scrollbar-width:thin;scrollbar-color:#CDD5E0 transparent}
+:is(#pgO2O,#pgOT) .ctblwrap::-webkit-scrollbar{width:9px;height:9px}
+:is(#pgO2O,#pgOT) .ctblwrap::-webkit-scrollbar-thumb{background:#CDD5E0;border-radius:5px;border:2px solid #fff}
+:is(#pgO2O,#pgOT) table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
+:is(#pgO2O,#pgOT) thead th{position:sticky;top:0;z-index:2;background:#F7F9FB;border-bottom:1px solid var(--cline);
  text-align:right;padding:9px 10px;font-weight:600;font-size:10.5px;line-height:1.3;text-transform:uppercase;
  letter-spacing:.03em;color:var(--cink2);cursor:pointer;vertical-align:bottom;user-select:none;white-space:nowrap}
-#pgO2O thead th.l{text-align:left}
-#pgO2O thead th:hover{background:#EDF1F6;color:var(--cbl)}
-#pgO2O thead th .carr{font-size:8.5px;margin-left:4px;color:var(--cbl)}
-#pgO2O tbody td{padding:8px 10px;border-bottom:1px solid var(--cline2);text-align:right;white-space:nowrap}
-#pgO2O tbody td.l{text-align:left;white-space:normal;overflow-wrap:break-word}
-#pgO2O tbody tr:last-child td{border-bottom:0}
-#pgO2O tbody tr:hover{background:var(--cblL)}
-#pgO2O .cdim{color:var(--cink3)}
-#pgO2O .cdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;
+:is(#pgO2O,#pgOT) thead th.l{text-align:left}
+:is(#pgO2O,#pgOT) thead th:hover{background:#EDF1F6;color:var(--cbl)}
+:is(#pgO2O,#pgOT) thead th .carr{font-size:8.5px;margin-left:4px;color:var(--cbl)}
+:is(#pgO2O,#pgOT) tbody td{padding:8px 10px;border-bottom:1px solid var(--cline2);text-align:right;white-space:nowrap}
+:is(#pgO2O,#pgOT) tbody td.l{text-align:left;white-space:normal;overflow-wrap:break-word}
+:is(#pgO2O,#pgOT) tbody tr:last-child td{border-bottom:0}
+:is(#pgO2O,#pgOT) tbody tr:hover{background:var(--cblL)}
+:is(#pgO2O,#pgOT) .cdim{color:var(--cink3)}
+:is(#pgO2O,#pgOT) .cdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;
  vertical-align:0}
-#pgO2O .cbad{color:#A5231E;font-weight:600}
-#pgO2O .cgood{color:#146F6B;font-weight:600}
+:is(#pgO2O,#pgOT) .cbad{color:#A5231E;font-weight:600}
+:is(#pgO2O,#pgOT) .cgood{color:#146F6B;font-weight:600}
 
 /* tooltip ร่วมทุกกราฟ */
 #o2oTip{position:fixed;z-index:9998;pointer-events:none;background:#12161C;color:#fff;
@@ -438,6 +438,34 @@ table.etbl tr.res td{background:var(--yeL)}
 #o2oTip .tn{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
 
 
+/* ===== เฉพาะหน้า OT ===== */
+#pgOT .otseg{display:inline-flex;border:1px solid var(--cline);border-radius:7px;overflow:hidden;background:#fff}
+#pgOT .otseg button{border:0;background:#fff;font:inherit;font-size:12.5px;font-weight:500;padding:8px 14px;
+ cursor:pointer;color:var(--cink2);border-right:1px solid var(--cline)}
+#pgOT .otseg button:last-child{border-right:0}
+#pgOT .otseg button:hover{background:var(--cbg)}
+#pgOT .otseg button.on{background:var(--cbl);color:#fff}
+/* กราฟแท่งตั้ง (รายวัน / ชั่วโมงที่เริ่ม OT) */
+#pgOT .vb{display:flex;align-items:flex-end;gap:6px;height:196px;padding-top:24px}
+#pgOT .vbcol{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative;
+ cursor:pointer;min-width:0}
+#pgOT .vbcol:hover .vbbar{filter:brightness(.92)}
+#pgOT .vbbar{border-radius:4px 4px 0 0;min-height:2px;transition:height .25s}
+#pgOT .vbval{position:absolute;top:-20px;left:0;right:0;text-align:center;font-size:10.5px;font-weight:600;
+ font-family:"IBM Plex Mono",monospace;color:var(--cink2);white-space:nowrap}
+#pgOT .vbx{display:flex;gap:6px;margin-top:7px;border-top:1px solid var(--cline);padding-top:6px}
+#pgOT .vbx div{flex:1;text-align:center;font-size:10px;color:var(--cink3);font-family:"IBM Plex Mono",monospace;
+ min-width:0;overflow:hidden}
+#pgOT .vbx div b{display:block;font-weight:600;color:var(--cink2);font-size:10.5px}
+/* ขั้นสถานะอนุมัติ */
+#pgOT .fn{display:flex;flex-direction:column;gap:11px}
+#pgOT .fnrow{display:grid;grid-template-columns:16px 1fr;gap:11px;align-items:start}
+#pgOT .fndot{width:11px;height:11px;border-radius:3px;margin-top:4px}
+#pgOT .fnhd{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;font-weight:600;
+ margin-bottom:5px;align-items:baseline}
+#pgOT .fnsub{font-size:11.5px;color:var(--cink3);font-weight:400}
+#pgOT .fntrk{height:16px;background:#F1F3F6;border-radius:4px;overflow:hidden}
+#pgOT .fnfill{height:100%;border-radius:0 4px 4px 0}
 .pagenav{display:flex;gap:8px;padding:10px 22px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
 .pagenav button{font:inherit;font-weight:600;font-size:13px;padding:7px 16px;border-radius:7px;border:1px solid var(--line);background:#f4f6f8;color:var(--ink2);cursor:pointer}
 .pagenav button.on{background:var(--bl);color:#fff;border-color:var(--bl)}
@@ -466,6 +494,7 @@ table.etbl tr.res td{background:var(--yeL)}
  <button class="on" data-pg="sim">Store Cost Simulator</button>
  <button data-pg="personnel">Personnel Summary</button>
  <button data-pg="o2o">Control Tower · O2O</button>
+ <button data-pg="ot">OT</button>
 </div>
 <div id="pgSim">
 <header><div class="wrap"><div class="refreshhd"><h1>Personnel Cost to Sales — Store Simulator</h1>
@@ -740,6 +769,115 @@ table.etbl tr.res td{background:var(--yeL)}
   <tbody id="cStoreBody"></tbody>
  </table></div>
  <div class="cnote" id="cTableNote"></div>
+</div>
+
+</div>
+</div>
+<div id="pgOT" style="display:none">
+<div class="cwrap">
+<div class="refreshhd" style="margin:0 0 16px">
+ <div><h1>OT &mdash; ค่าล่วงเวลา</h1>
+  <div class="csub" id="otSub"></div></div>
+ <button class="refreshbtn" id="otRefresh" title="คืนค่าตัวกรอง หน่วยวัด และการจัดเรียง กลับเป็นค่าเริ่มต้น แล้วคำนวณใหม่ทั้งหน้า"><span class="rico">&#10227;</span>Refresh</button></div>
+
+<div class="cfbar">
+ <div><div class="cflabel">Region</div><select id="otReg" class="cfsel" style="min-width:176px"></select></div>
+ <div><div class="cflabel">สาขา</div><select id="otSto" class="cfsel" style="min-width:214px"></select></div>
+ <div><div class="cflabel">แผนก</div><select id="otDep" class="cfsel" style="min-width:186px"></select></div>
+ <div><div class="cflabel">สถานะอนุมัติ</div><select id="otSta" class="cfsel" style="min-width:150px"></select></div>
+ <div><div class="cflabel">ช่วงวันที่</div><select id="otWin" class="cfsel">
+   <option value="-1">ทั้งเดือน</option>
+   <option value="past">เกิดขึ้นแล้ว</option>
+   <option value="future">คำขอล่วงหน้า</option></select></div>
+ <div style="border-left:1px solid var(--cline);padding-left:14px;margin-left:2px">
+  <div class="cflabel">หน่วยวัด</div>
+  <div class="otseg" id="otMeasure"><button data-m="h" class="on">ชั่วโมง</button><button data-m="b">บาท</button></div></div>
+ <button id="otClr" class="cghost">ล้าง filter</button>
+</div>
+
+<div class="ckpis" id="otKpi"></div>
+
+<div class="ccard" style="margin-bottom:18px">
+ <div class="chd bl"><span>OT รายวัน</span>
+  <button class="ciconbtn" id="otDlDay" title="Export CSV">&#8681;</button></div>
+ <div class="cbody">
+  <div class="clegend">
+   <span><i style="background:var(--cbl)"></i>วันที่เกิดขึ้นแล้ว</span>
+   <span><i style="background:var(--cr1)"></i>คำขอล่วงหน้า</span>
+   <span style="margin-left:auto" id="otDayUnit"></span></div>
+  <div class="vb" id="otDay"></div>
+  <div class="vbx" id="otDayX"></div>
+ </div>
+ <div class="cnote" id="otDayNote"></div>
+</div>
+
+<div class="cgrid cg2">
+ <div class="ccard">
+  <div class="chd gr"><span>OT รายสาขา</span>
+   <button class="ciconbtn" id="otDlSto" title="Export CSV">&#8681;</button></div>
+  <div class="cbody"><div class="hb" id="otStoBar"></div></div>
+  <div class="cnote" id="otStoNote"></div>
+ </div>
+ <div class="ccard">
+  <div class="chd nv"><span>OT รายแผนก</span></div>
+  <div class="cbody"><div class="hb" id="otDepBar"></div></div>
+  <div class="cnote" id="otDepNote"></div>
+ </div>
+</div>
+
+<div class="cgrid cg2">
+ <div class="ccard">
+  <div class="chd bl"><span>สถานะการอนุมัติ</span></div>
+  <div class="cbody"><div class="fn" id="otFunnel"></div></div>
+  <div class="cnote" id="otFunnelNote"></div>
+ </div>
+ <div class="ccard">
+  <div class="chd gr"><span>เวลาที่เริ่ม OT</span></div>
+  <div class="cbody">
+   <div class="clegend"><span>จำนวนรายการที่เริ่ม OT ในแต่ละชั่วโมง</span></div>
+   <div class="vb" id="otHour" style="height:170px"></div>
+   <div class="vbx" id="otHourX"></div>
+  </div>
+  <div class="cnote" id="otHourNote"></div>
+ </div>
+</div>
+
+<div class="ccard" style="margin-bottom:18px">
+ <div class="chd nv"><span>พนักงานที่ OT สูงสุด 15 อันดับ</span>
+  <button class="ciconbtn" id="otDlEmp" title="Export CSV">&#8681;</button></div>
+ <div class="cbody"><div class="hb" id="otEmpBar"></div></div>
+ <div class="cnote" id="otEmpNote"></div>
+</div>
+
+<div class="ccard" id="cardOTRows">
+ <div class="chd bl"><span>รายการ OT ทั้งหมด</span>
+  <button class="ciconbtn" id="otDlAll" title="Export CSV">&#8681;</button></div>
+ <div class="ctblfilter">
+  <div><div class="cflabel">Region</div><select id="otTReg" class="cfsel" style="min-width:176px"></select></div>
+  <div><div class="cflabel">สาขา</div><select id="otTSto" class="cfsel" style="min-width:214px"></select></div>
+  <button id="otTClr" class="cghost">ล้าง</button>
+  <div class="ctblcount n" id="otTCount"></div>
+ </div>
+ <div class="ctblwrap"><table>
+  <thead><tr>
+   <th class="l" data-k="date" data-t="s">วันที่<span class="carr"></span></th>
+   <th class="l" data-k="start" data-t="s">เริ่ม–จบ<span class="carr"></span></th>
+   <th data-k="hours" data-t="n">ชั่วโมง<span class="carr"></span></th>
+   <th data-k="baht" data-t="n">บาท<span class="carr"></span></th>
+   <th data-k="sn" data-t="n">ST No.<span class="carr"></span></th>
+   <th class="l" data-k="stName" data-t="s">สาขา<span class="carr"></span></th>
+   <th class="l" data-k="regName" data-t="s">Region<span class="carr"></span></th>
+   <th class="l" data-k="depName" data-t="s">แผนก<span class="carr"></span></th>
+   <th class="l" data-k="posName" data-t="s">ตำแหน่ง<span class="carr"></span></th>
+   <th data-k="grade" data-t="n">เกรด<span class="carr"></span></th>
+   <th class="l" data-k="emp" data-t="s">รหัส<span class="carr"></span></th>
+   <th class="l" data-k="name" data-t="s">ชื่อ<span class="carr"></span></th>
+   <th data-k="rate" data-t="n">อัตรา<br>บาท/ชม.<span class="carr"></span></th>
+   <th class="l" data-k="staName" data-t="s">สถานะ<span class="carr"></span></th>
+  </tr></thead>
+  <tbody id="otRowsBody"></tbody>
+ </table></div>
+ <div class="cnote" id="otTableNote"></div>
 </div>
 
 </div>
@@ -1385,9 +1523,9 @@ pRenderAll();
 document.querySelectorAll('.pagenav button').forEach(b=>{
  b.onclick=()=>{
   document.querySelectorAll('.pagenav button').forEach(x=>x.classList.toggle('on',x===b));
-  ['sim','personnel','o2o'].forEach(pg=>{
-   document.getElementById(pg==='sim'?'pgSim':pg==='personnel'?'pgPersonnel':'pgO2O')
-    .style.display = b.dataset.pg===pg ? '' : 'none';
+  const PG={sim:'pgSim', personnel:'pgPersonnel', o2o:'pgO2O', ot:'pgOT'};
+  Object.entries(PG).forEach(([pg,id])=>{
+   document.getElementById(id).style.display = b.dataset.pg===pg ? '' : 'none';
   });
  };
 });
@@ -1825,6 +1963,435 @@ function initO2OUI(){
  cSetTgt(85);
 }
 
+
+/* ==== OT — ค่าล่วงเวลา ======================================================
+   ที่มา: OT_Sep2026_as_of_20260902.xlsx · ชีต Data (1 แถว = 1 คำขอ OT)
+   102 รายการ · 74 คน · 15 สาขา · 9 Region · 23 แผนก · 37 ตำแหน่ง
+   ตรวจแล้ว OT1.5 Baht = ชม. x อัตรา x 1.5 และ OT1.0 Baht = ชม. x อัตรา
+   ตรงทุกแถว (0 รายการที่ไม่ตรง) · รวม 312.20 ชม. · 27,425.13 บาท
+   as-of ดึงจากค่า Date request สูงสุดในข้อมูล ไม่ได้อ้างจากชื่อไฟล์
+   ใช้ชุดสีและสไตล์ร่วมกับหน้า Control Tower O2O */
+const OTDATA = {"meta":{"month":"Sep 2026","asof":"2026-09-02","from":"2026-09-01","thru":"2026-09-30","src":"OT_Sep2026_as_of_20260902.xlsx · ชีต Data (ระดับรายการ)"},"stn":["Ayutthaya Branch","Bangbon Branch","Banphae Branch","Chumphon Branch","Hat Yai Branch","Ladkrabang Branch","Lardprao Branch","Maesod Branch","Phichit Branch","Ram Inthra Branch","Sakaeo Branch","Sathorn Branch","Surat Thani Branch","Thep Rak Branch","Udonthani Branch"],"reg":["Bangkok East","Bangkok West","Lower East","Lower North","Lower South","North Central","Upper East","Upper Northeast","Upper South"],"dep":["Admin G/R","Admin O2O Operation","Bakery","Butchery","Customer Service","Customer Service - Cashier","Customer Service - Check Out","Customer Service - Checker","Customer Service - O2O","Dry Food 1","Dry Food 2","Frozen","Fruit &Vegetable","General Affair","Last Mile","Loader","Non Food 1","Non Food 2","Non Fresh","Operation G/R","Picker","Seafood","Store Office Support"],"pos":["Customer Service Officer - O2O","Staff 1 - Admin O2O Operation","Staff 1 - Butchery","Staff 1 - Cashier","Staff 1 - Checker","Staff 1 - Customer Service","Staff 1 - Dry Food 1","Staff 1 - Dry Food 2","Staff 1 - F&V","Staff 1 - Fish","Staff 1 - Frozen","Staff 1 - Loader","Staff 1 - Non Food 2","Staff 1 - Non Fresh","Staff 1 - Operation GR","Staff 1 - Picker","Staff 2 - Admin GR","Staff 2 - Admin O2O Operation","Staff 2 - Butchery","Staff 2 - Customer Service","Staff 2 - Dry Food 1","Staff 2 - Dry Food 2","Staff 2 - F&V","Staff 2 - Frozen","Staff 2 - General Affair","Staff 2 - Non Food 2","Staff 2 - Non Fresh","Staff 2 - Office Support","Staff 2 - Operation GR","Staff 2 - Picker","Supervisor - Bakery","Supervisor - Butchery","Supervisor - Cashier&Check Out","Supervisor - Dry Food 1","Supervisor - Frozen","Supervisor - Last Mile","Supervisor - Non Food 1"],"sta":["Approve","First App","Submit"],"day":["2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05","2026-09-06","2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"rows":[["1567","พงษ์ศักดิ์ กิ่งสวัสดิ์",1,6,0,17,25,12,0,"00:00","06:00",0,2,61.9,0.0,6.0,0.0,557.1],["1568","ยุทธนา สมทรัพย์",1,6,0,16,36,14,0,"14:00","16:00",0,2,61.9,0.0,2.0,0.0,185.7],["1707","นที หงษ์โต",1,6,0,9,33,14,0,"23:00","05:00",0,2,61.9,0.0,6.0,0.0,557.1],["2627","อีเลียส รีรา",9,4,4,11,34,14,0,"14:00","16:00",0,2,58.17,0.0,2.0,0.0,174.51],["2666","ชาญณรงค์ บุญรัตน์",9,4,4,19,28,12,0,"07:00","17:00",0,1,58.17,0.0,10.0,0.0,872.55],["2680","โสภิณ พึ่งแสงโชติช่วง",9,4,4,10,7,11,1,"15:30","17:30",0,2,58.17,0.0,2.0,0.0,174.51],["2731","โกเมท ชูวงศ์",9,4,4,10,7,11,0,"15:30","17:30",0,2,58.17,0.0,2.0,0.0,174.51],["2731","โกเมท ชูวงศ์",9,4,4,10,7,11,1,"15:30","17:30",0,2,58.17,0.0,2.0,0.0,174.51],["11148","หทัยกาญจน์ วัชรเสถียร",42,9,0,4,19,12,0,"11:00","14:00",0,2,62.34,0.0,3.0,0.0,280.53],["11517","สุชาดา จันทร",9,4,4,9,33,14,0,"14:30","16:30",0,1,58.17,0.0,2.0,0.0,174.51],["14480","นเรศ กุลมา",42,9,0,7,4,11,0,"12:00","16:00",0,1,62.34,0.0,4.0,0.0,374.04],["19041","อรพรรณ ปั้นรูป",42,9,0,0,16,12,0,"15:00","18:00",0,2,62.34,0.0,3.0,0.0,280.53],["21699","จิณณพัต ชำนาญสวน",73,7,3,9,6,11,1,"14:00","15:00",0,2,51.26,0.0,1.0,0.0,76.89],["24253","ไพโรจน์ เพชรสุวรรณ",9,4,4,9,20,12,0,"05:30","15:30",0,1,58.17,0.0,10.0,0.0,872.55],["24253","ไพโรจน์ เพชรสุวรรณ",9,4,4,9,20,12,1,"15:30","17:30",0,1,58.17,0.0,2.0,0.0,174.51],["26379","ธัญพร ชมทรัพย์",42,9,0,7,4,11,0,"11:00","14:00",0,2,62.34,0.0,3.0,0.0,280.53],["29402","โสรยา เพ็ญมี",9,4,4,10,21,12,0,"20:00","06:00",1,2,58.17,0.0,10.0,0.0,872.55],["38636","วัตถาภรณ์ คำเลิศ",18,11,1,9,20,12,0,"15:00","18:00",0,2,62.07,0.0,3.0,0.0,279.31],["45382","ธีรเดช สุวรรณรินทร์",73,7,3,12,8,11,0,"14:00","15:00",0,2,51.26,0.0,1.0,0.0,76.89],["47253","ณัฐพงค์ คำคง",1,6,0,9,20,12,0,"00:00","02:00",0,2,61.9,0.0,2.0,0.0,185.7],["47253","ณัฐพงค์ คำคง",1,6,0,9,20,12,1,"00:00","02:00",0,2,61.9,0.0,2.0,0.0,185.7],["55241","อนงค์วดี ราชาวงษ์",18,11,1,9,20,12,0,"15:00","17:00",0,2,62.07,0.0,2.0,0.0,186.21],["55241","อนงค์วดี ราชาวงษ์",18,11,1,9,20,12,1,"15:00","18:00",0,2,62.07,0.0,3.0,0.0,279.31],["55243","แพน ศรีหา",18,11,1,9,20,12,0,"17:00","20:00",0,2,62.07,0.0,3.0,0.0,279.31],["58390","กัมพล ชื่นชมภู",43,3,8,3,31,14,1,"08:00","17:00",0,1,58.89,0.0,9.0,0.0,795.02],["58960","สุธรรม เหลืองอร่ามนภา",10,14,7,13,24,12,0,"17:30","20:00",0,1,57.71,0.0,2.5,0.0,216.41],["59354","เขตธนัตถ์ สุขศรี",1,6,0,17,12,11,0,"17:00","20:00",0,2,61.9,0.0,3.0,0.0,278.55],["67509","ชนิสรา สืบจากมี",30,10,6,8,0,13,0,"14:20","16:20",0,2,55.23,0.0,2.0,0.0,165.69],["67897","กัลญารัตน์ ไกรแผลง",30,10,6,14,35,14,0,"14:20","16:20",0,2,55.23,0.0,2.0,0.0,165.69],["73217","อรวรรณ พุทธา",9,4,4,20,15,11,0,"16:00","17:00",0,2,58.17,0.0,1.0,0.0,87.26],["73415","อรรถวุฒิ เกิดเมฆ",84,2,2,18,26,12,0,"11:00","13:30",0,2,55.69,0.0,2.5,0.0,208.84],["77238","วิชชุตา ฤทธิรักษา",84,2,2,2,30,14,0,"14:00","16:00",0,2,55.69,0.0,2.0,0.0,167.07],["78051","อนาวิล เพ็ชรมงคล",9,4,4,20,15,11,0,"08:00","18:00",0,2,58.17,0.0,10.0,0.0,872.55],["80095","วิไลวรรณ จันทร์กระจ่าง",4,1,1,20,15,11,0,"15:00","17:00",0,2,64.18,0.0,2.0,0.0,192.54],["81443","จันทิมา จิตตพันธ์",9,4,4,3,2,11,0,"05:00","15:00",0,2,58.17,0.0,10.0,0.0,872.55],["82110","กิตติยาภรณ์ แก้วแสงทอง",30,10,6,1,17,12,0,"14:20","16:20",0,2,55.23,0.0,2.0,0.0,165.69],["85582","บริวัฒน์ แก้วยอด",42,9,0,19,14,11,0,"08:00","18:00",0,2,62.34,0.0,10.0,0.0,935.1],["86249","เดชา แซ่เล้า",1,6,0,9,6,11,0,"15:00","19:30",0,2,61.9,0.0,4.5,0.0,417.83],["86249","เดชา แซ่เล้า",1,6,0,9,6,11,1,"15:00","19:00",0,2,61.9,0.0,4.0,0.0,371.4],["86475","สุพัตรา โพธิ์ทอง",9,4,4,6,32,14,0,"14:00","17:00",0,2,58.17,0.0,3.0,0.0,261.76],["87147","นัฐวุฒิ โจมกลาง",18,11,1,9,6,11,0,"15:00","17:00",0,2,62.07,0.0,2.0,0.0,186.21],["87147","นัฐวุฒิ โจมกลาง",18,11,1,9,6,11,1,"15:00","18:00",0,2,62.07,0.0,3.0,0.0,279.31],["91496","ปริญญา ทองปราง",9,4,4,10,7,11,0,"15:30","17:30",0,2,58.17,0.0,2.0,0.0,174.51],["97802","วิลาวัณย์ กิจคลอน",9,4,4,20,15,11,0,"17:00","19:00",0,2,58.17,0.0,2.0,0.0,174.51],["99223","สุชาดา เหลือล้น",119,8,3,1,1,11,1,"14:00","16:00",0,0,51.01,0.0,2.0,0.0,153.03],["104781","อุไรวรรณ ทีเงิน",18,11,1,9,6,11,0,"15:00","18:00",0,2,62.07,0.0,3.0,0.0,279.31],["104781","อุไรวรรณ ทีเงิน",18,11,1,9,6,11,1,"15:00","18:00",0,2,62.07,0.0,3.0,0.0,279.31],["108885","เจนณรงค์ เดียบไม้",119,8,3,15,11,11,1,"14:00","16:00",0,0,51.01,0.0,2.0,0.0,153.03],["111442","อาทิตยา เจริญจิตต์",119,8,3,20,15,11,1,"14:00","16:00",0,0,51.01,0.0,2.0,0.0,153.03],["12825","ราตรี กันธิยะ",73,7,3,12,22,12,0,"14:00","15:00",0,2,51.26,0.0,1.0,0.0,76.89],["63382","ศศิวิมล น้อยแสง",13,12,8,22,27,12,0,"14:00","17:30",0,0,59.7,0.0,3.5,0.0,313.42],["33689","ปณัสย์ สัมฤทธิ์",13,12,8,3,18,12,0,"15:00","17:00",0,2,59.7,0.0,2.0,0.0,179.1],["113913","ธีรพัฒน์ ธิมาจร",129,5,0,13,24,12,0,"17:20","00:15",1,2,53.75,0.0,6.9167,0.0,557.66],["66930","ชาญชัย เทพพิมล",73,7,3,9,20,12,1,"12:00","14:00",0,1,51.26,0.0,2.0,0.0,153.78],["66930","ชาญชัย เทพพิมล",73,7,3,9,20,12,2,"08:00","10:00",0,1,51.26,0.0,2.0,0.0,153.78],["66930","ชาญชัย เทพพิมล",73,7,3,9,20,12,3,"14:30","16:30",0,1,51.26,0.0,2.0,0.0,153.78],["66930","ชาญชัย เทพพิมล",73,7,3,9,20,12,4,"14:30","16:30",0,1,51.26,0.0,2.0,0.0,153.78],["115709","ศศิทราภรณ์ ไร่ขาม",4,1,1,20,15,11,0,"05:00","08:00",0,2,64.18,0.0,3.0,0.0,288.81],["115713","ลลิตา โคจิ๋ว",4,1,1,20,15,11,0,"18:00","19:00",0,2,64.18,0.0,1.0,0.0,96.27],["115756","ปองพล พลประสิทธิ์",1,6,0,9,6,11,0,"14:00","00:00",0,2,61.9,0.0,10.0,0.0,928.5],["115770","ณัฐชา เชิดฉัน",4,1,1,20,15,11,0,"05:00","08:00",0,2,64.18,0.0,3.0,0.0,288.81],["117252","นิรันดร์ กล่อมจิตร",73,7,3,9,6,11,6,"14:30","16:30",0,2,51.26,0.0,2.0,0.0,153.78],["117252","นิรันดร์ กล่อมจิตร",73,7,3,9,6,11,7,"19:00","21:00",0,2,51.26,0.0,2.0,0.0,153.78],["117252","นิรันดร์ กล่อมจิตร",73,7,3,9,6,11,8,"19:00","21:00",0,2,51.26,0.0,2.0,0.0,153.78],["117252","นิรันดร์ กล่อมจิตร",73,7,3,9,6,11,9,"19:00","21:00",0,2,51.26,0.0,2.0,0.0,153.78],["117252","นิรันดร์ กล่อมจิตร",73,7,3,9,6,11,11,"12:00","14:00",0,2,51.26,0.0,2.0,0.0,153.78],["117252","นิรันดร์ กล่อมจิตร",73,7,3,9,6,11,12,"12:00","14:00",0,2,51.26,0.0,2.0,0.0,153.78],["117312","พีรพล แสนหงษ์",73,7,3,9,6,11,1,"14:00","16:00",0,2,51.26,0.0,2.0,0.0,153.78],["117312","พีรพล แสนหงษ์",73,7,3,9,6,11,2,"12:00","14:00",0,2,51.26,0.0,2.0,0.0,153.78],["117312","พีรพล แสนหงษ์",73,7,3,9,6,11,3,"12:00","14:00",0,2,51.26,0.0,2.0,0.0,153.78],["117312","พีรพล แสนหงษ์",73,7,3,9,6,11,4,"12:00","14:00",0,2,51.26,0.0,2.0,0.0,153.78],["117312","พีรพล แสนหงษ์",73,7,3,9,6,11,5,"12:00","14:00",0,2,51.26,0.0,2.0,0.0,153.78],["117312","พีรพล แสนหงษ์",73,7,3,9,6,11,6,"12:00","14:00",0,2,51.26,0.0,2.0,0.0,153.78],["117312","พีรพล แสนหงษ์",73,7,3,9,6,11,7,"19:00","21:00",0,2,51.26,0.0,2.0,0.0,153.78],["117312","พีรพล แสนหงษ์",73,7,3,9,6,11,8,"19:00","21:00",0,2,51.26,0.0,2.0,0.0,153.78],["117312","พีรพล แสนหงษ์",73,7,3,9,6,11,9,"14:30","16:30",0,2,51.26,0.0,2.0,0.0,153.78],["117312","พีรพล แสนหงษ์",73,7,3,9,6,11,10,"14:30","16:30",0,2,51.26,0.0,2.0,0.0,153.78],["117312","พีรพล แสนหงษ์",73,7,3,9,6,11,11,"14:30","16:30",0,2,51.26,0.0,2.0,0.0,153.78],["117312","พีรพล แสนหงษ์",73,7,3,9,6,11,12,"12:00","14:00",0,2,51.26,0.0,2.0,0.0,153.78],["108268","สมหญิง ศรีสังข์",42,9,0,20,15,11,0,"04:33","16:20",0,2,62.34,0.0,11.7833,0.0,1101.86],["108703","ธนพร เทศฤทธิ์",42,9,0,19,14,11,0,"15:00","17:00",0,2,62.34,0.0,2.0,0.0,187.02],["117721","รัตนาภรณ์ โตกาล",42,9,0,4,5,11,0,"15:00","18:00",0,2,62.34,0.0,3.0,0.0,280.53],["115596","พัชรพล เวียงนนท์",4,1,1,15,11,11,0,"18:00","20:00",0,1,64.18,0.0,2.0,0.0,192.54],["119817","พีรพัฒน์ ศรีวัฒนา",1,6,0,17,12,11,0,"15:00","18:00",0,2,61.9,0.0,3.0,0.0,278.55],["120084","มลธิชา แซ่ฉิ้ม",9,4,4,5,3,11,0,"11:00","12:00",0,2,58.17,0.0,1.0,0.0,87.26],["110858","ภาวิณี ชูบัณฑิตย์",9,4,4,20,15,11,0,"16:00","17:00",0,2,58.17,0.0,1.0,0.0,87.26],["110863","มูฮัมหมัดซานูซี ยะมะแซ",9,4,4,15,11,11,0,"14:00","16:00",0,2,58.17,0.0,2.0,0.0,174.51],["110863","มูฮัมหมัดซานูซี ยะมะแซ",9,4,4,15,11,11,1,"14:00","15:00",0,2,58.17,0.0,1.0,0.0,87.25],["55764","ธิดาวดี วงษ์ทองลอย",84,2,2,12,8,11,1,"14:00","17:20",0,2,55.69,0.0,3.3333,0.0,278.45],["55948","ศิริเพ็ญ อักขระนุรักษ์",9,4,4,1,17,12,0,"17:00","20:00",0,2,58.17,0.0,3.0,0.0,261.76],["108210","ราตรี แสงมงคล",51,0,5,20,29,12,0,"04:00","08:00",0,2,59.2,0.0,4.0,0.0,355.2],["115601","ทิตยา วรชินา",4,1,1,1,1,11,0,"17:00","19:00",0,1,64.18,0.0,2.0,0.0,192.54],["120143","น้ำฝน ขยันงาน",84,2,2,18,13,11,0,"17:00","18:00",0,2,55.69,0.0,1.0,0.0,83.53],["120163","รุ่งโรจน์ เสนารินทร์",18,11,1,9,6,11,0,"17:00","20:00",0,2,62.07,0.0,3.0,0.0,279.31],["120310","ศิรินญา แซ่โต๊ะ",9,4,4,11,10,11,0,"15:00","17:00",0,2,58.17,0.0,2.0,0.0,174.51],["120310","ศิรินญา แซ่โต๊ะ",9,4,4,11,10,11,1,"15:00","17:00",0,2,58.17,0.0,2.0,0.0,174.51],["20994","พัฒพงษ์ ว่องไว",18,11,1,11,23,12,0,"00:00","03:00",1,2,62.07,0.0,3.0,0.0,279.31],["116171","พรทิพย์ บุญราชแขวง",18,11,1,21,9,11,0,"15:00","17:00",0,2,62.07,0.0,2.0,0.0,186.21],["120432","นาหา จะลา",151,13,0,18,13,11,1,"12:00","14:00",0,2,56.9,0.0,2.0,0.0,170.7],["113745","ศิริวรรณ เศรษฐชนะ",9,4,4,5,3,11,0,"11:00","12:00",0,2,58.17,0.0,1.0,0.0,87.26],["23527","นัฐพล ฟาคูณ",42,9,0,9,33,14,0,"14:20","18:00",0,2,62.34,0.0,3.6667,0.0,342.87],["102116","อารมณ์ มะทอง",42,9,0,20,15,11,0,"00:00","02:30",1,2,62.34,0.0,2.5,0.0,233.78]]};
+const OTROWS = OTDATA.rows;
+const OTC = {bl:'#3270c7', fut:'#8FB3E0', gd:'#1a9691', wn:'#d19900', cr:'#d93731'};
+/* ลำดับขั้นการอนุมัติ Submit (รออนุมัติชั้น 1) → First App (รอชั้น 2) → Approve (จบ) */
+const OTSTAGE = [
+ {k:'Submit',    lab:'Submit — รออนุมัติชั้นที่ 1', col:OTC.cr},
+ {k:'First App', lab:'First App — ผ่านชั้นที่ 1 รอชั้นที่ 2', col:OTC.wn},
+ {k:'Approve',   lab:'Approve — อนุมัติครบแล้ว', col:OTC.gd},
+];
+let otM = 'h';                                        // หน่วยวัด h = ชั่วโมง, b = บาท
+let otF = {reg:-1, sto:-1, dep:-1, sta:-1, win:-1};
+let otT = {reg:-1, sto:-1};                           // filter เฉพาะตาราง
+let otSort = {k:'baht', dir:-1};
+
+/* วันสุดท้ายที่เกิดขึ้นแล้ว = as-of · วันหลังจากนั้นคือคำขอล่วงหน้า */
+const OTASOF = OTDATA.meta.asof;
+const otIsPast = d => d <= OTASOF;
+
+function otRow(r){
+ const h = (r[14]||0) + (r[15]||0), b = (r[16]||0) + (r[17]||0);
+ const day = OTDATA.day[r[8]];
+ return {emp:r[0], name:r[1], sn:r[2], stName:OTDATA.stn[r[3]], reg:r[4], regName:OTDATA.reg[r[4]],
+   dep:r[5], depName:OTDATA.dep[r[5]], pos:r[6], posName:OTDATA.pos[r[6]], grade:r[7],
+   di:r[8], date:day, start:r[9], end:r[10], overnight:r[11]===1,
+   sta:r[12], staName:OTDATA.sta[r[12]], rate:r[13],
+   h10:r[14], h15:r[15], b10:r[16], b15:r[17], hours:h, baht:b,
+   past:otIsPast(day), startHour:parseInt(String(r[9]).slice(0,2),10)||0};
+}
+function otMatch(o){
+ if(otF.reg>=0 && o.reg!==otF.reg) return false;
+ if(otF.sto>=0 && o.sn!==otF.sto) return false;
+ if(otF.dep>=0 && o.dep!==otF.dep) return false;
+ if(otF.sta>=0 && o.sta!==otF.sta) return false;
+ if(otF.win==='past' && !o.past) return false;
+ if(otF.win==='future' && o.past) return false;
+ return true;
+}
+const otAll  = () => OTROWS.map(otRow);
+const otList = () => otAll().filter(otMatch);
+const otTList = () => otList().filter(o=>(otT.reg<0||o.reg===otT.reg) && (otT.sto<0||o.sn===otT.sto));
+
+/* ค่าของหน่วยวัดที่เลือก + ตัวจัดรูปแบบ */
+const otV    = o => otM==='h' ? o.hours : o.baht;
+const otUnit = () => otM==='h' ? 'ชั่วโมง' : 'บาท';
+const otFmt  = v => otM==='h' ? nf(v,2) : nf(Math.round(v),0);
+const otFmtH = v => nf(v,2)+' ชม.';
+const otFmtB = v => nf(Math.round(v),0)+' บาท';
+const otBoth = o => `${otFmtH(o.hours)} · ${otFmtB(o.baht)}`;
+
+function otAgg(list){
+ const sum = f => list.reduce((a,o)=>a+f(o),0);
+ const hours = sum(o=>o.hours), baht = sum(o=>o.baht);
+ const pend = list.filter(o=>o.staName!=='Approve');
+ return {n:list.length, hours, baht,
+   emps:new Set(list.map(o=>o.emp)).size, stores:new Set(list.map(o=>o.sn)).size,
+   deps:new Set(list.map(o=>o.dep)).size, days:new Set(list.map(o=>o.date)).size,
+   rate: hours>0 ? baht/hours : null,
+   perReq: list.length ? hours/list.length : null,
+   pendN:pend.length, pendB:pend.reduce((a,o)=>a+o.baht,0), pendH:pend.reduce((a,o)=>a+o.hours,0),
+   h10:sum(o=>o.h10), h15:sum(o=>o.h15)};
+}
+
+/* ---- ตัวช่วยจัดกลุ่ม ---- */
+function otGroup(list, keyFn, labFn){
+ const m = new Map();
+ list.forEach(o=>{
+  const k = keyFn(o);
+  if(!m.has(k)) m.set(k, {key:k, lab:labFn(o), hours:0, baht:0, n:0, emps:new Set()});
+  const g = m.get(k); g.hours+=o.hours; g.baht+=o.baht; g.n++; g.emps.add(o.emp);
+ });
+ return [...m.values()];
+}
+
+/* ---- 1 · KPI ---- */
+function otRenderKpi(a){
+ const pendPct = a.baht>0 ? a.pendB/a.baht : 0;
+ const tiles = [
+  ['ชั่วโมง OT รวม', nf(a.hours,2), `${a.n} รายการ · เฉลี่ย ${a.perReq==null?'—':nf(a.perReq,2)} ชม./รายการ`, '', 'hero'],
+  ['ค่า OT รวม', nf(Math.round(a.baht),0), `เฉลี่ย ${a.rate==null?'—':nf(a.rate,2)} บาท/ชม.`, '', ''],
+  ['ค้างอนุมัติ', nf(Math.round(a.pendB),0), `${nf(pendPct*100,1)}% ของค่า OT · ${a.pendN} รายการ · ${nf(a.pendH,2)} ชม.`,
+    pendPct>0.5?'crit':(pendPct>0.2?'warn':'good'), ''],
+  ['พนักงาน', nf(a.emps,0), `เฉลี่ย ${a.emps?nf(a.hours/a.emps,2):'—'} ชม./คน`, '', ''],
+  ['สาขา', nf(a.stores,0), `${a.deps} แผนก · ${a.days} วันที่มี OT`, '', ''],
+ ];
+ document.getElementById('otKpi').innerHTML = tiles.map(t=>
+  `<div class="ckpi ${t[3]} ${t[4]}"><div class="k">${t[0]}</div><div class="v n">${t[1]}</div>
+   <div class="d">${t[2]}</div></div>`).join('');
+}
+
+/* ---- 2 · รายวัน ---- */
+let otDayRows = [];
+function otRenderDay(list){
+ const g = otGroup(list, o=>o.date, o=>o.date).sort((a,b)=>a.key<b.key?-1:1);
+ otDayRows = g;
+ const el = document.getElementById('otDay'), xl = document.getElementById('otDayX');
+ document.getElementById('otDayUnit').textContent = 'หน่วย: ' + otUnit();
+ if(!g.length){ el.innerHTML=''; xl.innerHTML='';
+  document.getElementById('otDayNote').textContent='ไม่มีข้อมูลตามเงื่อนไขที่กรอง'; return; }
+ const val = x => otM==='h' ? x.hours : x.baht;
+ const mx = Math.max(...g.map(val));
+ el.innerHTML = g.map(x=>{
+  const past = otIsPast(x.key);
+  return `<div class="vbcol"><div class="vbval">${otFmt(val(x))}</div>
+   <div class="vbbar" style="height:${val(x)/mx*100}%;background:${past?OTC.bl:OTC.fut}"></div></div>`;
+ }).join('');
+ xl.innerHTML = g.map(x=>{
+  const d = new Date(x.key+'T00:00:00');
+  const wd = ['อา','จ','อ','พ','พฤ','ศ','ส'][d.getDay()];
+  return `<div><b>${d.getDate()}</b>${wd}</div>`;
+ }).join('');
+ [...el.children].forEach((c,i)=>{
+  const x = g[i], d = new Date(x.key+'T00:00:00');
+  cBind(c, `<b>${x.key}</b> (${['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'][d.getDay()]})`
+   + `<br>${otIsPast(x.key)?'เกิดขึ้นแล้ว':'คำขอล่วงหน้า'}`
+   + `<br><span class="tn">${nf(x.hours,2)}</span> ชม. · <span class="tn">${nf(Math.round(x.baht),0)}</span> บาท`
+   + `<br><span class="tn">${x.n}</span> รายการ · <span class="tn">${x.emps.size}</span> คน`);
+ });
+ const past = g.filter(x=>otIsPast(x.key)), fut = g.filter(x=>!otIsPast(x.key));
+ const ph = past.reduce((a,x)=>a+x.hours,0), fh = fut.reduce((a,x)=>a+x.hours,0);
+ const pb = past.reduce((a,x)=>a+x.baht,0),  fb = fut.reduce((a,x)=>a+x.baht,0);
+ const top = g.slice().sort((a,b)=>val(b)-val(a))[0];
+ document.getElementById('otDayNote').innerHTML =
+  `ข้อมูล ณ ${OTASOF} · <b>เกิดขึ้นแล้ว</b> ${past.length} วัน ${nf(ph,2)} ชม. ${nf(Math.round(pb),0)} บาท`
+  + ` · <b>คำขอล่วงหน้า</b> ${fut.length} วัน ${nf(fh,2)} ชม. ${nf(Math.round(fb),0)} บาท`
+  + (top?` · วันที่สูงสุดคือ ${top.key} ที่ ${otFmt(val(top))} ${otUnit()}`
+        + (g.reduce((a,x)=>a+val(x),0)>0 ? ` คิดเป็น ${nf(val(top)/g.reduce((a,x)=>a+val(x),0)*100,1)}% ของทั้งช่วง` : '') : '');
+}
+
+/* ---- 3 · รายสาขา (คลิกเพื่อกรองทั้งหน้า) ---- */
+let otStoRows = [];
+function otRenderSto(list){
+ const g = otGroup(list, o=>o.sn, o=>`${o.sn} ${o.stName}`);
+ const val = x => otM==='h' ? x.hours : x.baht;
+ g.sort((a,b)=>val(b)-val(a));
+ otStoRows = g;
+ const el = document.getElementById('otStoBar');
+ if(!g.length){ el.innerHTML='<div class="cdim" style="padding:14px;text-align:center">ไม่มีข้อมูลตามเงื่อนไขที่กรอง</div>';
+  document.getElementById('otStoNote').textContent=''; return; }
+ const mx = Math.max(...g.map(val)), tot = g.reduce((a,x)=>a+val(x),0);
+ el.innerHTML = g.map(x=>
+  `<div class="hbrow" data-sn="${x.key}"><div class="hbname" title="${x.lab}">${x.lab}</div>
+   <div class="hbtrk"><div class="hbfill" style="width:${val(x)/mx*100}%;background:${OTC.bl}"></div></div>
+   <div class="hbval">${otFmt(val(x))}</div></div>`).join('');
+ [...el.children].forEach((tr,i)=>{
+  const x = g[i];
+  cBind(tr, `<b>${x.lab}</b><br><span class="tn">${nf(x.hours,2)}</span> ชม. · <span class="tn">${nf(Math.round(x.baht),0)}</span> บาท`
+   + `<br><span class="tn">${x.n}</span> รายการ · <span class="tn">${x.emps.size}</span> คน`
+   + `<br>สัดส่วน <span class="tn">${nf(val(x)/tot*100,1)}%</span> ของที่กรองอยู่`
+   + `<br><b>คลิกเพื่อกรองเฉพาะสาขานี้</b>`);
+  tr.style.cursor='pointer';
+  tr.onclick = ()=>{ otF.sto = (otF.sto===x.key ? -1 : x.key);
+   document.getElementById('otSto').value = otF.sto; otRenderAll(); };
+ });
+ const t3 = g.slice(0,3).reduce((a,x)=>a+val(x),0);
+ document.getElementById('otStoNote').innerHTML =
+  `${g.length} สาขา · หน่วย ${otUnit()} · 3 สาขาแรกคิดเป็น <b>${nf(t3/tot*100,1)}%</b> ของทั้งหมด · คลิกแถวเพื่อกรองเฉพาะสาขานั้น`;
+}
+
+/* ---- 4 · รายแผนก ---- */
+function otRenderDep(list){
+ const g = otGroup(list, o=>o.dep, o=>o.depName);
+ const val = x => otM==='h' ? x.hours : x.baht;
+ g.sort((a,b)=>val(b)-val(a));
+ const show = g.slice(0,12);
+ const el = document.getElementById('otDepBar');
+ if(!g.length){ el.innerHTML='<div class="cdim" style="padding:14px;text-align:center">ไม่มีข้อมูลตามเงื่อนไขที่กรอง</div>';
+  document.getElementById('otDepNote').textContent=''; return; }
+ const mx = Math.max(...show.map(val)), tot = g.reduce((a,x)=>a+val(x),0);
+ el.innerHTML = show.map(x=>
+  `<div class="hbrow"><div class="hbname" title="${x.lab}">${x.lab}</div>
+   <div class="hbtrk"><div class="hbfill" style="width:${val(x)/mx*100}%;background:${OTC.bl}"></div></div>
+   <div class="hbval">${otFmt(val(x))}</div></div>`).join('');
+ [...el.children].forEach((tr,i)=>{
+  const x = show[i];
+  cBind(tr, `<b>${x.lab}</b><br><span class="tn">${nf(x.hours,2)}</span> ชม. · <span class="tn">${nf(Math.round(x.baht),0)}</span> บาท`
+   + `<br><span class="tn">${x.n}</span> รายการ · <span class="tn">${x.emps.size}</span> คน`
+   + `<br>สัดส่วน <span class="tn">${nf(val(x)/tot*100,1)}%</span> ของที่กรองอยู่`);
+ });
+ const top = show[0];
+ document.getElementById('otDepNote').innerHTML =
+  `${g.length} แผนก${g.length>12?` (แสดง 12 อันดับแรก)`:''} · หน่วย ${otUnit()}`
+  + (top?` · <b>${top.lab}</b> สูงสุดที่ ${nf(val(top)/tot*100,1)}% ของทั้งหมด`:'');
+}
+
+/* ---- 5 · สถานะการอนุมัติ ---- */
+function otRenderFunnel(list){
+ const tot = list.reduce((a,o)=>a+o.baht,0), totH = list.reduce((a,o)=>a+o.hours,0);
+ const el = document.getElementById('otFunnel');
+ const rows = OTSTAGE.map(st=>{
+  const g = list.filter(o=>o.staName===st.k);
+  return {...st, n:g.length, hours:g.reduce((a,o)=>a+o.hours,0), baht:g.reduce((a,o)=>a+o.baht,0)};
+ });
+ el.innerHTML = rows.map(r=>{
+  const pct = tot>0 ? r.baht/tot*100 : 0;
+  return `<div class="fnrow"><div class="fndot" style="background:${r.col}"></div>
+   <div><div class="fnhd"><span>${r.lab}</span>
+     <span class="n">${nf(Math.round(r.baht),0)} บาท <span class="fnsub">(${nf(pct,1)}%)</span></span></div>
+    <div class="fntrk"><div class="fnfill" style="width:${pct}%;background:${r.col}"></div></div>
+    <div class="fnsub" style="margin-top:4px">${r.n} รายการ · ${nf(r.hours,2)} ชม.</div></div></div>`;
+ }).join('');
+ [...el.children].forEach((c,i)=>{
+  const r = rows[i];
+  cBind(c, `<b>${r.lab}</b><br><span class="tn">${r.n}</span> รายการ`
+   + `<br><span class="tn">${nf(r.hours,2)}</span> ชม. · <span class="tn">${nf(Math.round(r.baht),0)}</span> บาท`
+   + (tot>0?`<br><span class="tn">${nf(r.baht/tot*100,1)}%</span> ของค่า OT ที่กรองอยู่`:''));
+ });
+ const done = rows.find(r=>r.k==='Approve') || {n:0,baht:0};
+ const pend = tot - done.baht;
+ document.getElementById('otFunnelNote').innerHTML = list.length
+  ? `อนุมัติครบแล้ว <b>${done.n}</b> จาก <b>${list.length}</b> รายการ`
+    + ` · ยังค้างอนุมัติ <b>${nf(Math.round(pend),0)}</b> บาท (${nf(tot>0?pend/tot*100:0,1)}% ของค่า OT)`
+    + ` · ตัวเลขค่า OT ทั้งหน้านี้จึงเป็นยอด<b>ที่ขอ</b> ไม่ใช่ยอดที่อนุมัติแล้ว`
+  : 'ไม่มีข้อมูลตามเงื่อนไขที่กรอง';
+}
+
+/* ---- 6 · เวลาที่เริ่ม OT ---- */
+function otRenderHour(list){
+ const cnt = new Array(24).fill(0), hrs = new Array(24).fill(0);
+ list.forEach(o=>{ cnt[o.startHour]++; hrs[o.startHour]+=o.hours; });
+ const mx = Math.max(1,...cnt);
+ const el = document.getElementById('otHour'), xl = document.getElementById('otHourX');
+ el.innerHTML = cnt.map((c,h)=>
+  `<div class="vbcol"><div class="vbval">${c||''}</div>
+   <div class="vbbar" style="height:${c/mx*100}%;background:${c?OTC.bl:'transparent'}"></div></div>`).join('');
+ xl.innerHTML = cnt.map((c,h)=>`<div>${h%3===0?String(h).padStart(2,'0'):''}</div>`).join('');
+ [...el.children].forEach((c,h)=>{
+  cBind(c, `<b>เริ่ม OT ${String(h).padStart(2,'0')}:00</b><br><span class="tn">${cnt[h]}</span> รายการ`
+   + `<br><span class="tn">${nf(hrs[h],2)}</span> ชม.`
+   + (list.length?` · <span class="tn">${nf(cnt[h]/list.length*100,1)}%</span> ของรายการ`:''));
+ });
+ const peak = cnt.indexOf(Math.max(...cnt));
+ const top2 = cnt.map((c,h)=>[h,c]).sort((a,b)=>b[1]-a[1]).slice(0,2);
+ document.getElementById('otHourNote').innerHTML = list.length
+  ? `ชั่วโมงที่เริ่ม OT มากที่สุดคือ <b>${String(peak).padStart(2,'0')}:00</b>`
+    + ` · สองชั่วโมงแรก (${top2.map(x=>String(x[0]).padStart(2,'0')+':00').join(' และ ')}) รวม`
+    + ` <b>${nf((top2[0][1]+(top2[1]?top2[1][1]:0))/list.length*100,1)}%</b> ของรายการทั้งหมด`
+  : 'ไม่มีข้อมูลตามเงื่อนไขที่กรอง';
+}
+
+/* ---- 7 · พนักงาน OT สูงสุด ---- */
+let otEmpRows = [];
+function otRenderEmp(list){
+ const m = new Map();
+ list.forEach(o=>{
+  if(!m.has(o.emp)) m.set(o.emp, {emp:o.emp, name:o.name, sn:o.sn, stName:o.stName,
+    depName:o.depName, posName:o.posName, grade:o.grade, hours:0, baht:0, n:0});
+  const g = m.get(o.emp); g.hours+=o.hours; g.baht+=o.baht; g.n++;
+ });
+ const val = x => otM==='h' ? x.hours : x.baht;
+ const all = [...m.values()].sort((a,b)=>val(b)-val(a));
+ otEmpRows = all;
+ const show = all.slice(0,15);
+ const el = document.getElementById('otEmpBar');
+ if(!show.length){ el.innerHTML='<div class="cdim" style="padding:14px;text-align:center">ไม่มีข้อมูลตามเงื่อนไขที่กรอง</div>';
+  document.getElementById('otEmpNote').textContent=''; return; }
+ const mx = Math.max(...show.map(val)), tot = all.reduce((a,x)=>a+val(x),0);
+ el.innerHTML = show.map(x=>
+  `<div class="hbrow wide"><div class="hbname" title="${x.emp} ${x.name} · ${x.stName}">${x.name}</div>
+   <div class="hbtrk"><div class="hbfill" style="width:${val(x)/mx*100}%;background:${OTC.bl}"></div></div>
+   <div class="hbval">${otFmt(val(x))}</div></div>`).join('');
+ [...el.children].forEach((tr,i)=>{
+  const x = show[i];
+  cBind(tr, `<b>${x.name}</b> <span class="tn">(${x.emp})</span>`
+   + `<br>${x.sn} ${x.stName} · ${x.depName}<br>${x.posName} · เกรด ${x.grade}`
+   + `<br><span class="tn">${x.n}</span> ครั้ง · <span class="tn">${nf(x.hours,2)}</span> ชม. · <span class="tn">${nf(Math.round(x.baht),0)}</span> บาท`
+   + `<br>เฉลี่ย <span class="tn">${nf(x.hours/x.n,2)}</span> ชม./ครั้ง`);
+ });
+ const t10 = all.slice(0,10).reduce((a,x)=>a+val(x),0);
+ const most = all.slice().sort((a,b)=>b.n-a.n)[0];
+ document.getElementById('otEmpNote').innerHTML =
+  `${all.length} คน · หน่วย ${otUnit()} · 10 คนแรกคิดเป็น <b>${nf(tot>0?t10/tot*100:0,1)}%</b> ของทั้งหมด`
+  + (most && most.n>1 ? ` · ขอ OT บ่อยสุดคือ <b>${most.name}</b> ${most.n} ครั้ง (${nf(most.hours,2)} ชม.)` : '');
+}
+
+/* ---- 8 · ตารางรายการ ---- */
+function otRenderTable(list){
+ const rows = list.slice().sort((a,b)=>{
+  const k=otSort.k, d=otSort.dir;
+  let av=a[k], bv=b[k];
+  if(typeof av==='string') return d*String(av).localeCompare(String(bv),'th');
+  if(av==null) return 1; if(bv==null) return -1;
+  return d*(av-bv);
+ });
+ const stCol = s => s==='Approve'?OTC.gd : (s==='First App'?OTC.wn : OTC.cr);
+ document.getElementById('otRowsBody').innerHTML = rows.length ? rows.map(o=>
+  `<tr><td class="l n">${o.date}</td>
+   <td class="l n">${o.start}–${o.end}${o.overnight?' <span class="cdim" title="OT ข้ามวัน">+1</span>':''}</td>
+   <td class="n">${nf(o.hours,2)}</td><td class="n">${nf(Math.round(o.baht),0)}</td>
+   <td class="l n">${o.sn}</td><td class="l">${o.stName}</td><td class="l">${o.regName}</td>
+   <td class="l">${o.depName}</td><td class="l">${o.posName}</td><td class="n">${o.grade}</td>
+   <td class="l n">${o.emp}</td><td class="l">${o.name}</td><td class="n">${nf(o.rate,2)}</td>
+   <td class="l"><span class="cdot" style="background:${stCol(o.staName)}"></span>${o.staName}</td></tr>`
+ ).join('') : '<tr><td colspan="14" class="cdim" style="text-align:center;padding:16px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
+ document.querySelectorAll('#cardOTRows thead th').forEach(th=>{
+  const a=th.querySelector('.carr'); if(!a) return;
+  a.textContent = th.dataset.k===otSort.k ? (otSort.dir===1?'▲':'▼') : '';
+ });
+ const h=rows.reduce((a,o)=>a+o.hours,0), b=rows.reduce((a,o)=>a+o.baht,0);
+ document.getElementById('otTableNote').innerHTML =
+  `${rows.length} รายการ · รวม ${nf(h,2)} ชม. ${nf(Math.round(b),0)} บาท`
+  + ` · จุดสีคือสถานะอนุมัติ (แดง = รอชั้น 1, เหลือง = รอชั้น 2, เขียว = อนุมัติครบ)`
+  + ` · +1 หมายถึง OT ข้ามวัน · คลิกหัวคอลัมน์เพื่อจัดเรียง`;
+ const c=document.getElementById('otTCount'); if(c) c.textContent = `${rows.length} รายการ`;
+}
+
+/* เติม dropdown ของตาราง จากรายการที่ผ่าน filter หลักแล้ว */
+function otFillTblSelects(list){
+ const rS=document.getElementById('otTReg'), sS=document.getElementById('otTSto');
+ if(!rS||!sS) return;
+ const regs=[...new Set(list.map(o=>o.reg))].sort((a,b)=>OTDATA.reg[a].localeCompare(OTDATA.reg[b],'en'));
+ if(otT.reg>=0 && !regs.includes(otT.reg)) otT.reg=-1;
+ rS.innerHTML='<option value="-1">ทุก Region</option>'+
+  regs.map(i=>`<option value="${i}">${OTDATA.reg[i]} (${list.filter(o=>o.reg===i).length})</option>`).join('');
+ rS.value=otT.reg;
+ const stos=[...new Map(list.filter(o=>otT.reg<0||o.reg===otT.reg).map(o=>[o.sn,o])).values()].sort((a,b)=>a.sn-b.sn);
+ if(otT.sto>=0 && !stos.some(o=>o.sn===otT.sto)) otT.sto=-1;
+ sS.innerHTML='<option value="-1">ทุกสาขา</option>'+
+  stos.map(o=>`<option value="${o.sn}">${o.sn} — ${o.stName}</option>`).join('');
+ sS.value=otT.sto;
+}
+
+/* dropdown สาขาของแถบหลัก ขึ้นเฉพาะสาขาใน Region ที่เลือก */
+function otFillStoSelect(){
+ const sel=document.getElementById('otSto'); if(!sel) return;
+ const base=otAll().filter(o=>otF.reg<0||o.reg===otF.reg);
+ const stos=[...new Map(base.map(o=>[o.sn,o])).values()].sort((a,b)=>a.sn-b.sn);
+ if(otF.sto>=0 && !stos.some(o=>o.sn===otF.sto)) otF.sto=-1;
+ sel.innerHTML=`<option value="-1">ทุกสาขา (${stos.length})</option>`+
+  stos.map(o=>`<option value="${o.sn}">${o.sn} — ${o.stName}</option>`).join('');
+ sel.value=otF.sto;
+}
+
+function otRenderAll(){
+ const list=otList(), agg=otAgg(list);
+ otRenderKpi(agg); otRenderDay(list); otRenderSto(list); otRenderDep(list);
+ otRenderFunnel(list); otRenderHour(list); otRenderEmp(list);
+ otFillTblSelects(list); otRenderTable(otTList());
+ return list;
+}
+function otClearFilters(){
+ otF={reg:-1, sto:-1, dep:-1, sta:-1, win:-1};
+ ['otReg','otDep','otSta','otWin'].forEach(id=>document.getElementById(id).value='-1');
+ otFillStoSelect();
+}
+
+function initOTUI(){
+ const m=OTDATA.meta;
+ document.getElementById('otSub').innerHTML =
+  `${m.month} · ข้อมูล ณ ${m.asof} · ช่วงที่ดึง ${m.from} ถึง ${m.thru}`
+  + ` · ${OTROWS.length} รายการ · ที่มา ${m.src}`;
+ const on=(id,ev,fn)=>document.getElementById(id).addEventListener(ev,fn);
+ const opt=(arr,cntFn)=>'<option value="-1">ทั้งหมด</option>'+
+   arr.map((x,i)=>`<option value="${i}">${x} (${cntFn(i)})</option>`).join('');
+ document.getElementById('otReg').innerHTML='<option value="-1">ทุก Region</option>'+
+  OTDATA.reg.map((x,i)=>[x,i]).filter(([x,i])=>OTROWS.some(r=>r[4]===i))
+   .map(([x,i])=>`<option value="${i}">${x} (${OTROWS.filter(r=>r[4]===i).length})</option>`).join('');
+ document.getElementById('otDep').innerHTML=opt(OTDATA.dep, i=>OTROWS.filter(r=>r[5]===i).length);
+ document.getElementById('otSta').innerHTML='<option value="-1">ทั้งหมด</option>'+
+  OTSTAGE.map(st=>{ const i=OTDATA.sta.indexOf(st.k);
+    return i<0?'':`<option value="${i}">${st.k} (${OTROWS.filter(r=>r[12]===i).length})</option>`;}).join('');
+ otFillStoSelect();
+
+ on('otReg','change', e=>{ otF.reg=+e.target.value; otF.sto=-1; otFillStoSelect(); otRenderAll(); });
+ on('otSto','change', e=>{ otF.sto=+e.target.value; otRenderAll(); });
+ on('otDep','change', e=>{ otF.dep=+e.target.value; otRenderAll(); });
+ on('otSta','change', e=>{ otF.sta=+e.target.value; otRenderAll(); });
+ on('otWin','change', e=>{ otF.win=e.target.value==='-1'?-1:e.target.value; otRenderAll(); });
+ on('otTReg','change', e=>{ otT.reg=+e.target.value; otT.sto=-1;
+   otFillTblSelects(otList()); otRenderTable(otTList()); });
+ on('otTSto','change', e=>{ otT.sto=+e.target.value; otRenderTable(otTList()); });
+ on('otTClr','click', ()=>{ otT={reg:-1,sto:-1}; otFillTblSelects(otList()); otRenderTable(otTList()); });
+ on('otClr','click', ()=>{ otClearFilters(); otRenderAll(); });
+ document.querySelectorAll('#otMeasure button').forEach(btn=>{
+  btn.onclick = ()=>{
+   otM = btn.dataset.m;
+   document.querySelectorAll('#otMeasure button').forEach(x=>x.classList.toggle('on',x===btn));
+   otRenderAll();
+  };
+ });
+ document.getElementById('otRefresh').onclick = ()=>flashRefresh(
+  document.getElementById('otRefresh'), ()=>{
+   otClearFilters(); otT={reg:-1,sto:-1}; otSort={k:'baht',dir:-1}; otM='h';
+   document.querySelectorAll('#otMeasure button').forEach(x=>x.classList.toggle('on',x.dataset.m==='h'));
+   otRenderAll();
+  });
+ document.querySelectorAll('#cardOTRows thead th').forEach(th=>{
+  th.onclick = ()=>{
+   const k=th.dataset.k; if(!k) return;
+   if(otSort.k===k) otSort.dir*=-1; else otSort={k, dir: th.dataset.t==='s'?1:-1};
+   otRenderTable(otTList());
+  };
+ });
+ /* ---- CSV ---- */
+ document.getElementById('otDlAll').onclick = ()=>{
+  const L=otTList().slice().sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:a.sn-b.sn);
+  download('ot_detail.csv', [['OT Date','Start','End','ข้ามวัน','OT1.0 Hour','OT1.5 Hour','รวมชั่วโมง',
+   'OT1.0 Baht','OT1.5 Baht','รวมบาท','อัตรา บาท/ชม.','ST No.','ST Name','Region','Department',
+   'Position','Job Grade','Emp id','ชื่อ','Status'],
+   ...L.map(o=>[o.date,o.start,o.end,o.overnight?'ใช่':'',o.h10,o.h15,+o.hours.toFixed(4),
+    o.b10,o.b15,+o.baht.toFixed(2),o.rate,o.sn,o.stName,o.regName,o.depName,o.posName,o.grade,
+    txt(o.emp),o.name,o.staName])]);
+ };
+ document.getElementById('otDlDay').onclick = ()=>{
+  download('ot_by_day.csv', [['OT Date','ประเภท','รายการ','พนักงาน','ชั่วโมง','บาท'],
+   ...otDayRows.map(x=>[x.key, otIsPast(x.key)?'เกิดขึ้นแล้ว':'คำขอล่วงหน้า', x.n, x.emps.size,
+     +x.hours.toFixed(4), +x.baht.toFixed(2)])]);
+ };
+ document.getElementById('otDlSto').onclick = ()=>{
+  download('ot_by_store.csv', [['ST No.','ST Name','รายการ','พนักงาน','ชั่วโมง','บาท'],
+   ...otStoRows.map(x=>[x.key, x.lab.replace(new RegExp('^'+x.key+' '),''), x.n, x.emps.size,
+     +x.hours.toFixed(4), +x.baht.toFixed(2)])]);
+ };
+ document.getElementById('otDlEmp').onclick = ()=>{
+  download('ot_by_employee.csv', [['Emp id','ชื่อ','ST No.','ST Name','Department','Position',
+   'Job Grade','ครั้ง','ชั่วโมง','บาท'],
+   ...otEmpRows.map(x=>[txt(x.emp),x.name,x.sn,x.stName,x.depName,x.posName,x.grade,x.n,
+     +x.hours.toFixed(4), +x.baht.toFixed(2)])]);
+ };
+ otRenderAll();
+}
+
 function padCode(n){ return String(n).padStart(3,'0'); }
 function pcredTryLogin(){
  const val = document.getElementById('loginPass').value.trim();
@@ -1845,12 +2412,15 @@ function pcredTryLogin(){
   PSTORES.length = 0; PSTORES.push(...filteredStores);
   const filteredO2O = O2OROWS.filter(r=>allowed.has(padCode(r[0])));
   O2OROWS.length = 0; O2OROWS.push(...filteredO2O);
+  const filteredOT = OTROWS.filter(r=>allowed.has(padCode(r[2])));
+  OTROWS.length = 0; OTROWS.push(...filteredOT);
  }
  document.getElementById('loginOverlay').style.display='none';
  document.getElementById('appRoot').style.display='';
  initSimulatorUI();
  initPersonnelUI();
  initO2OUI();
+ initOTUI();
 }
 document.getElementById('loginBtn').onclick = pcredTryLogin;
 document.getElementById('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') pcredTryLogin(); });
