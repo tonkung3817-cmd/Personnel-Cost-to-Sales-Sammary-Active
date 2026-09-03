@@ -338,7 +338,6 @@ table.etbl tr.res td{background:var(--yeL)}
  <div class="ptblwrap"><table>
   <thead><tr>
    <th class="l" data-k="position" data-t="s">M_Position<span class="parr"></span></th>
-   <th data-k="wagePerHead" data-t="n">ค่าจ้าง/คน<br>(บาท)<span class="parr"></span></th>
    <th data-k="active" data-t="n">Active<span class="parr"></span></th>
    <th data-k="costPct" data-t="n">Personnel Cost<br>to Sales (%)<span class="parr"></span></th>
    <th data-k="rec" data-t="n">แนะนำลด<br>จำนวนคน<span class="parr"></span></th>
@@ -346,7 +345,7 @@ table.etbl tr.res td{background:var(--yeL)}
   </tr></thead>
   <tbody id="positionBody"></tbody>
  </table></div>
- <div class="pfootnote">ค่าจ้าง/คน = ค่าจ้างเฉลี่ยต่อคนของตำแหน่งนี้ (บาท/เดือน)</div>
+ <div class="pfootnote">คลิกหัวคอลัมน์เพื่อจัดเรียง</div>
 </div>
 
 <div class="pcard" id="cardStructure">
@@ -356,7 +355,6 @@ table.etbl tr.res td{background:var(--yeL)}
  <div class="ptblwrap"><table>
   <thead><tr>
    <th class="l">Division / Department</th>
-   <th>ค่าจ้าง/คน<br>(บาท)</th>
    <th>Active</th>
    <th>Personnel Cost<br>to Sales (%)</th>
    <th>แนะนำลด<br>จำนวนคน</th>
@@ -813,20 +811,17 @@ function pRecompute(){
  const position = Object.entries(posAgg).map(([pi,v])=>{
   const sales = v.hasSales ? v.sales : null;
   const m = pCostMetrics(v.cost, sales, v.active);
-  const wagePerHead = v.active>0 ? (v.cost/v.active)*1e6 : null; // ล้านบาท -> บาท
-  return {position:PPOS[pi], active:v.active, sales, wagePerHead, costPct:m.pct, rec:m.rec, inc:m.inc};
+  return {position:PPOS[pi], active:v.active, sales, costPct:m.pct, rec:m.rec, inc:m.inc};
  });
  const structure = Object.entries(divAgg).map(([di,v])=>{
   const dSales = v.hasSales ? v.sales : null;
   const dM = pCostMetrics(v.cost, dSales, v.active);
-  const dWagePerHead = v.active>0 ? (v.cost/v.active)*1e6 : null;
   return {
-   name:PDIV[di], active:v.active, sales:dSales, wagePerHead:dWagePerHead, costPct:dM.pct, rec:dM.rec, inc:dM.inc,
+   name:PDIV[di], active:v.active, sales:dSales, costPct:dM.pct, rec:dM.rec, inc:dM.inc,
    depts: Object.entries(v.depts).map(([dpi,dv])=>{
     const dpSales = dv.hasSales ? dv.sales : null;
     const dpM = pCostMetrics(dv.cost, dpSales, dv.active);
-    const dpWagePerHead = dv.active>0 ? (dv.cost/dv.active)*1e6 : null;
-    return {name:PDEPT[dpi], active:dv.active, sales:dpSales, wagePerHead:dpWagePerHead, costPct:dpM.pct, rec:dpM.rec, inc:dpM.inc};
+    return {name:PDEPT[dpi], active:dv.active, sales:dpSales, costPct:dpM.pct, rec:dpM.rec, inc:dpM.inc};
    })
   };
  });
@@ -834,7 +829,6 @@ function pRecompute(){
 }
 
 const fmtSales = v => v==null ? '<span class="pdim">-</span>' : nf(v,1);
-const fmtWage = v => v==null ? '<span class="pdim">-</span>' : nf(Math.round(v),0);
 const fmtActive = v => nf(v,0);
 const fmtPct = v => v==null ? '<span class="pdim">-</span>' : pc(v,2);
 const fmtRec = v => v==null ? '<span class="pdim">-</span>' : (v>0 ? `<span style="color:var(--rd)">${nf(v,0)}</span>` : '<span class="pdim">0</span>');
@@ -870,9 +864,9 @@ function renderPosition(cur){
  });
  document.getElementById('positionBody').innerHTML = rows.length ? rows.map(r=>
   `<tr><td class="l prowname">${r.position}</td>
-   <td class="num">${fmtWage(r.wagePerHead)}</td><td class="num">${fmtActive(r.active)}</td>
+   <td class="num">${fmtActive(r.active)}</td>
    <td class="num">${fmtPct(r.costPct)}</td><td class="num">${fmtRec(r.rec)}</td><td class="num">${fmtInc(r.inc)}</td></tr>`
- ).join('') : '<tr><td colspan="6" class="pdim" style="text-align:center;padding:14px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
+ ).join('') : '<tr><td colspan="5" class="pdim" style="text-align:center;padding:14px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
  syncArrows('cardPosition', posSort);
 }
 
@@ -884,14 +878,14 @@ function renderStructure(cur){
   const open = structOpen.has(d.name);
   const deptRows = d.depts.map(dp=>
    `<tr class="pdeptrow ${open?'':'hide'}" data-parent="${cssesc(d.name)}">
-    <td class="l">${dp.name}</td><td class="num">${fmtWage(dp.wagePerHead)}</td><td class="num">${fmtActive(dp.active)}</td>
+    <td class="l">${dp.name}</td><td class="num">${fmtActive(dp.active)}</td>
     <td class="num">${fmtPct(dp.costPct)}</td><td class="num">${fmtRec(dp.rec)}</td><td class="num">${fmtInc(dp.inc)}</td></tr>`
   ).join('');
   return `<tr class="pdivrow" data-div="${cssesc(d.name)}">
    <td class="l"><span class="pcaret ${open?'open':''}">&#9656;</span>${d.name}</td>
-   <td class="num">${fmtWage(d.wagePerHead)}</td><td class="num">${fmtActive(d.active)}</td>
+   <td class="num">${fmtActive(d.active)}</td>
    <td class="num">${fmtPct(d.costPct)}</td><td class="num">${fmtRec(d.rec)}</td><td class="num">${fmtInc(d.inc)}</td></tr>${deptRows}`;
- }).join('') : '<tr><td colspan="6" class="pdim" style="text-align:center;padding:14px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
+ }).join('') : '<tr><td colspan="5" class="pdim" style="text-align:center;padding:14px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
  document.getElementById('structureBody').innerHTML = html;
  document.querySelectorAll('#structureBody .pdivrow').forEach(tr=>{
   tr.onclick=()=>{
@@ -994,13 +988,13 @@ document.querySelectorAll('[data-dl]').forEach(btn=>{
    download('branch_summary.csv', [['ST No.','ST Name','Sales','Active','Personnel Cost to Sales (%)','แนะนำลดจำนวนคน','แนะนำเพิ่มจำนวนคน'],
     ...cur.branch.map(r=>[r.stNo, r.stName, r.sales==null?'':r.sales, r.active, r.costPct==null?'':r.costPct.toFixed(2), r.rec==null?'':r.rec, r.inc==null?'':r.inc])]);
   } else if(t==='position'){
-   download('position_summary.csv', [['M_Position','ค่าจ้าง/คน (บาท)','Active','Personnel Cost to Sales (%)','แนะนำลดจำนวนคน','แนะนำเพิ่มจำนวนคน'],
-    ...cur.position.map(r=>[r.position, r.wagePerHead==null?'':Math.round(r.wagePerHead), r.active, r.costPct==null?'':r.costPct.toFixed(2), r.rec==null?'':r.rec, r.inc==null?'':r.inc])]);
+   download('position_summary.csv', [['M_Position','Active','Personnel Cost to Sales (%)','แนะนำลดจำนวนคน','แนะนำเพิ่มจำนวนคน'],
+    ...cur.position.map(r=>[r.position, r.active, r.costPct==null?'':r.costPct.toFixed(2), r.rec==null?'':r.rec, r.inc==null?'':r.inc])]);
   } else if(t==='structure'){
-   const out=[['Division','Department','ค่าจ้าง/คน (บาท)','Active','Personnel Cost to Sales (%)','แนะนำลดจำนวนคน','แนะนำเพิ่มจำนวนคน']];
+   const out=[['Division','Department','Active','Personnel Cost to Sales (%)','แนะนำลดจำนวนคน','แนะนำเพิ่มจำนวนคน']];
    cur.structure.forEach(d=>{
-    out.push([d.name,'',d.wagePerHead==null?'':Math.round(d.wagePerHead),d.active, d.costPct==null?'':d.costPct.toFixed(2), d.rec==null?'':d.rec, d.inc==null?'':d.inc]);
-    d.depts.forEach(dp=>out.push([d.name,dp.name,dp.wagePerHead==null?'':Math.round(dp.wagePerHead),dp.active, dp.costPct==null?'':dp.costPct.toFixed(2), dp.rec==null?'':dp.rec, dp.inc==null?'':dp.inc]));
+    out.push([d.name,'',d.active, d.costPct==null?'':d.costPct.toFixed(2), d.rec==null?'':d.rec, d.inc==null?'':d.inc]);
+    d.depts.forEach(dp=>out.push([d.name,dp.name,dp.active, dp.costPct==null?'':dp.costPct.toFixed(2), dp.rec==null?'':dp.rec, dp.inc==null?'':dp.inc]));
    });
    download('structure_summary.csv', out);
   }
