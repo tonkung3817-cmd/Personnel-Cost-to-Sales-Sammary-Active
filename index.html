@@ -176,6 +176,16 @@ table.etbl tr.res td{background:var(--yeL)}
 .pagenav{display:flex;gap:8px;padding:10px 22px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
 .pagenav button{font:inherit;font-weight:600;font-size:13px;padding:7px 16px;border-radius:7px;border:1px solid var(--line);background:#f4f6f8;color:var(--ink2);cursor:pointer}
 .pagenav button.on{background:var(--bl);color:#fff;border-color:var(--bl)}
+
+/* ปุ่ม Refresh (ใช้ร่วมกันทั้ง 2 หน้า) */
+.refreshbtn{font:inherit;font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:7px;border:1px solid var(--bl);background:#fff;color:var(--bl);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:background .12s,color .12s,border-color .12s}
+.refreshbtn:hover{background:var(--blL)}
+.refreshbtn:focus-visible{outline:2px solid var(--bl);outline-offset:2px}
+.refreshbtn .rico{display:inline-block;font-size:15px;line-height:1}
+.refreshbtn.spin .rico{animation:rspin .6s linear}
+@keyframes rspin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.refreshbtn.done{border-color:var(--gr);background:var(--grL);color:var(--grD)}
+.refreshhd{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
 </style></head><body>
 <div id="loginOverlay" style="position:fixed;inset:0;z-index:9999;background:#0f172a;display:flex;align-items:center;justify-content:center;font-family:inherit">
  <div style="background:#fff;border-radius:12px;padding:32px 28px;width:320px;max-width:90vw;box-shadow:0 10px 40px rgba(0,0,0,.3)">
@@ -192,7 +202,8 @@ table.etbl tr.res td{background:var(--yeL)}
  <button data-pg="personnel">Personnel Summary</button>
 </div>
 <div id="pgSim">
-<header><div class="wrap"><h1>Personnel Cost to Sales — Store Simulator</h1>
+<header><div class="wrap"><div class="refreshhd"><h1>Personnel Cost to Sales — Store Simulator</h1>
+<button class="refreshbtn" id="simRefresh" title="คืนค่าตัวกรอง เป้า % ขั้นต่ำที่ถือว่าเกิน และการจำลองลดคน กลับเป็นค่าเริ่มต้น แล้วคำนวณใหม่ทั้งหน้า (ไม่ต้องล็อกอินใหม่)"><span class="rico">&#10227;</span>Refresh</button></div>
 <div class="sub">ภาพรวมทั้งเครือ แล้วเจาะรายสาขา วิเคราะห์ 2 ชั้น (% to sales และจำนวนคนเทียบค่ากลางของ format เดียวกัน) พร้อมจำลองการลดคน · ยอดขาย Jul-26 · ค่าจ้าง Aug-26 · ค่าจ้างคำนวณจากรายชื่อพนักงาน Aug 2026 (ข้อมูล 01 Sep 26) (Active เต็มเดือน + Inactive คิดตามสัดส่วนวันฐาน 30 วัน) · เทียบกับ Aug 2026 (ข้อมูล 01 Sep 26) · 167 สาขา · 22 แผนก</div></div></header>
 
 <section class="blk"><div class="wrap">
@@ -280,7 +291,8 @@ table.etbl tr.res td{background:var(--yeL)}
 </div>
 <div id="pgPersonnel" style="display:none">
 <div class="pwrap">
-<h1>Personnel Summary</h1>
+<div class="refreshhd" style="margin:0 0 16px"><h1 style="margin:0">Personnel Summary</h1>
+<button class="refreshbtn" id="pRefresh" title="คืนค่าตัวกรองทุกช่อง เป้า % การจัดเรียงคอลัมน์ และการย่อ/ขยาย Division กลับเป็นค่าเริ่มต้น แล้วคำนวณใหม่ทั้ง 3 ตาราง (ไม่ต้องล็อกอินใหม่)"><span class="rico">&#10227;</span>Refresh</button></div>
 <div class="pfilterbar" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px">
  <div><div style="font-size:10.5px;color:var(--pink3);margin-bottom:3px">ST No. / ST Name</div>
   <select id="pStoreSel" style="padding:6px 8px;border:1px solid var(--pline);border-radius:5px;font:inherit;font-size:12.5px;min-width:220px"></select></div>
@@ -373,6 +385,18 @@ const nf=(x,d=0)=>x.toLocaleString('en-US',{minimumFractionDigits:d,maximumFract
 const mn=x=>nf(x/1e6,2);
 const pc=(x,d=2)=>nf(x,d)+'%';
 const $=id=>document.getElementById(id);
+
+/* ---- ปุ่ม Refresh: หมุนไอคอน แล้วติ๊กเขียวสั้น ๆ ให้เห็นว่าคำนวณใหม่แล้ว ---- */
+function flashRefresh(btn, reset){
+ btn.classList.remove('spin','done');
+ void btn.offsetWidth; // บังคับ reflow เพื่อให้ animation เล่นซ้ำได้เมื่อกดรัว
+ btn.classList.add('spin');
+ try{ reset(); }
+ finally{
+  setTimeout(()=>{ btn.classList.remove('spin'); btn.classList.add('done');
+   setTimeout(()=>btn.classList.remove('done'), 1000); }, 620);
+ }
+}
 
 /* ---- ส่วนต่างจากข้อมูลรอบก่อน (ระดับสาขาเท่านั้น) ---- */
 function dlt(n){const d=D[n],p=d[10];
@@ -670,6 +694,24 @@ $('bAuto').onclick=()=>{cut={};const d=D[cur],tp=tgtFor(d[0]);
  if(calc().p>tp/100)msg('ตัดครบทุกแผนกที่แนะนำแล้วแต่ยังไม่ถึงเป้า — เหลืออีก '+pc(calc().p-tp/100)+' ซึ่งต้องแก้ด้วยยอดขาย ไม่ใช่ด้วยการลดคน',1);};
 $('eExp').onclick=()=>doExport(rowsFor(cur),'sections_'+cur.replace(/[^A-Za-z0-9]+/g,'_')+'.csv');
 $('eExpAll').onclick=()=>doExport(names.flatMap(rowsFor),'sections_all_stores_20260817.csv');
+
+/* ---- Refresh: คืนค่าเริ่มต้นทุกตัวควบคุมของหน้านี้ แล้วคำนวณใหม่ทั้งหน้า ----
+   ข้อมูลฝังอยู่ในไฟล์และหน้าจอ login ตัดข้อมูลตามสิทธิ์ไปแล้ว จึงรีเซ็ตแบบไม่ reload
+   (reload จะเด้งกลับไปหน้า login) */
+function simResetAll(){
+ target=250;syncTgtInputs(250);
+ minH=1;$('mSel').value='1';
+ ovReg=-1;ovSto='';$('ovReg').value='-1';fillOvSto();
+ rkReg=-1;rkFmt=-1;rkQ='';
+ $('rkReg').value='-1';$('rkFmt').value='-1';$('rkQ').value='';
+ $('rkN').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.n==='15'));
+ $('rSel').value='-1';$('fSel').value='-1';
+ cut={};
+ $('expMsg').className='expmsg';$('expMsg').innerHTML='';
+ overview();ranking();fillStores(); // fillStores() รีเซ็ต cur, cut แล้วเรียก store() เอง
+}
+$('simRefresh').onclick=()=>flashRefresh($('simRefresh'),simResetAll);
+
 setT(2.5);ranking();fillStores();
 }
 
@@ -901,15 +943,23 @@ document.getElementById('pRegSel').onchange = ()=>{ pFilter.reg = +document.getE
 document.getElementById('pDivSel').onchange = ()=>{ pFilter.div = +document.getElementById('pDivSel').value; pRenderAll(); };
 document.getElementById('pDeptSel').onchange = ()=>{ pFilter.dept = +document.getElementById('pDeptSel').value; pRenderAll(); };
 document.getElementById('pPosSel').onchange = ()=>{ pFilter.pos = +document.getElementById('pPosSel').value; pRenderAll(); };
-document.getElementById('pClearBtn').onclick = ()=>{
+function pClearFilters(){
  pFilter = {store:-1, reg:-1, div:-1, dept:-1, pos:-1};
- document.getElementById('pStoreSel').value = '-1';
- document.getElementById('pRegSel').value = '-1';
- document.getElementById('pDivSel').value = '-1';
- document.getElementById('pDeptSel').value = '-1';
- document.getElementById('pPosSel').value = '-1';
- pRenderAll();
-};
+ ['pStoreSel','pRegSel','pDivSel','pDeptSel','pPosSel']
+  .forEach(id=>{ document.getElementById(id).value = '-1'; });
+}
+document.getElementById('pClearBtn').onclick = ()=>{ pClearFilters(); pRenderAll(); };
+
+/* ---- Refresh: ล้าง filter + คืนเป้า % การจัดเรียง และการย่อ/ขยาย Division
+   กลับเป็นค่าเริ่มต้น แล้วคำนวณใหม่ทั้ง 3 ตาราง (ไม่ reload เพื่อไม่ให้เด้งกลับหน้า login) */
+function pResetAll(){
+ pClearFilters();
+ branchSort = {k:'stNo', dir:1};
+ posSort = {k:'active', dir:-1};
+ structOpen = null;   // null = init ใหม่ตอน render → กาง Division ทั้งหมด
+ setPTarget(2.5);     // เซ็ต PTARGET + ช่องกรอก แล้วเรียก pRenderAll() ให้เอง
+}
+document.getElementById('pRefresh').onclick = ()=>flashRefresh(document.getElementById('pRefresh'), pResetAll);
 
 /* ---------- sort header clicks ---------- */
 document.querySelectorAll('#cardBranch thead th').forEach(th=>{
