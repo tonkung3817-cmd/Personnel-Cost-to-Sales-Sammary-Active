@@ -640,10 +640,10 @@ table.etbl tr.res td{background:var(--yeL)}
  <button class="refreshbtn" id="cRefresh" title="คืนค่าตัวกรอง เป้า %OTIF และการจัดเรียง กลับเป็นค่าเริ่มต้น แล้วคำนวณใหม่ทั้งหน้า"><span class="rico">&#10227;</span>Refresh</button></div>
 
 <div class="cfbar">
- <div><div class="cflabel">ค้นหาสาขา</div>
-  <input id="cQ" class="cfinp" type="text" placeholder="รหัส หรือ ชื่อสาขา..." style="width:190px"></div>
  <div><div class="cflabel">Region</div>
-  <select id="cReg" class="cfsel" style="min-width:176px"></select></div>
+  <select id="cReg" class="cfsel" style="min-width:186px"></select></div>
+ <div><div class="cflabel">สาขา</div>
+  <select id="cSto" class="cfsel" style="min-width:224px"></select></div>
  <div><div class="cflabel">ประเภท</div>
   <select id="cType" class="cfsel">
    <option value="-1">ทั้งหมด</option><option value="store">Store</option><option value="fc">FC / AFC</option>
@@ -1424,7 +1424,7 @@ const O2OREG = {};
 })();
 
 let CTGT = 85;                                     // เป้า %OTIF (%)
-let cFilter = {q:'', reg:-1, type:-1, stat:-1, bk:-1};
+let cFilter = {reg:-1, store:-1, type:-1, stat:-1, bk:-1};
 let cTbl = {reg:-1, store:-1};                     // filter เฉพาะตารางรายสาขา
 let cHistSel = null;                               // ช่วง %OTIF ที่คลิกเลือกใน histogram
 let cSort = {k:'otif', dir:1};                     // เริ่มจากแย่สุดขึ้นก่อน
@@ -1445,9 +1445,8 @@ function cRow(r){
 }
 function cIsFC(o){ return o.isFC; }
 function cMatch(o){
- const q = cFilter.q.trim().toLowerCase();
- if(q && !(String(o.sn)+' '+o.name).toLowerCase().includes(q)) return false;
  if(cFilter.reg>=0 && o.reg!==cFilter.reg) return false;
+ if(cFilter.store>=0 && o.sn!==cFilter.store) return false;
  if(cFilter.type==='fc' && !cIsFC(o)) return false;
  if(cFilter.type==='store' && cIsFC(o)) return false;
  if(cFilter.stat==='bad' && !(o.otif!=null && o.otif*100 < CTGT)) return false;
@@ -1755,9 +1754,21 @@ function cSetTgt(v){
  cRenderAll();
 }
 function cClearFilters(){
- cFilter = {q:'', reg:-1, type:-1, stat:-1, bk:-1};
- document.getElementById('cQ').value='';
+ cFilter = {reg:-1, store:-1, type:-1, stat:-1, bk:-1};
  ['cReg','cType','cStat','cBk'].forEach(id=>document.getElementById(id).value='-1');
+ cFillStoSelect();
+}
+
+/* dropdown สาขาของแถบหลัก ขึ้นเฉพาะสาขาใน Region ที่เลือก เรียงตามรหัสสาขา
+   ถ้าสาขาที่เลือกไว้ไม่อยู่ใน Region ใหม่ ให้กลับเป็นทุกสาขา */
+function cFillStoSelect(){
+ const sel = document.getElementById('cSto');
+ if(!sel) return;
+ const list = cAll().filter(o=>cFilter.reg<0 || o.reg===cFilter.reg).sort((a,b)=>a.sn-b.sn);
+ if(cFilter.store>=0 && !list.some(o=>o.sn===cFilter.store)) cFilter.store = -1;
+ sel.innerHTML = `<option value="-1">ทุกสาขา (${list.length})</option>` +
+  list.map(o=>`<option value="${o.sn}">${o.sn} — ${o.name}</option>`).join('');
+ sel.value = cFilter.store;
 }
 
 function initO2OUI(){
@@ -1768,8 +1779,9 @@ function initO2OUI(){
  document.getElementById('cReg').innerHTML = '<option value="-1">ทุก Region</option>' +
   [...new Set(O2OROWS.map(r=>O2OREG[r[0]]??0))].sort((a,b)=>a-b)
    .map(i=>`<option value="${i}">${O2OREGN[i]} (${O2OROWS.filter(r=>(O2OREG[r[0]]??0)===i).length})</option>`).join('');
- on('cQ','input', e=>{ cFilter.q=e.target.value; cRenderAll(); });
- on('cReg','change', e=>{ cFilter.reg=+e.target.value; cHistSel=null; cRenderAll(); });
+ on('cReg','change', e=>{ cFilter.reg=+e.target.value; cFilter.store=-1;
+   cFillStoSelect(); cHistSel=null; cRenderAll(); });
+ on('cSto','change', e=>{ cFilter.store=+e.target.value; cHistSel=null; cRenderAll(); });
  on('cTblReg','change', e=>{ cTbl.reg=+e.target.value; cTbl.store=-1;
    cFillTblSelects(cList()); cRenderTable(cTblList()); });
  on('cTblSto','change', e=>{ cTbl.store=+e.target.value; cRenderTable(cTblList()); });
@@ -1778,6 +1790,7 @@ function initO2OUI(){
  on('cType','change', e=>{ cFilter.type=e.target.value==='-1'?-1:e.target.value; cRenderAll(); });
  on('cStat','change', e=>{ cFilter.stat=e.target.value==='-1'?-1:e.target.value; cRenderAll(); });
  on('cBk','change',  e=>{ cFilter.bk  =e.target.value==='-1'?-1:e.target.value; cRenderAll(); });
+ cFillStoSelect();
  on('cTgtDn','click', ()=>cSetTgt(CTGT-1));
  on('cTgtUp','click', ()=>cSetTgt(CTGT+1));
  on('cTgtIn','change', e=>cSetTgt(parseFloat(e.target.value)||85));
