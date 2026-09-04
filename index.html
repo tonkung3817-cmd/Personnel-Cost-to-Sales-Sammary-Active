@@ -762,16 +762,30 @@ table.etbl tr.res td{background:var(--yeL)}
  </div>
 </div>
 
-<div class="ccard" style="margin-bottom:18px">
- <div class="chd nv"><span>Backlog + Order Today &mdash; ราย Region</span></div>
- <div class="cbody">
-  <div class="clegend">
-   <span><i style="background:var(--ccr)"></i>Backlog สะสม 7 วัน</span>
-   <span><i style="background:var(--cbl)"></i>Order Today</span>
-   <span style="margin-left:auto"><i style="background:var(--cink);width:2px;height:13px;border-radius:0"></i>ขีดแบ่ง Backlog | Order Today</span></div>
-  <div class="hb" id="cBkToday"></div>
+<div class="cgrid cg2">
+ <div class="ccard">
+  <div class="chd nv"><span>Backlog + Order Today &mdash; ราย Region</span></div>
+  <div class="cbody">
+   <div class="clegend">
+    <span><i style="background:var(--ccr)"></i>Backlog สะสม 7 วัน</span>
+    <span><i style="background:var(--cbl)"></i>Order Today</span>
+    <span style="margin-left:auto"><i style="background:var(--cink);width:2px;height:13px;border-radius:0"></i>ขีดแบ่ง Backlog | Order Today</span></div>
+   <div class="hb" id="cBkToday"></div>
+  </div>
+  <div class="cnote" id="cBkTodayNote"></div>
  </div>
- <div class="cnote" id="cBkTodayNote"></div>
+
+ <div class="ccard">
+  <div class="chd gr"><span>Backlog + Order Today &mdash; รายสาขา 15 อันดับออเดอร์สูงสุด</span></div>
+  <div class="cbody">
+   <div class="clegend">
+    <span><i style="background:var(--ccr)"></i>Backlog สะสม 7 วัน</span>
+    <span><i style="background:var(--cbl)"></i>Order Today</span>
+    <span style="margin-left:auto"><i style="background:var(--cink);width:2px;height:13px;border-radius:0"></i>ขีดแบ่ง Backlog | Order Today</span></div>
+   <div class="hb" id="cBkStore"></div>
+  </div>
+  <div class="cnote" id="cBkStoreNote"></div>
+ </div>
 </div>
 
 <div class="cgrid cg2">
@@ -2052,9 +2066,54 @@ function cRenderBkToday(list){
   + ` · ความยาวแท่งคือออเดอร์รวม (backlog + วันนี้) เรียงจากมากไปน้อย`;
 }
 
+/* Backlog + Order Today รายสาขา · คู่กับการ์ดราย Region ด้านซ้าย
+   ใช้รูปแบบ สเกล และการอ่านค่าชุดเดียวกัน ต่างกันแค่ระดับความละเอียด
+   เรียงตามออเดอร์รวมเหมือนกัน เพื่อให้อ่านคู่กันได้ว่าใน Region ที่งานหนัก
+   เป็นสาขาไหนที่แบกไว้ · การ์ด Backlog 15 สาขาสูงสุดด้านล่างเรียงตาม backlog
+   จึงเป็นอีกมุมหนึ่ง ไม่ซ้ำกับใบนี้ */
+const CBKST_N = 15;
+function cRenderBkStore(list){
+ const rows = list.filter(o=>o.total>0).sort((a,b)=>b.total-a.total).slice(0,CBKST_N);
+ const el = document.getElementById('cBkStore');
+ if(!rows.length){
+  el.innerHTML = '<div class="cdim" style="padding:14px;text-align:center">ไม่มีออเดอร์ตามเงื่อนไขที่กรอง</div>';
+  document.getElementById('cBkStoreNote').textContent = ''; return;
+ }
+ const mx = Math.max(...rows.map(o=>o.total));
+ el.innerHTML = rows.map(o=>{
+  const pBk = o.l7d/o.total*100;
+  return `<div class="hbrow wide" style="grid-template-columns:190px 1fr 142px">
+   <div class="hbname" title="${o.sn} ${o.name}">${o.sn} ${o.name}</div>
+   <div class="hbtrk">
+    <div class="hbfill" style="width:${(o.total/mx*100).toFixed(2)}%;display:flex;background:none">
+     <div style="width:${pBk.toFixed(2)}%;height:100%;background:${CC.cr}"></div>
+     <div style="width:${(100-pBk).toFixed(2)}%;height:100%;background:${CC.bl}"></div></div>
+    <div class="hbtgt" style="left:calc(${(o.l7d/mx*100).toFixed(2)}% - 1px);opacity:1"></div></div>
+   <div class="hbval"><span style="color:#A5231E">${nf(o.l7d,0)}</span> <span class="cdim">|</span> ${nf(o.today,0)}</div>
+  </div>`;
+ }).join('');
+ [...el.children].forEach((tr,i)=>{
+  const o = rows[i];
+  cBind(tr, `<b>${o.sn} ${o.name}</b> · ${o.regName}`
+   + `<br>Backlog สะสม 7 วัน <span class="tn">${nf(o.l7d,0)}</span> ออเดอร์`
+   + `<br>Order Today <span class="tn">${nf(o.today,0)}</span> ออเดอร์`
+   + `<br>รวม <span class="tn">${nf(o.total,0)}</span> · backlog คิดเป็น <span class="tn">${cPct(o.l7d/o.total)}</span> ของออเดอร์สาขา`
+   + (o.otif!=null ? `<br>%OTIF <span class="tn">${cPct(o.otif)}</span>` : '<br>ไม่มีข้อมูล OTIF'));
+ });
+ const tt = list.reduce((a,o)=>a+(o.total||0),0);
+ const shown = rows.reduce((a,o)=>a+o.total,0);
+ const worst = rows.slice().sort((a,b)=>b.l7d/b.total - a.l7d/a.total)[0];
+ document.getElementById('cBkStoreNote').innerHTML =
+  `${rows.length} สาขาแรกรวม <b>${nf(shown,0)}</b> ออเดอร์ คิดเป็น <b>${nf(tt>0?shown/tt*100:0,1)}%</b>`
+  + ` ของออเดอร์ทั้งหมด ${nf(tt,0)} · ในกลุ่มนี้สาขาที่สัดส่วน backlog สูงสุดคือ`
+  + ` <b>${worst.sn} ${worst.name}</b> ที่ ${cPct(worst.l7d/worst.total)}`
+  + ` · ดูครบทุกสาขาได้ที่ตารางรายละเอียดด้านล่าง`;
+}
+
 function cRenderAll(){
  const list = cList(), agg = cAgg(list);
- cRenderKpi(agg); cRenderMetrics(agg); cRenderBkToday(list); cRenderHist(list);
+ cRenderKpi(agg); cRenderMetrics(agg); cRenderHist(list);
+ cRenderBkToday(list); cRenderBkStore(list);
  cRenderBacklog(list); cRenderScat(list);
  cFillTblSelects(list);
  cRenderTable(cTblList());
