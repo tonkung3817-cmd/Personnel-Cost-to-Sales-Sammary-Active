@@ -762,6 +762,18 @@ table.etbl tr.res td{background:var(--yeL)}
  </div>
 </div>
 
+<div class="ccard" style="margin-bottom:18px">
+ <div class="chd nv"><span>Backlog + Order Today &mdash; ราย Region</span></div>
+ <div class="cbody">
+  <div class="clegend">
+   <span><i style="background:var(--ccr)"></i>Backlog สะสม 7 วัน</span>
+   <span><i style="background:var(--cbl)"></i>Order Today</span>
+   <span style="margin-left:auto"><i style="background:var(--cink);width:2px;height:13px;border-radius:0"></i>ขีดแบ่ง Backlog | Order Today</span></div>
+  <div class="hb" id="cBkToday"></div>
+ </div>
+ <div class="cnote" id="cBkTodayNote"></div>
+</div>
+
 <div class="cgrid cg2">
  <div class="ccard">
   <div class="chd nv"><span>Backlog สะสม 7 วัน &mdash; 15 สาขาสูงสุด</span>
@@ -1991,9 +2003,58 @@ function cFillTblSelects(list){
 }
 
 /* ---- render ทั้งหน้า ---- */
+/* Backlog + Order Today ราย Region · รูปแบบเดียวกับการ์ดตัวชี้วัด O2O ระดับเครือ
+   ต่างกันที่แท่งเดียวมีสองส่วนต่อกัน แดงคือ backlog สะสม น้ำเงินคือออเดอร์วันนี้
+   และมีขีดคั่นตรงรอยต่อ เพื่ออ่านได้ทันทีว่าแท่งนี้แบ่งเป็น Backlog | Order Today
+   ความยาวแท่งคือออเดอร์รวม ใช้สเกลเดียวกันทุกแถว เทียบกันได้ตรงๆ
+   คู่สี Makro Red กับ Blue ตรวจผ่านทั้ง 6 เกณฑ์ (CVD ΔE 22.6 · normal 31.9) */
+function cRenderBkToday(list){
+ const by = new Map();
+ list.forEach(o=>{
+  const g = by.get(o.reg) || {name:o.regName, l7d:0, today:0, total:0, n:0};
+  g.l7d += o.l7d||0; g.today += o.today||0; g.total += o.total||0; g.n++;
+  by.set(o.reg, g);
+ });
+ const rows = [...by.values()].filter(g=>g.total>0).sort((a,b)=>b.total-a.total);
+ const el = document.getElementById('cBkToday');
+ if(!rows.length){
+  el.innerHTML = '<div class="cdim" style="padding:14px;text-align:center">ไม่มีออเดอร์ตามเงื่อนไขที่กรอง</div>';
+  document.getElementById('cBkTodayNote').textContent = ''; return;
+ }
+ const mx = Math.max(...rows.map(g=>g.total));
+ el.innerHTML = rows.map(g=>{
+  const pBk = g.l7d/g.total*100;
+  return `<div class="hbrow wide" style="grid-template-columns:190px 1fr 142px">
+   <div class="hbname" title="${g.name} · ${g.n} สาขา">${g.name}</div>
+   <div class="hbtrk">
+    <div class="hbfill" style="width:${(g.total/mx*100).toFixed(2)}%;display:flex;background:none">
+     <div style="width:${pBk.toFixed(2)}%;height:100%;background:${CC.cr}"></div>
+     <div style="width:${(100-pBk).toFixed(2)}%;height:100%;background:${CC.bl}"></div></div>
+    <div class="hbtgt" style="left:calc(${(g.l7d/mx*100).toFixed(2)}% - 1px);opacity:1"></div></div>
+   <div class="hbval"><span style="color:#A5231E">${nf(g.l7d,0)}</span> <span class="cdim">|</span> ${nf(g.today,0)}</div>
+  </div>`;
+ }).join('');
+ [...el.children].forEach((tr,i)=>{
+  const g = rows[i];
+  cBind(tr, `<b>${g.name}</b> · ${g.n} สาขา`
+   + `<br>Backlog สะสม 7 วัน <span class="tn">${nf(g.l7d,0)}</span> ออเดอร์`
+   + `<br>Order Today <span class="tn">${nf(g.today,0)}</span> ออเดอร์`
+   + `<br>รวม <span class="tn">${nf(g.total,0)}</span> · backlog คิดเป็น <span class="tn">${cPct(g.l7d/g.total)}</span> ของออเดอร์รวม`);
+ });
+ const l7 = rows.reduce((a,g)=>a+g.l7d,0);
+ const td = rows.reduce((a,g)=>a+g.today,0);
+ const tt = rows.reduce((a,g)=>a+g.total,0);
+ const worst = rows.slice().sort((a,b)=>b.l7d/b.total - a.l7d/a.total)[0];
+ document.getElementById('cBkTodayNote').innerHTML =
+  `ระดับเครือ backlog <b>${nf(l7,0)}</b> | Order Today <b>${nf(td,0)}</b> · รวม <b>${nf(tt,0)}</b>`
+  + ` · backlog คิดเป็น <b>${cPct(l7/tt)}</b> ของออเดอร์รวม`
+  + ` · Region ที่สัดส่วน backlog สูงสุดคือ <b>${worst.name}</b> ที่ ${cPct(worst.l7d/worst.total)}`
+  + ` · ความยาวแท่งคือออเดอร์รวม (backlog + วันนี้) เรียงจากมากไปน้อย`;
+}
+
 function cRenderAll(){
  const list = cList(), agg = cAgg(list);
- cRenderKpi(agg); cRenderMetrics(agg); cRenderHist(list);
+ cRenderKpi(agg); cRenderMetrics(agg); cRenderBkToday(list); cRenderHist(list);
  cRenderBacklog(list); cRenderScat(list);
  cFillTblSelects(list);
  cRenderTable(cTblList());
