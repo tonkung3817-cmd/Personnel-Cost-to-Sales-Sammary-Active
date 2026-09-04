@@ -275,8 +275,12 @@ table.etbl tr.res td{background:var(--yeL)}
    สีพื้นใช้เฉด CP AXTRA · ตรวจ contrast ตัวอักษรแล้วทุกใบ
    Blue #306FC7 + ขาว 4.97:1 · Lotus เข้ม #347570 + ขาว 5.35:1
    Makro #DA3832 + ขาว 4.57:1 · Yellow #F6C24A ใช้ตัวอักษรเข้ม #12161C 11.00:1 */
-#pgPersonnel .pkrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(272px,1fr));gap:16px;
+/* ตรึง 4 คอลัมน์ เพราะการ์ด 7 ใบถ้าปล่อย auto-fit จะได้ 6+1 ทำให้ใบสุดท้าย
+   ห้อยเดียวดายที่จอกว้าง · 4 คอลัมน์ได้ 4+3 ทุกความกว้างระดับเดสก์ท็อป */
+#pgPersonnel .pkrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;
  margin-bottom:20px}
+@media (max-width:1120px){#pgPersonnel .pkrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){#pgPersonnel .pkrow{grid-template-columns:minmax(0,1fr)}}
 #pgPersonnel .pk{border-radius:14px;padding:17px 20px 15px;color:#fff;
  box-shadow:0 2px 6px rgba(18,22,28,.10),0 1px 2px rgba(18,22,28,.06);display:flex;
  flex-direction:column;min-width:0}
@@ -285,6 +289,10 @@ table.etbl tr.res td{background:var(--yeL)}
 #pgPersonnel .pk.rd{background:#DA3832}
 #pgPersonnel .pk.ye{background:#F6C24A;color:#12161C}
 #pgPersonnel .pk.nv{background:#1E4A85}
+/* am = เหลือง CP AXTRA ขั้นเข้ม คงเฉดเดิม (ห่างกัน 5°) ลดความสว่างให้ตัวอักษรขาว
+   อ่านได้ 5.54:1 · จับคู่กับ .ye เป็นสองขั้นของโทนเดียว สื่อว่า Outsource กับ
+   Temporary เป็นพนักงานไม่ประจำกลุ่มเดียวกัน ไม่ใช่สองเรื่องแยกกัน */
+#pgPersonnel .pk.am{background:#8A6100}
 #pgPersonnel .pk .pkt{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
  opacity:.95;line-height:1.3}
 #pgPersonnel .pk .pkv{font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin:6px 0 11px;
@@ -1396,13 +1404,13 @@ const PAEC = {"asof":"2026-09-03","tot":[2935,2711,161,63],"st":{"1":[105,95,7,3
 const PIDX_OUT = PPOS.indexOf('17. Outsource');
 const PIDX_TMP = PPOS.indexOf('15. Temporary');
 function renderPKRow(){
- let act=0, bud=0, out=0, tmp=0, lw=0;
+ let act=0, bud=0, out=0, tmp=0, lw=0, tmpLw=0;
  const stSet = new Set();
  for(const row of PRAW){
   if(!pMatch(row)) continue;
   act += row[4]; bud += (row[5]||0); lw += (row[6]||0); stSet.add(row[0]);
   if(row[3]===PIDX_OUT) out += row[4];
-  if(row[3]===PIDX_TMP) tmp += row[4];
+  if(row[3]===PIDX_TMP){ tmp += row[4]; tmpLw += (row[6]||0); }
  }
  const perm = act - out - tmp;
  // ค่าจ้างและยอดขายมีที่ระดับสาขา จึงรวมจากสาขาที่ยังอยู่ในผลกรอง
@@ -1441,6 +1449,14 @@ function renderPKRow(){
   {c:'ye', t:'พนักงาน Outsource', v:nf(out,0),
    chips:[`<b>${p(out,act)}</b> ของ Active`, `Temporary <b>${nf(tmp,0)}</b> (${p(tmp,act)})`],
    f:`รวมพนักงานไม่ประจำ ${nf(out+tmp,0)} คน`},
+  /* Temporary ต่อจาก Outsource · ใช้เหลืองขั้นเข้มคู่กับใบ Outsource
+     เพราะเป็นพนักงานไม่ประจำกลุ่มเดียวกัน */
+  {c:'am', t:'พนักงาน Temporary', v:nf(tmp,0),
+   chips:[`<b>${p(tmp,act)}</b> ของ Active`,
+          tmpLw>0 ? `สัปดาห์ก่อน <b>${nf(tmpLw,0)}</b>` : `Outsource <b>${nf(out,0)}</b> (${p(out,act)})`],
+   f: tmpLw>0
+     ? `เทียบสัปดาห์ก่อน ${tmp-tmpLw>0?'+':''}${nf(tmp-tmpLw,0)} คน · รวมกับ Outsource เป็นไม่ประจำ ${nf(out+tmp,0)} คน`
+     : `ตำแหน่ง 15. Temporary · รวมกับ Outsource เป็นไม่ประจำ ${nf(out+tmp,0)} คน`},
   {c:'nv', t:'พนักงาน AEC', v:nf(ae,0),
    chips:[`พม่า <b>${nf(mm,0)}</b> (${p(mm,ae)})`, `ลาว <b>${nf(la,0)}</b> (${p(la,ae)})`],
    f:`สัญชาติอื่นใน AEC ${nf(ot,0)} คน · ข้อมูล EMP ณ ${PAEC.asof} เฉพาะ Active`
