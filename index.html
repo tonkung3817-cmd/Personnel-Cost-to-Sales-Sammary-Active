@@ -275,13 +275,14 @@ table.etbl tr.res td{background:var(--yeL)}
    สีพื้นใช้เฉด CP AXTRA · ตรวจ contrast ตัวอักษรแล้วทุกใบ
    Blue #306FC7 + ขาว 4.97:1 · Lotus เข้ม #347570 + ขาว 5.35:1
    Makro #DA3832 + ขาว 4.57:1 · Yellow #F6C24A ใช้ตัวอักษรเข้ม #12161C 11.00:1 */
-/* ตรึง 4 คอลัมน์ เพราะการ์ด 7 ใบถ้าปล่อย auto-fit จะได้ 6+1 ทำให้ใบสุดท้าย
-   ห้อยเดียวดายที่จอกว้าง · 4 คอลัมน์ได้ 4+3 ทุกความกว้างระดับเดสก์ท็อป */
-#pgPersonnel .pkrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;
+/* ตรึง 6 คอลัมน์ให้การ์ด 6 ใบอยู่แถวเดียวตั้งแต่ 1280px ขึ้นไป
+   ระยะและขนาดตัวอักษรในการ์ดถูกลดลงให้พอดีความกว้าง 6 ช่อง */
+#pgPersonnel .pkrow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;
  margin-bottom:20px}
-@media (max-width:1120px){#pgPersonnel .pkrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:1279px){#pgPersonnel .pkrow{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:860px){#pgPersonnel .pkrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:620px){#pgPersonnel .pkrow{grid-template-columns:minmax(0,1fr)}}
-#pgPersonnel .pk{border-radius:14px;padding:17px 20px 15px;color:#fff;
+#pgPersonnel .pk{border-radius:12px;padding:13px 14px 12px;color:#fff;
  box-shadow:0 2px 6px rgba(18,22,28,.10),0 1px 2px rgba(18,22,28,.06);display:flex;
  flex-direction:column;min-width:0}
 #pgPersonnel .pk.bl{background:#306FC7}
@@ -293,17 +294,18 @@ table.etbl tr.res td{background:var(--yeL)}
    อ่านได้ 5.54:1 · จับคู่กับ .ye เป็นสองขั้นของโทนเดียว สื่อว่า Outsource กับ
    Temporary เป็นพนักงานไม่ประจำกลุ่มเดียวกัน ไม่ใช่สองเรื่องแยกกัน */
 #pgPersonnel .pk.am{background:#8A6100}
-#pgPersonnel .pk .pkt{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+#pgPersonnel .pk .pkt{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
  opacity:.95;line-height:1.3}
-#pgPersonnel .pk .pkv{font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin:6px 0 11px;
+#pgPersonnel .pk .pkv{font-size:29px;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin:4px 0 8px;
  font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
-#pgPersonnel .pk .pkchips{display:flex;gap:9px;flex-wrap:wrap}
-#pgPersonnel .pk .pkchip{background:rgba(255,255,255,.22);border-radius:7px;padding:6px 10px;
- font-size:11.5px;line-height:1.4;font-weight:500;min-width:0}
+/* ชิปเรียงลงเป็นบรรทัด ไม่ห่อข้าง เพราะช่องแคบลงแล้วการห่อทำให้ความสูงกระโดดไม่เท่ากัน */
+#pgPersonnel .pk .pkchips{display:flex;flex-direction:column;gap:5px;align-items:flex-start}
+#pgPersonnel .pk .pkchip{background:rgba(255,255,255,.22);border-radius:6px;padding:4px 7px;
+ font-size:10.5px;line-height:1.35;font-weight:500;min-width:0;max-width:100%}
 #pgPersonnel .pk.ye .pkchip{background:rgba(18,22,28,.13)}
 #pgPersonnel .pk .pkchip b{font-weight:700;font-family:"IBM Plex Mono",monospace;
  font-variant-numeric:tabular-nums}
-#pgPersonnel .pk .pkf{font-size:11.5px;opacity:.85;margin-top:11px;line-height:1.45}
+#pgPersonnel .pk .pkf{font-size:10.5px;opacity:.85;margin-top:8px;line-height:1.4}
 
 /* ===== ชุดสไตล์ร่วมของหน้า Control Tower O2O และหน้า OT =====
    สีมาร์คในกราฟใช้เฉด CP AXTRA ที่ขยับความสว่าง/อิ่มสีให้ผ่านเกณฑ์ contrast
@@ -1404,11 +1406,11 @@ const PAEC = {"asof":"2026-09-03","tot":[2935,2711,161,63],"st":{"1":[105,95,7,3
 const PIDX_OUT = PPOS.indexOf('17. Outsource');
 const PIDX_TMP = PPOS.indexOf('15. Temporary');
 function renderPKRow(){
- let act=0, bud=0, out=0, tmp=0, lw=0, tmpLw=0;
+ let act=0, bud=0, out=0, tmp=0, tmpLw=0;
  const stSet = new Set();
  for(const row of PRAW){
   if(!pMatch(row)) continue;
-  act += row[4]; bud += (row[5]||0); lw += (row[6]||0); stSet.add(row[0]);
+  act += row[4]; bud += (row[5]||0); stSet.add(row[0]);
   if(row[3]===PIDX_OUT) out += row[4];
   if(row[3]===PIDX_TMP){ tmp += row[4]; tmpLw += (row[6]||0); }
  }
@@ -1437,38 +1439,30 @@ function renderPKRow(){
   {c:'bl', t:'พนักงาน Active', v:nf(act,0),
    chips:[`Permanent <b>${nf(perm,0)}</b> (${p(perm,act)})`,
           `ไม่ประจำ <b>${nf(out+tmp,0)}</b> (${p(out+tmp,act)})`],
-   f:`จาก Budget ${nf(bud,0)} อัตรา · บรรจุ ${p(act,bud)} · ${stSet.size} สาขา`},
+   f:`Budget ${nf(bud,0)} · บรรจุ ${p(act,bud)} · ${stSet.size} สาขา`},
   {c:pct==null?'bl':(onTgt?'gr':'rd'), t:'Personnel Cost to Sales', v:pct==null?'—':pc(pct,2),
    chips:[`ค่าจ้าง <b>${nf(wage,2)}</b> ลบ.`, `ยอดขาย <b>${nf(sales,1)}</b> ลบ.`],
    f:pct==null?'ไม่มีข้อมูลยอดขายในผลกรองนี้'
-     :`เทียบเป้า ${pc(PTARGET,2)} · ${onTgt?'ต่ำกว่าเป้า':'สูงกว่าเป้า'} ${nf(Math.abs(pct-PTARGET),2)} จุด`},
+     :`เป้า ${pc(PTARGET,2)} · ${onTgt?'ต่ำกว่าเป้า':'สูงกว่าเป้า'} ${nf(Math.abs(pct-PTARGET),2)} จุด`},
   {c:'gr', t:'พนักงาน Permanent', v:nf(perm,0),
    chips:[`<b>${p(perm,act)}</b> ของ Active`,
           `${PPOS.length-2} ตำแหน่งประจำ`],
-   f:'Active หักตำแหน่ง Temporary และ Outsource ออก'},
+   f:'Active หัก Temporary และ Outsource'},
   {c:'ye', t:'พนักงาน Outsource', v:nf(out,0),
    chips:[`<b>${p(out,act)}</b> ของ Active`, `Temporary <b>${nf(tmp,0)}</b> (${p(tmp,act)})`],
-   f:`รวมพนักงานไม่ประจำ ${nf(out+tmp,0)} คน`},
+   f:`ไม่ประจำรวม ${nf(out+tmp,0)} คน`},
   /* Temporary ต่อจาก Outsource · ใช้เหลืองขั้นเข้มคู่กับใบ Outsource
      เพราะเป็นพนักงานไม่ประจำกลุ่มเดียวกัน */
   {c:'am', t:'พนักงาน Temporary', v:nf(tmp,0),
    chips:[`<b>${p(tmp,act)}</b> ของ Active`,
           tmpLw>0 ? `สัปดาห์ก่อน <b>${nf(tmpLw,0)}</b>` : `Outsource <b>${nf(out,0)}</b> (${p(out,act)})`],
    f: tmpLw>0
-     ? `เทียบสัปดาห์ก่อน ${tmp-tmpLw>0?'+':''}${nf(tmp-tmpLw,0)} คน · รวมกับ Outsource เป็นไม่ประจำ ${nf(out+tmp,0)} คน`
-     : `ตำแหน่ง 15. Temporary · รวมกับ Outsource เป็นไม่ประจำ ${nf(out+tmp,0)} คน`},
+     ? `เทียบสัปดาห์ก่อน ${tmp-tmpLw>0?'+':''}${nf(tmp-tmpLw,0)} คน`
+     : 'ตำแหน่ง 15. Temporary'},
   {c:'nv', t:'พนักงาน AEC', v:nf(ae,0),
    chips:[`พม่า <b>${nf(mm,0)}</b> (${p(mm,ae)})`, `ลาว <b>${nf(la,0)}</b> (${p(la,ae)})`],
-   f:`สัญชาติอื่นใน AEC ${nf(ot,0)} คน · ข้อมูล EMP ณ ${PAEC.asof} เฉพาะ Active`
-     + (narrowed ? ' · นับทุกตำแหน่งในสาขาที่กรอง' : '')},
-  /* เทียบสัปดาห์ก่อน · คนลดเป็นแดง คนเพิ่มเป็นเขียว เพราะหน้านี้มองมุม
-     อัตราบรรจุกำลังคน คนลดคืออัตราบรรจุตก */
-  {c: lw===0 ? 'bl' : (act<lw ? 'rd' : 'gr'), t:'เทียบสัปดาห์ก่อน',
-   v: lw===0 ? '—' : (act-lw>0?'+':'')+nf(act-lw,0),
-   chips:[`สัปดาห์ก่อน <b>${nf(lw,0)}</b> (${p(lw,bud)})`,
-          `สัปดาห์นี้ <b>${nf(act,0)}</b> (${p(act,bud)})`],
-   f: lw===0 ? 'ไม่มีข้อมูลสัปดาห์ก่อนในผลกรองนี้'
-     : `อัตราบรรจุ ${bud>0?nf((act-lw)/bud*100,2)+' จุด':'—'} · เทียบ Budget ${nf(bud,0)} อัตรา`},
+   f:`สัญชาติอื่น ${nf(ot,0)} คน · EMP ${PAEC.asof} เฉพาะ Active`
+     + (narrowed ? ' · นับทุกตำแหน่งในสาขา' : '')},
  ];
  document.getElementById('pKRow').innerHTML = cards.map(k=>
   `<div class="pk ${k.c}"><div class="pkt">${k.t}</div><div class="pkv">${k.v}</div>
