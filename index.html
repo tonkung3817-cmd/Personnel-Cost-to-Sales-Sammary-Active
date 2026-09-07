@@ -1226,7 +1226,8 @@ table.etbl tr.res td{background:var(--yeL)}
   <div><div class="cflabel">แสดง</div><select id="mpTop" class="cfsel" style="min-width:170px">
    <option value="0">ทุกสาขา</option>
    <option value="1">เฉพาะสาขาที่คนหายสุทธิ</option>
-   <option value="2">เฉพาะสาขาที่มีพนักงานพม่า</option></select></div>
+   <option value="2">เฉพาะสาขาที่มีพนักงานพม่า</option>
+   <option value="3">เฉพาะสาขาที่มีพนักงานลาว</option></select></div>
   <div class="ctblcount n" id="mpStoCount"></div>
  </div>
  <div class="ctblwrap"><table>
@@ -1243,6 +1244,9 @@ table.etbl tr.res td{background:var(--yeL)}
    <th data-k="mmAct" data-t="n">พม่า Active<span class="carr"></span></th>
    <th data-k="mmHire" data-t="n">พม่ารับเข้า<span class="carr"></span></th>
    <th data-k="mmLeave" data-t="n">พม่าลาออก<span class="carr"></span></th>
+   <th data-k="loAct" data-t="n">ลาว Active<span class="carr"></span></th>
+   <th data-k="loHire" data-t="n">ลาวรับเข้า<span class="carr"></span></th>
+   <th data-k="loLeave" data-t="n">ลาวลาออก<span class="carr"></span></th>
   </tr></thead>
   <tbody id="mpStoBody"></tbody>
  </table></div>
@@ -3596,6 +3600,7 @@ const MPETH = MPDATA.eths, MPDIV = MPDATA.divs, MPRSN = MPDATA.rsns;
 const MPRG = MPDATA.rgrp, MPRGN = MPDATA.rgrpn;
 const MPDAYS = MPDATA.meta.days;
 const MP_ETH_MM = MPETH.indexOf('พม่า');
+const MP_ETH_LO = MPETH.indexOf('Lao');
 /* กลุ่มเหตุผล index 3 = เปลี่ยนสถานะภายใน ไม่ใช่การเสียคนออกจากองค์กร */
 const MP_RG_INT = 3;
 
@@ -3647,7 +3652,8 @@ function mpAgg(){
  const ten = [0,0,0,0,0];
  const rsn = new Array(MPRSN.length).fill(0);
  const rg = new Array(MPRGN.length).fill(0);
- const st = MPST.map(()=>({act:0, hire:0, leave:0, e30:0, mmAct:0, mmHire:0, mmLeave:0}));
+ const st = MPST.map(()=>({act:0, hire:0, leave:0, e30:0, mmAct:0, mmHire:0, mmLeave:0,
+   loAct:0, loHire:0, loLeave:0}));
  const cat = MPCAT.map(()=>({act:0, hire:0, leave:0, e30:0, real:0, intn:0}));
  let act = 0, mmAct = 0, start = 0;   /* start = active ณ วันที่ 0 ของช่วงข้อมูล */
 
@@ -3660,24 +3666,28 @@ function mpAgg(){
   start += b[4]; act += b[4];
   st[b[0]].act += b[4]; cat[b[1]].act += b[4];
   if(b[2]===MP_ETH_MM){ mmAct += b[4]; st[b[0]].mmAct += b[4]; }
+  if(b[2]===MP_ETH_LO) st[b[0]].loAct += b[4];
  }
  for(const x of MPROWS){
   if(!mpMatch(x)) continue;
-  const mm = x[2]===MP_ETH_MM;
+  const mm = x[2]===MP_ETH_MM, lo = x[2]===MP_ETH_LO;
   if(x[4] === -1) start++;                       /* เข้างานก่อนช่วง = active ตั้งต้น */
   else { hire[x[4]]++; if(mm) mmHire[x[4]]++; }
   if(x[5] === -1){
    act++; st[x[0]].act++; cat[x[1]].act++;
    if(mm){ mmAct++; st[x[0]].mmAct++; }
+   if(lo) st[x[0]].loAct++;
   } else { leave[x[5]]++; if(mm) mmLeave[x[5]]++; }
   /* ตัวเลขในช่วงที่เลือก แยกจากยอดสะสมทั้งปีข้างบน */
   if(x[4] >= d1 && x[4] <= d2){
    st[x[0]].hire++; cat[x[1]].hire++;
    if(mm) st[x[0]].mmHire++;
+   if(lo) st[x[0]].loHire++;
   }
   if(x[5] >= d1 && x[5] <= d2){
    st[x[0]].leave++; cat[x[1]].leave++;
    if(mm) st[x[0]].mmLeave++;
+   if(lo) st[x[0]].loLeave++;
    const t = x[6];
    ten[t<30?0:t<90?1:t<180?2:t<365?3:4]++;
    if(t < 30){ st[x[0]].e30++; cat[x[1]].e30++; }
@@ -3729,8 +3739,11 @@ function mpRenderKpi(a){
 
 /* ---- 1 · รับเข้า-ลาออก รายวัน · แท่งขึ้นลงจากเส้นศูนย์ ---- */
 function mpRenderDay(a){
- const W=1600, H=360, ml=76, mr=34, mt=22, mb=44;
- const pw=W-ml-mr, ph=H-mt-mb, n=a.nd;
+ /* โหมดรายวันมีป้ายสองบรรทัด (วันที่ + ชื่อเดือน) จึงกันที่ด้านล่างไว้มากกว่า */
+ /* โหมดรายวันไว้สำหรับดูทีละเดือน (สูงสุด 32 วัน) กว้างกว่านั้นตัวเลขบนแท่งเริ่มชนกัน */
+ const n=a.nd, dayMode = n <= 32;
+ const W=1600, H=dayMode?378:360, ml=76, mr=34, mt=22, mb=dayMode?62:44;
+ const pw=W-ml-mr, ph=H-mt-mb;
  /* สเกลขึ้นและลงใช้ค่าสูงสุดร่วมกัน ไม่งั้นเทียบสองฝั่งด้วยตาไม่ได้
     ต้นเดือนมีการเข้า-ออกตามรอบสัญญาเป็นพันคน ถ้าเอายอดสูงสุดมาตั้งแกน
     วันปกติที่อยู่ระดับร้อยจะแบนติดเส้นศูนย์จนอ่านไม่ออกทั้งกราฟ จึงตั้งแกน
@@ -3755,15 +3768,40 @@ function mpRenderDay(a){
  const y0 = mt + ph/2;
  const X = i => ml + (n>1 ? (i+.5)/n*pw : pw/2);
  const Y = v => y0 - v/top*(ph/2);
- const bw = Math.max(1.4, Math.min(9, pw/n - 1.2));
+ /* ช่วงสั้น (เลือกเดือนเดียวหรือสองเดือน) เปลี่ยนเป็นโหมดรายวันเต็มตัว
+    คือมีป้ายวันที่ทุกวัน แท่งกว้างขึ้น และมีตัวเลขกำกับบนแท่ง ซึ่งอ่านทีละวันได้จริง
+    ช่วงยาวทำแบบนั้นไม่ได้ 249 วันจะมีตัวเลข 500 ตัวทับกันจนอ่านไม่ออก */
+ const bw = Math.max(1.4, Math.min(dayMode ? 22 : 9, pw/n - (dayMode ? 4 : 1.2)));
  let g='';
+ /* แถบจางของวันอาทิตย์ ช่วยอธิบายจังหวะรายสัปดาห์ที่ทำให้แท่งขึ้นลง */
+ if(dayMode){
+  const [yy,mm0,dd0] = MPDATA.meta.from.split('-').map(Number);
+  for(let d=a.d1;d<=a.d2;d++){
+   const wd = new Date(Date.UTC(yy, mm0-1, dd0+d)).getUTCDay();
+   if(wd!==0) continue;
+   const i=d-a.d1, hw=pw/n;
+   g += `<rect x="${(X(i)-hw/2).toFixed(1)}" y="${mt}" width="${hw.toFixed(1)}"`
+      + ` height="${ph}" fill="#F4F6F8"></rect>`;
+  }
+ }
  for(let t=-2;t<=2;t++){
   const v=top*t/2, y=Y(v);
   g += `<line class="gl" x1="${ml}" y1="${y.toFixed(1)}" x2="${(ml+pw).toFixed(1)}" y2="${y.toFixed(1)}"`
      + (t===0?' style="stroke:#B7C0CC"':'') + '></line>'
      + `<text x="${ml-9}" y="${(y+3.5).toFixed(1)}" text-anchor="end">${nf(Math.abs(v),0)}</text>`;
  }
- MPMON.forEach(m=>{
+ if(dayMode){
+  /* วันที่ทุกแท่ง วันอาทิตย์เป็นสีแดง · ชื่อเดือนกำกับใต้วันแรกของช่วงและวันที่ 1 ของเดือนถัดไป */
+  const [yy,mm0,dd0] = MPDATA.meta.from.split('-').map(Number);
+  for(let d=a.d1;d<=a.d2;d++){
+   const i=d-a.d1, t=new Date(Date.UTC(yy, mm0-1, dd0+d));
+   g += `<text x="${X(i).toFixed(1)}" y="${H-mb+18}" text-anchor="middle"`
+      + (t.getUTCDay()===0?' style="fill:#A5231E"':'') + `>${t.getUTCDate()}</text>`;
+   if(d===a.d1 || t.getUTCDate()===1)
+    g += `<text class="axt" x="${X(i).toFixed(1)}" y="${H-mb+33}" text-anchor="middle">`
+       + `${MP_MON_TH[t.getUTCMonth()]} ${String(t.getUTCFullYear()).slice(2)}</text>`;
+  }
+ } else MPMON.forEach(m=>{
   if(m.e < a.d1 || m.s > a.d2) return;
   const i = Math.max(m.s,a.d1) - a.d1, j = Math.min(m.e,a.d2) - a.d1;
   g += `<text x="${((X(i)+X(j))/2).toFixed(1)}" y="${H-mb+18}" text-anchor="middle">${m.lab}</text>`;
@@ -3787,6 +3825,25 @@ function mpRenderDay(a){
      + ` height="${(Y(-v)-y0).toFixed(1)}" fill="#DA3832"></rect>`;
    if(a.leave[d] > top) over.push({i, v:a.leave[d], up:-1});
   }
+ }
+ /* โหมดรายวันใส่ตัวเลขบนแท่ง ข้ามวันที่เป็นศูนย์ และข้ามแท่งที่ล้นแกน
+    เพราะแท่งพวกนั้นมีเลขกำกับอยู่ที่ขอบแกนแล้ว ถ้าใส่ซ้ำจะไปทับป้ายวันที่ด้านล่าง
+    ป้ายที่จะชนกันในแนวนอนก็ข้ามไป คิดความกว้างจากจำนวนตัวอักษร */
+ if(dayMode){
+  [1,-1].forEach(sgn=>{
+   const arr = sgn>0 ? a.hire : a.leave;
+   let lastR = -1e9;
+   for(let d=a.d1;d<=a.d2;d++){
+    const v = arr[d];
+    if(!v || v > top) continue;
+    const w = nf(v,0).length*6, i = d-a.d1;
+    if(X(i)-w/2 < lastR + 5) continue;
+    lastR = X(i)+w/2;
+    g += `<text class="ovlab" x="${X(i).toFixed(1)}"`
+      + ` y="${(sgn>0 ? Y(v)-5 : Y(-v)+12).toFixed(1)}" text-anchor="middle"`
+      + ` fill="${sgn>0?'#2A5A9E':'#A5231E'}">${nf(v,0)}</text>`;
+   }
+  });
  }
  /* ค่าเฉลี่ยเคลื่อนที่ 7 วัน · รายวันแกว่งแรงตามวันหยุดจนดูแนวโน้มไม่ออก */
  const ma = arr => {
@@ -3859,6 +3916,10 @@ function mpRenderDay(a){
   + ` <b>${a.net>0?'+':''}${nf(a.net,0)}</b> คน`
   + (clip ? ` · <b>แกนถูกตัดที่ ${nf(top,0)} คน</b> เพราะต้นเดือนมีรอบสัญญาเข้าออกเป็นพัน`
     + ` ถ้าไม่ตัด วันปกติจะแบนติดเส้นศูนย์ทั้งกราฟ · แท่งที่ล้นมีเลขกำกับไว้ให้` : '')
+  + (dayMode ? ` · <b>โหมดรายวัน</b> มีวันที่กำกับทุกแท่งและตัวเลขบนแท่ง`
+      + ` แถบพื้นจางคือวันอาทิตย์`
+    : ` · อยากดูทีละวันพร้อมวันที่และตัวเลขบนแท่ง ให้เลือก "ตั้งแต่เดือน" กับ "ถึงเดือน"`
+      + ` เป็นเดือนเดียวกัน กราฟจะเปลี่ยนเป็นโหมดรายวันเอง`)
   + ` · เอาเมาส์ชี้ที่กราฟเพื่อดูตัวเลขรายวัน`;
 }
 
@@ -4165,6 +4226,7 @@ function mpRenderStore(a){
    .filter(s=>s.act>0 || s.hire>0 || s.leave>0);
  if(mpView===1) rows = rows.filter(s=>s.net<0);
  if(mpView===2) rows = rows.filter(s=>s.mmAct>0 || s.mmHire>0 || s.mmLeave>0);
+ if(mpView===3) rows = rows.filter(s=>s.loAct>0 || s.loHire>0 || s.loLeave>0);
  if(mpQ){
   const q = mpQ.toLowerCase();
   rows = rows.filter(s=>String(s.sn).includes(q) || padCode(s.sn).includes(q)
@@ -4189,8 +4251,11 @@ function mpRenderStore(a){
    <td class="n">${s.e30p==null?'<span class="cdim">—</span>':cPct(s.e30p,1)}</td>
    <td class="n">${s.mmAct?nf(s.mmAct,0):'<span class="cdim">0</span>'}</td>
    <td class="n">${s.mmHire?nf(s.mmHire,0):'<span class="cdim">0</span>'}</td>
-   <td class="n">${s.mmLeave?nf(s.mmLeave,0):'<span class="cdim">0</span>'}</td></tr>`).join('')
-  : '<tr><td colspan="12" class="cdim" style="text-align:center;padding:16px">ไม่พบสาขาตามเงื่อนไขที่กรอง</td></tr>';
+   <td class="n">${s.mmLeave?nf(s.mmLeave,0):'<span class="cdim">0</span>'}</td>
+   <td class="n">${s.loAct?nf(s.loAct,0):'<span class="cdim">0</span>'}</td>
+   <td class="n">${s.loHire?nf(s.loHire,0):'<span class="cdim">0</span>'}</td>
+   <td class="n">${s.loLeave?nf(s.loLeave,0):'<span class="cdim">0</span>'}</td></tr>`).join('')
+  : '<tr><td colspan="15" class="cdim" style="text-align:center;padding:16px">ไม่พบสาขาตามเงื่อนไขที่กรอง</td></tr>';
  document.querySelectorAll('#cardMPStore thead th').forEach(th=>{
   const s=th.querySelector('.carr'); if(!s) return;
   s.textContent = th.dataset.k===mpSort.k ? (mpSort.dir===1?'▲':'▼') : '';
@@ -4202,6 +4267,7 @@ function mpRenderStore(a){
   + ` รับเข้า ${nf(sum(s=>s.hire),0)} ลาออก ${nf(sum(s=>s.leave),0)}`
   + ` สุทธิ ${sum(s=>s.net)>0?'+':''}${nf(sum(s=>s.net),0)}`
   + ` · พม่า Active ${nf(sum(s=>s.mmAct),0)} รับเข้า ${nf(sum(s=>s.mmHire),0)} ลาออก ${nf(sum(s=>s.mmLeave),0)}`
+  + ` · ลาว Active ${nf(sum(s=>s.loAct),0)} รับเข้า ${nf(sum(s=>s.loHire),0)} ลาออก ${nf(sum(s=>s.loLeave),0)}`
   + ` · คลิกหัวคอลัมน์เพื่อจัดเรียง · Active คือยอด ณ ${MPDATA.meta.asof} ไม่ขึ้นกับเดือนที่เลือก`
   + ` ส่วนรับเข้า/ลาออก นับตามช่วงเดือนที่เลือก`;
 }
@@ -4340,7 +4406,8 @@ function initMPUI(){
   const a = mpAgg();
   download('manpower_by_store.csv',
    [['ST No.','สาขา','Region','Active','รับเข้า','ลาออก','สุทธิ','อัตราลาออกต่อปี %',
-     'ออกภายใน 30 วัน','ออกภายใน 30 วัน %','พม่า Active','พม่ารับเข้า','พม่าลาออก']].concat(
+     'ออกภายใน 30 วัน','ออกภายใน 30 วัน %','พม่า Active','พม่ารับเข้า','พม่าลาออก',
+     'ลาว Active','ลาวรับเข้า','ลาวลาออก']].concat(
     MPST.map((s,i)=>({sn:s[0], name:s[1], reg:MPREG[s[2]], ...a.st[i]}))
      .filter(s=>s.act || s.hire || s.leave)
      .sort((x,y)=>y.leave-x.leave)
@@ -4349,7 +4416,7 @@ function initMPUI(){
       return [padCode(s.sn), s.name, s.reg, s.act, s.hire, s.leave, s.hire-s.leave,
         avg>0 ? (s.leave/avg*(365/a.nd)*100).toFixed(2) : '',
         s.e30, s.leave ? (s.e30/s.leave*100).toFixed(2) : '',
-        s.mmAct, s.mmHire, s.mmLeave];
+        s.mmAct, s.mmHire, s.mmLeave, s.loAct, s.loHire, s.loLeave];
      })));
  };
  mpRenderAll();
