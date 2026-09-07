@@ -33,6 +33,24 @@ section.blk:first-of-type{border-top:none}
 .trk{height:19px;background:#F1F3F6;border-radius:4px;overflow:hidden;display:flex}
 .f1{background:var(--rd)}.f2{background:var(--gr)}.f3{background:var(--bl)}
 .rt{text-align:right;color:var(--ink2)}
+/* ---- แถบเทียบยอดขายสองงวด · แถบกระจายสองข้างจากเส้นศูนย์ ----
+   ทิศทางของแถบ (ซ้าย/ขวา) กับเครื่องหมาย +/- ในตัวเลข บอกขึ้น-ลงอยู่แล้ว
+   สีจึงเป็นตัวช่วยซ้ำ ไม่ใช่ช่องทางเดียวที่บอกความหมาย                     */
+.dvrow{display:grid;grid-template-columns:204px 1fr 70px 84px 158px;gap:10px;align-items:center;font-size:12.5px}
+.dvrow > div:last-child{white-space:nowrap}
+.dvrow.hd{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);font-weight:600}
+.dvnm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dvtrk{height:19px;background:#F1F3F6;border-radius:4px;position:relative}
+.dvzero{position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--ink3)}
+.dvfill{position:absolute;top:0;bottom:0;min-width:2px}
+.dvfill.up{left:50%;background:var(--gr);border-radius:0 4px 4px 0}
+.dvfill.dn{right:50%;background:var(--rd);border-radius:4px 0 0 4px}
+.dvsum{display:flex;gap:18px;flex-wrap:wrap;align-items:baseline;padding:10px 13px;background:var(--bg);
+ border-radius:9px;margin:2px 0 12px}
+.dvsum .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);font-weight:600}
+.dvsum .v{font-size:17px;font-weight:600;letter-spacing:-.02em}
+.dvleg{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:var(--ink2);margin-top:11px}
+.dvleg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 .ctlbar{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
 .lbl{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);font-weight:500;margin-bottom:5px}
 select,input[type=text]{font:inherit;font-size:13.5px;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink)}
@@ -679,6 +697,18 @@ table.etbl tr.res td{background:var(--yeL)}
   <th id="rkPrevH">% to sales<br>งวดก่อน</th>
   <th>% to sales</th><th>เป้า</th><th>ค่ากลาง format</th><th>ส่วนต่าง</th><th>คน</th><th id="rkChgH">เทียบงวดก่อน</th><th>แนะนำลด</th>
  </tr></thead><tbody id="rkBody"></tbody></table></div></div>
+<div class="card pad" style="margin-top:12px">
+ <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end">
+  <div><div style="font-weight:600;font-size:13.5px">ยอดขาย ก.ค. เทียบ ส.ค.</div>
+   <div class="cap" style="margin:0 0 2px" id="dvCap"></div></div>
+  <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+   <div class="chips" id="dvLvl"><button class="chip on" data-v="reg">ราย Region</button><button class="chip" data-v="sto">รายสาขา</button></div>
+   <div class="chips" id="dvN"><button class="chip on" data-n="10">โต/ตก 10 อันดับ</button><button class="chip" data-n="25">25</button><button class="chip" data-n="0">ทุกสาขา</button></div>
+  </div>
+ </div>
+ <div class="dvsum" id="dvSum"></div>
+ <div class="bars" id="dvRows"></div>
+ <div class="dvleg" id="dvLeg"></div></div>
 <div class="split">
  <div class="card pad"><div style="font-weight:600;font-size:13.5px;margin-bottom:3px">% to sales แต่ละ format</div>
   <div class="cap" style="margin-bottom:10px">แถบแดงคือส่วนที่เกินเป้า</div><div class="bars" id="ovFmt"></div></div>
@@ -1412,6 +1442,83 @@ function overview(){
  $('ovSec').innerHTML=ss.map(([i,b,rec])=>`<div class="br"><div title="${S[i]}">${S[i].length>20?S[i].slice(0,19)+'…':S[i]}</div>
   <div class="trk"><div class="f3" style="width:${b/smx*100}%"></div></div>
   <div class="rt n">${pc(b,3)} <span style="color:var(--rdD)">/${nf(rec,0)}</span></div></div>`).join('');
+ salesCmp(list);
+}
+
+/* ---- 1b. เทียบยอดขาย ก.ค. กับ ส.ค. -----------------------------------------
+   งานของข้อมูลคือ "ก่อน → หลัง ต่อรายการ" แต่ขนาดของแต่ละรายการต่างกันเป็นเท่าตัว
+   (Region ใหญ่สุด 2,437 ลบ. เล็กสุด 1,130 ลบ.) ขณะที่ยอดขายรวมเปลี่ยนแค่ 2.71%
+   ถ้าวางยอดจริงสองงวดบนสเกลเดียวกัน สองจุดของทุกแถวจะทับกันจนอ่านไม่ออก
+   จึงวัดแถบเป็น % ที่เปลี่ยน กระจายสองข้างของเส้นศูนย์ (เทียบข้ามขนาดได้)
+   แล้วพิมพ์ทั้ง ลบ. ที่เปลี่ยนและยอดจริงสองงวดในแถวเดียวกัน เพื่อไม่ให้ %
+   ปิดบังขนาด · ทิศทางแถบกับเครื่องหมาย +/- บอกขึ้น-ลงอยู่แล้ว สีเป็นตัวช่วยซ้ำ */
+function salesCmp(list){
+ /* ราย Region ได้เฉพาะตอนไม่ได้กรอง Region ไว้ ไม่งั้นจะเหลือแถวเดียว */
+ const lvl=($('dvLvl').querySelector('.chip.on')||{dataset:{v:'reg'}}).dataset.v;
+ const byReg = lvl==='reg' && ovReg<0 && !ovSto;
+ $('dvLvl').style.display = (ovReg<0 && !ovSto) ? '' : 'none';
+ $('dvN').style.display = byReg ? 'none' : '';
+ const g=new Map();
+ for(const n of list){ const d=D[n]; const k=byReg?R[d[6]]:n;
+  let a=g.get(k); if(!a){a={p:0,c:0,n:0};g.set(k,a);} a.p+=d[10][3];a.c+=d[1];a.n++; }
+ const all=[...g].map(([k,a])=>({k,p:a.p,c:a.c,n:a.n,pct:a.p>0?(a.c/a.p-1)*100:0}))
+   .sort((x,y)=>y.pct-x.pct);
+ const tp=all.reduce((t,r)=>t+r.p,0), tc=all.reduce((t,r)=>t+r.c,0), td=tc-tp;
+ const tpct=tp>0?(tc/tp-1)*100:0;
+ const nUp=all.filter(r=>r.pct>0.005).length, nDn=all.filter(r=>r.pct<-0.005).length;
+ const unit=byReg?'Region':'สาขา';
+ /* เว้นวรรครอบคำอังกฤษเวลาแทรกกลางประโยคไทย · คำไทยไม่ต้องเว้น */
+ const uEnd=byReg?' Region':'สาขา', uMid=byReg?' Region ':'สาขา';
+ /* สเกลตั้งจากทุกแถวในมุมที่กรอง ไม่ใช่แค่แถวที่โชว์ ความยาวแถบจึงไม่ขยับตอนสลับ 10/25/ทุกสาขา */
+ const mx=Math.max(...all.map(r=>Math.abs(r.pct)),0.01);
+ /* โหมดรายสาขาเอาหัวกับท้าย เพราะเรื่องที่ต้องดูอยู่สองปลาย ไม่ใช่ N อันดับแรก */
+ const lim=byReg?0:+($('dvN').querySelector('.chip.on')||{dataset:{n:10}}).dataset.n;
+ let rows=all, cut=null;
+ if(lim>0 && all.length>lim*2){
+  rows=[...all.slice(0,lim),null,...all.slice(-lim)];
+  cut=all.slice(lim,all.length-lim);
+ }
+ $('dvCap').innerHTML=[
+  `แถบวัดเป็น % ที่ยอดขายเปลี่ยนจากงวด ${PREVDATE} มางวดนี้ — เทียบกันได้ข้ามขนาด${uEnd}`,
+  `ช่อง ลบ. บอกขนาดที่เปลี่ยนจริง เพราะ % เพียว ๆ ทำให้${uMid}เล็กดูขยับแรงกว่าที่เป็น`,
+  `เรียงจากโตมากสุดลงมา`,
+  `ความยาวเต็มแถบ = ${nf(mx,2)}%`,
+  cut?`แสดงหัว ${lim} และท้าย ${lim} จาก ${all.length} สาขา`:''
+ ].filter(Boolean).join(' · ');
+ $('dvSum').innerHTML=[
+  ['ยอดขาย '+PREVDATE, mn(tp)+' ลบ.', ''],
+  ['ยอดขายงวดนี้', mn(tc)+' ลบ.', ''],
+  ['เปลี่ยนแปลง', (td>0?'+':'')+nf(td/1e6,2)+' ลบ.', td>=0?'var(--grD)':'var(--rdD)'],
+  ['คิดเป็น', (tpct>0?'+':'')+nf(tpct,2)+'%', tpct>=0?'var(--grD)':'var(--rdD)'],
+  [(byReg?'Region ':'สาขา')+'ที่โต / ที่ตก', nUp+' / '+nDn, '']
+ ].map(x=>`<div><div class="k">${x[0]}</div><div class="v n"${x[2]?` style="color:${x[2]}"`:''}>${x[1]}</div></div>`).join('');
+ $('dvRows').innerHTML=`<div class="dvrow hd"><div>${unit}</div><div>% ที่ยอดขายเปลี่ยน</div>`
+  + `<div class="rt">%</div><div class="rt">ลบ.</div><div class="rt">ก.ค. → ส.ค. (ลบ.)</div></div>`
+  + rows.map(r=>{
+   if(!r){ /* แถวรวมของช่วงกลางที่ไม่ได้โชว์ · อ่านคอลัมน์เดียวกันกับแถวอื่นได้ตรง ๆ
+              ช่วง % ของกลุ่มนี้อยู่ใน tooltip เพราะยัดลงช่อง % แล้วตกบรรทัด      */
+    const cp=cut.reduce((t,x)=>t+x.p,0), cc=cut.reduce((t,x)=>t+x.c,0), cd=(cc-cp)/1e6;
+    const cpct=cp>0?(cc/cp-1)*100:0;
+    const tip=`อีก ${cut.length} สาขาที่ไม่ได้แสดง · แต่ละสาขาเปลี่ยน `
+     +`${(cut[cut.length-1].pct>0?'+':'')+nf(cut[cut.length-1].pct,2)}% ถึง `
+     +`${(cut[0].pct>0?'+':'')+nf(cut[0].pct,2)}% · รวมกันแล้ว ${(cpct>0?'+':'')+nf(cpct,2)}%`;
+    const g='color:var(--ink3);font-size:11.5px';
+    return `<div class="dvrow" title="${tip}"><div class="dvnm" style="${g}">อีก ${cut.length} สาขา</div>
+    <div class="dvtrk" style="background:none"><div class="dvzero"></div></div>
+    <div class="rt n" style="${g}">${(cpct>0?'+':'')+nf(cpct,2)}%</div>
+    <div class="rt n" style="${g}">${(cd>0?'+':'')+nf(cd,2)}</div>
+    <div class="rt n" style="${g}">${mn(cp)} → ${mn(cc)}</div></div>`; }
+   const isUp=r.pct>0, dm=(r.c-r.p)/1e6;
+   const tip=`${r.k}${byReg?' · '+r.n+' สาขา':''}: ${mn(r.p)} → ${mn(r.c)} ลบ.`
+    +` (${(dm>0?'+':'')+nf(dm,2)} ลบ. · ${(isUp?'+':'')+nf(r.pct,2)}%)`;
+   return `<div class="dvrow"><div class="dvnm" title="${tip}">${r.k}</div>
+   <div class="dvtrk" title="${tip}"><div class="dvfill ${isUp?'up':'dn'}" style="width:${Math.abs(r.pct)/mx*50}%"></div><div class="dvzero"></div></div>
+   <div class="rt n" style="font-weight:600;color:${isUp?'var(--grD)':'var(--rdD)'}">${(isUp?'+':'')+nf(r.pct,2)}%</div>
+   <div class="rt n" style="color:var(--ink2)">${(dm>0?'+':'')+nf(dm,2)}</div>
+   <div class="rt n" style="color:var(--ink3)">${mn(r.p)} → ${mn(r.c)}</div></div>`}).join('');
+ $('dvLeg').innerHTML=`<span><i style="background:var(--gr)"></i>ยอดขายโต — แถบไปทางขวา</span>`
+  + `<span><i style="background:var(--rd)"></i>ยอดขายตก — แถบไปทางซ้าย</span>`
+  + `<span style="color:var(--ink3)">เส้นกลางคือไม่เปลี่ยน · ชี้ที่แถบเพื่อดูยอดจริงทั้งสองงวด</span>`;
 }
 
 /* ---- ranking ---- */
@@ -1767,6 +1874,9 @@ $('rkReg').onchange=()=>{rkReg=+$('rkReg').value;ranking();};
 $('rkFmt').innerHTML='<option value="-1">ทุก format</option>'+F.map((x,i)=>`<option value="${i}">${x} (${names.filter(n=>D[n][0]===i).length})</option>`).join('');
 $('rkFmt').onchange=()=>{rkFmt=+$('rkFmt').value;ranking();};
 $('rkN').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{$('rkN').querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));ranking();});
+for(const id of ['dvLvl','dvN'])
+ $(id).querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+  $(id).querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c)); overview();});
 $('rSel').innerHTML='<option value="-1">ทุก region</option>'+R.map((x,i)=>`<option value="${i}">${x} (${names.filter(n=>D[n][6]===i).length})</option>`).join('');
 $('fSel').innerHTML='<option value="-1">ทุก format</option>'+F.map((x,i)=>`<option value="${i}">${x} (${names.filter(n=>D[n][0]===i).length})</option>`).join('');
 $('rSel').onchange=fillStores;$('fSel').onchange=fillStores;
@@ -1802,6 +1912,8 @@ function simResetAll(){
  rkReg=-1;rkFmt=-1;rkQ='';
  $('rkReg').value='-1';$('rkFmt').value='-1';$('rkQ').value='';
  $('rkN').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.n==='15'));
+ $('dvLvl').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.v==='reg'));
+ $('dvN').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.n==='10'));
  $('rSel').value='-1';$('fSel').value='-1';
  cut={};
  /* ออกจากโหมดรวมทุกสาขาด้วย · fillStores จะคงตัวเลือกนี้ไว้ตอนเปลี่ยนตัวกรอง
