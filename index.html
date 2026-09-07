@@ -664,8 +664,8 @@ table.etbl tr.res td{background:var(--yeL)}
 <div id="hero"></div></div></section>
 
 <section class="blk"><div class="wrap">
-<h2><span class="b">3</span>แผนกในสาขานี้</h2>
-<p class="cap">แต่ละการ์ดปรับจำนวนคนที่จะตัดได้ ตัวเลขด้านบนขยับตามทันที</p>
+<h2 id="secDeptH"><span class="b">3</span>แผนกในสาขานี้</h2>
+<p class="cap" id="secDeptC">แต่ละการ์ดปรับจำนวนคนที่จะตัดได้ ตัวเลขด้านบนขยับตามทันที</p>
 <div class="rmk">
  <div class="rmkrow"><span class="rmkb rb0">ปัญหาคนเกิน</span>
   <span>เกิน<b>ทั้ง 2 ชั้น</b> — ชั้น 1 คือ % to sales ของแผนกสูงกว่าค่ากลางของ format เดียวกัน และชั้น 2 คือ<b>จำนวนคนมากกว่าค่ากลางของแผนกนั้นใน format เดียวกัน</b> · ข้อแนะนำใช้<b>ค่าที่น้อยกว่า</b>ระหว่างสองชั้นเสมอ เพื่อไม่ให้ประเมินสูงเกิน</span></div>
@@ -1396,6 +1396,53 @@ function ranking(){
   cur=n;$('sSel').value=n;cut={};store();
   document.getElementById('secStore').scrollIntoView({behavior:'smooth',block:'start'});});
 }
+/* ---- ตัวเลือก "ทุกสาขา" ----------------------------------------------------
+   สร้างสาขาสังเคราะห์หนึ่งรายการจากสาขาที่ผ่านตัวกรอง Region/Format แล้วยัดลง D
+   ใต้คีย์ที่ชื่อสาขาจริงชนไม่ได้ · ทุกฟังก์ชันปลายทาง (calc, store, cards, ver,
+   cph, dlt) อ่าน D[cur] เหมือนกันหมด จึงไม่ต้องแก้อะไรตามอีก
+   ตัวรวมไม่ได้อยู่ใน names จึงไม่กระทบภาพรวม ตารางจัดอันดับ หรือ Export ทุกสาขา
+
+   ชั้น1/ชั้น2 ของตัวรวม ใช้ผลบวกของ "จำนวนที่แนะนำลด" ของแต่ละสาขา ไม่ได้เอา
+   ส่วนเกินดิบมาบวกกัน เพราะสาขาที่คนน้อยกว่าค่ากลางจะไปหักลบสาขาที่คนเกินจน
+   ตัวเลขต่ำกว่าความจริง · ผลที่ได้จึงเท่ากับ KPI "คนเกินที่แนะนำให้ลด" ในภาพรวมพอดี
+   ค่ากลางของตัวรวม = ผลบวกค่ากลางของแต่ละสาขา ซึ่งเป็นเกณฑ์เทียบที่ถูกต้อง
+   เพราะค่ากลางเป็นค่าประจำ format ไม่ใช่ค่าประจำเครือ */
+/* คีย์ต้องเป็นอักขระที่พิมพ์ได้ · ตอนแรกใช้ \u0000 แล้วพบว่า HTML parser แปลง NUL
+   เป็น U+FFFD ทำให้ค่าใน option ไม่ตรงกับคีย์ใน D และเลือกจาก dropdown แล้วหน้าพัง
+   ชื่อสาขาในข้อมูลเป็นภาษาอังกฤษล้วน จึงไม่มีทางชนกับสตริงนี้ */
+const ALLK = '*ALL*';
+function buildAll(list){
+ if(!list.length) return null;
+ let sales=0,wage=0,hc=0,paid=0,lv=0, psales=0,pwage=0,phc=0,plv=0;
+ const by=new Map();
+ for(const n of list){
+  const d=D[n];
+  sales+=d[1]; wage+=d[2]; hc+=d[3]; paid+=d[4]; lv+=d[5];
+  psales+=d[10][3]; pwage+=d[10][1]; phc+=d[10][2]; plv+=d[10][4];
+  for(const r of d[9]){
+   let g=by.get(r[0]);
+   if(!g){ g={hc:0,wage:0,wageN:0,med:0,medPctW:0,rec:0,noRec:0,mask:0,n:0}; by.set(r[0],g); }
+   g.n++; g.hc+=r[1]; g.med+=r[5];
+   if(r[10]===1) g.mask++; else { g.wage+=(r[2]||0); g.wageN++;
+     g.medPctW += (r[4]||0)/100*d[1]; }
+   if(r[8]===1) g.noRec++;
+   g.rec += ver(r).rec;
+  }
+ }
+ const secs=[...by.entries()].map(([k,g])=>{
+  const allMask = g.mask===g.n;
+  return [k, g.hc, allMask?null:g.wage,
+    allMask?null:+(g.wage/sales*100).toFixed(4),
+    allMask?null:+(g.medPctW/sales*100).toFixed(4),
+    +g.med.toFixed(1), +g.rec.toFixed(1), +g.rec.toFixed(1),
+    g.noRec===g.n?1:0, 0, allMask?1:0];
+ }).sort((a,b)=>(b[2]||0)-(a[2]||0));
+ /* fmt = -1 คือ "ไม่ใช่ format เดียว" · จุดที่ใช้ F[] หรือ M[] มีการ์ดกันไว้แล้ว */
+ return [-1, sales, wage, hc, paid, lv, -1, -1, list.length+' สาขา', secs,
+   [psales>0?+(pwage/psales*100).toFixed(4):0, pwage, phc, psales, plv, -1]];
+}
+const isAll = n => n===ALLK;
+
 /* ---- store ---- */
 function inFilter(n){const f=+$('fSel').value,rg=+$('rSel').value;
  return (f<0||D[n][0]===f)&&(rg<0||D[n][6]===rg);}
@@ -1404,8 +1451,12 @@ function fillStores(){
  if(!l.length){$('sSel').innerHTML='<option value="">— ไม่มีสาขาตามเงื่อนไข —</option>';
   $('hero').innerHTML='<div class="hero bad" style="text-align:center;padding:26px">ไม่มีสาขาที่ตรงกับเงื่อนไขที่เลือก</div>';
   $('cards').innerHTML='';return;}
- $('sSel').innerHTML=l.map(n=>`<option value="${n}">${D[n][8]}  ${n} — ${pc(D[n][2]/D[n][1]*100)} · ${F[D[n][0]]}</option>`).join('');
- cur=l[0];$('sSel').value=cur;cut={};store();}
+ const agg=buildAll(l);
+ if(agg) D[ALLK]=agg; else delete D[ALLK];
+ const keep=(cur===ALLK&&agg)?ALLK:null;
+ $('sSel').innerHTML=(agg?`<option value="${ALLK}">รวมทุกสาขา (${l.length} สาขา) — ${pc(agg[2]/agg[1]*100)}</option>`:'')
+  +l.map(n=>`<option value="${n}">${D[n][8]}  ${n} — ${pc(D[n][2]/D[n][1]*100)} · ${F[D[n][0]]}</option>`).join('');
+ cur=keep||l[0];$('sSel').value=cur;cut={};store();}
 function calc(){const d=D[cur];let ch=0,sv=0;
  for(const r of d[9]){const x=cut[r[0]]||0;if(!x)continue;ch+=x;sv+=x*cph(r);}
  const c=d[2]-sv,h=d[3]-ch;
@@ -1415,11 +1466,12 @@ function store(){const d=D[cur],v=calc(),tp=tgtFor(d[0])/100,ok=v.p<=tp,dl=dlt(c
  let trec=0,nOut=0,nSales=0;
  for(const r of d[9]){const z=ver(r);trec+=z.rec;if(z.v===0&&!z.noRec)nOut++;if(z.v===1)nSales++;}
  $('hero').innerHTML=`<div class="hero ${ok?'ok':'bad'}"><div class="hgrid">
- <div class="hg"><div class="k">ยอดขาย/เดือน</div><div class="v n">${mn(v.sales)}</div><div class="d">ล้านบาท · Jul-26</div></div>
+ <div class="hg"><div class="k">${isAll(cur)?'ยอดขายรวม/เดือน':'ยอดขาย/เดือน'}</div><div class="v n">${mn(v.sales)}</div><div class="d">ล้านบาท · Jul-26</div></div>
  <div class="hg"><div class="k">ค่าจ้างพนักงาน/เดือน</div><div class="v n">${mn(v.cost)}</div><div class="d">${v.cutHC?'เดิม '+mn(v.cost0)+' ลบ.':'ล้านบาท · Aug-26'}</div></div>
- <div class="hg"><div class="k">คนทั้งสาขา</div><div class="v n">${nf(v.hc)}</div><div class="d">${v.cutHC>0?'ตัดไป '+nf(v.cutHC)+' คน จาก '+nf(v.hc0):v.cutHC<0?'เพิ่ม '+nf(-v.cutHC)+' คน จาก '+nf(v.hc0):'Active '+nf(d[4])+' · ลาออก ส.ค. '+nf(d[5])+' · ขนาด '+B[d[7]]}</div></div>
+ <div class="hg"><div class="k">${isAll(cur)?'คนทุกสาขาที่กรอง':'คนทั้งสาขา'}</div><div class="v n">${nf(v.hc)}</div><div class="d">${v.cutHC>0?'ตัดไป '+nf(v.cutHC)+' คน จาก '+nf(v.hc0):v.cutHC<0?'เพิ่ม '+nf(-v.cutHC)+' คน จาก '+nf(v.hc0):'Active '+nf(d[4])+' · ลาออก ส.ค. '+nf(d[5])+(isAll(cur)?' · '+d[9].length+' แผนก':' · ขนาด '+B[d[7]])}</div></div>
  <div class="hg"><div class="k">Personnel cost to sales</div><div class="v n" style="color:${ok?'var(--grD)':'var(--rdD)'}">${pc(v.p)}</div>
-  <div class="d">${v.cutHC?'เดิม '+pc(v.p0):'ค่ากลาง '+F[d[0]]+' '+pc(M[d[0]])}</div></div>
+  <div class="d">${v.cutHC?'เดิม '+pc(v.p0)
+    :(isAll(cur)?'รวมทุก format':'ค่ากลาง '+F[d[0]]+' '+pc(M[d[0]]))}</div></div>
  <div class="hg"><div class="k">เป้า</div><div class="v n">${pc(tp)}</div><div class="d">${ok?'ผ่านเป้า':'เกินเป้า '+pc(v.p-tp)}</div></div></div>
  <div class="tgtbar"><div class="tgtfill" style="width:${Math.min(100,v.p/(Math.max(tp,v.p0,v.p)*1.25)*100)}%;background:${ok?'var(--gr)':'var(--rd)'}"></div>
   <div class="tgtmark" style="left:${Math.min(99,tp/(Math.max(tp,v.p0,v.p)*1.25)*100)}%"><span>เป้า ${pc(tp)}</span></div></div>
@@ -1461,38 +1513,54 @@ function curve(vals,now,med,W,H){
 
 /* ---- cards ---- */
 function cards(){const d=D[cur],v=calc();
+ const all=isAll(cur);
+ /* หัวข้อและคำอธิบายต้องบอกให้ตรงว่ากำลังดูสาขาเดียวหรือรวมทุกสาขา */
+ $('secDeptH').innerHTML='<span class="b">3</span>'
+  +(all?'แผนกรวมทุกสาขาที่กรอง':'แผนกในสาขานี้');
+ $('secDeptC').innerHTML=all
+  ?'ตัวเลขแต่ละแผนกคือผลรวมของสาขาที่ผ่านตัวกรอง · ช่อง "แนะนำลด" คือผลบวกของจำนวน'
+   +'ที่แต่ละสาขาถูกแนะนำจากเกณฑ์ 2 ชั้นของตัวเอง ไม่ได้เอาค่าเฉลี่ยทั้งเครือมาตัดสินใหม่'
+   +' เพราะค่ากลางเป็นค่าประจำ format · เส้นโค้งเทียบสาขาไม่แสดงในโหมดนี้'
+  :'แต่ละการ์ดปรับจำนวนคนที่จะตัดได้ ตัวเลขด้านบนขยับตามทันที';
  $('cards').innerHTML=d[9].map(r=>{const k=r[0],x=cut[k]||0,u=cph(r),now=r[1]-x,z=ver(r);
   const recR=Math.round(z.rec);
   const mk=masked(r);
   const per1=u/d[1]*100, need01=per1>0?Math.ceil(0.1/per1):null;
   const vals=K[d[0]+'|'+k]||[r[1]];
-  const W=600,H=76,C=curve(vals,now,r[5],W,H);
-  const posc=C.pct>=75?'var(--rdD)':C.pct>=50?'var(--yeD)':'var(--grD)';
-  const posl=C.pct>=75?'คนมากกว่าเพื่อนมาก':C.pct>=50?'คนมากกว่าค่ากลาง':C.pct>=25?'คนน้อยกว่าค่ากลาง':'คนน้อยสุดในกลุ่ม';
+  const W=600,H=76,C=all?null:curve(vals,now,r[5],W,H);
+  const posc=all?'':C.pct>=75?'var(--rdD)':C.pct>=50?'var(--yeD)':'var(--grD)';
+  const posl=all?'':C.pct>=75?'คนมากกว่าเพื่อนมาก':C.pct>=50?'คนมากกว่าค่ากลาง':C.pct>=25?'คนน้อยกว่าค่ากลาง':'คนน้อยสุดในกลุ่ม';
   const showPill=(z.v===0&&!z.noRec)||z.v===1;
   return `<div class="sc ${x>0?'cut':x<0?'add':''}">
   <div class="top"><div class="nm">${S[k]}${z.noRec?' <span class="pill p3">Part time</span>':''}</div>
    ${showPill?`<span class="pill p${z.v}">${VN[z.v]}</span>`:''}</div>
   <div class="mets">
    <div class="met"><div class="k">ชั้น 1 · % to sales</div>
-    <div class="v n" style="color:${mk?'var(--ink3)':(z.eA>=minH?'var(--rdD)':'var(--ink)')}">${mk?'ปิดข้อมูล':pc(r[3],3)}</div>
-    <div class="s">${mk?'คนน้อยกว่า 3 · ดูรายละเอียดในไฟล์ Excel':'ค่ากลาง '+pc(r[4],3)+(z.eA>=minH?` · เกิน ${nf(z.eA,1)} คน`:' · ไม่เกิน')}</div></div>
+    <div class="v n" style="color:${mk?'var(--ink3)'
+      :(all?(r[3]>r[4]?'var(--rdD)':'var(--ink)'):(z.eA>=minH?'var(--rdD)':'var(--ink)'))}">${mk?'ปิดข้อมูล':pc(r[3],3)}</div>
+    <div class="s">${mk?'คนน้อยกว่า 3 · ดูรายละเอียดในไฟล์ Excel'
+      :all?'ค่ากลางรวม '+pc(r[4],3)+(r[3]>r[4]?' · สูงกว่าค่ากลาง':' · ไม่สูงกว่าค่ากลาง')
+      :'ค่ากลาง '+pc(r[4],3)+(z.eA>=minH?` · เกิน ${nf(z.eA,1)} คน`:' · ไม่เกิน')}</div></div>
    <div class="met"><div class="k">ชั้น 2 · จำนวนคน</div>
-    <div class="v n" style="color:${z.eB>=minH?'var(--rdD)':'var(--ink)'}">${r[1]}</div>
-    <div class="s">ค่ากลาง ${r[5]} คน${z.eB>=minH?` · เกิน ${nf(z.eB,1)} คน`:' · ไม่เกิน'}</div></div>
+    <div class="v n" style="color:${(all?r[1]>r[5]:z.eB>=minH)?'var(--rdD)':'var(--ink)'}">${nf(r[1])}</div>
+    <div class="s">${all?'ค่ากลางรวม '+nf(r[5])+' คน'+(r[1]>r[5]?` · มากกว่า ${nf(r[1]-r[5])} คน`:' · ไม่มากกว่า')
+      :'ค่ากลาง '+r[5]+' คน'+(z.eB>=minH?` · เกิน ${nf(z.eB,1)} คน`:' · ไม่เกิน')}</div></div>
    <div class="met"><div class="k">ค่าจ้าง/คน</div><div class="v n">${mk?'ปิดข้อมูล':(u>0?nf(u):'—')}</div><div class="s">${mk?'เพื่อความเป็นส่วนตัว':(u>0?'บาท/เดือน':'ไม่มีในระบบ')}</div></div>
    <div class="met"><div class="k">แนะนำลด</div>
     <div class="v n" style="color:${z.rec>=1?'var(--rdD)':'var(--ink3)'}">${z.noRec?'—':(z.rec>=1?nf(z.rec,1):'0')}</div>
     <div class="s">${mk?'ปิดข้อมูลค่าจ้าง':(z.noRec?'ไม่แนะนำ (Part time)':(z.rec>=1?'คน · ประหยัด '+nf(z.rec*u)+' บ.':'คน'))}</div></div>
   </div>
   <div class="why ${(z.v===0&&!z.noRec)?'wOut':z.v===1?'wSales':z.v===2?'wWatch':'wOk'}">${
-   mk?`<b>ปิดข้อมูลค่าจ้าง</b> — แผนกนี้มีคนน้อยกว่า 3 คน ถ้าแสดง % to sales จะย้อนคำนวณเงินเดือนรายบุคคลได้ · ตรวจได้เฉพาะชั้น 2 คือ ${r[1]} คน เทียบค่ากลาง ${r[5]} คน${z.eB>=minH?` (เกิน ${nf(z.eB,1)} คน)`:' (ไม่เกิน)'}`
+   all?`<b>ผลรวมทุกสาขาที่กรอง</b> — ทุกช่องเป็นผลรวม · <b>แนะนำลด ${nf(z.rec,1)} คน</b>`
+    +` มาจากผลบวกของจำนวนที่แต่ละสาขาถูกแนะนำจากเกณฑ์ 2 ชั้นของสาขาตัวเอง`
+    +` ไม่ได้เอา % และจำนวนคนรวมมาตัดสินใหม่ เพราะค่ากลางเป็นค่าประจำ format`
+   :mk?`<b>ปิดข้อมูลค่าจ้าง</b> — แผนกนี้มีคนน้อยกว่า 3 คน ถ้าแสดง % to sales จะย้อนคำนวณเงินเดือนรายบุคคลได้ · ตรวจได้เฉพาะชั้น 2 คือ ${r[1]} คน เทียบค่ากลาง ${r[5]} คน${z.eB>=minH?` (เกิน ${nf(z.eB,1)} คน)`:' (ไม่เกิน)'}`
    :z.noRec&&z.v===0?`<b>เกินทั้ง 2 ชั้น แต่ไม่แนะนำให้ลด</b> — แผนกนี้จ้างแบบ Part time อยู่แล้ว การลดคนไม่ใช่เครื่องมือที่เหมาะกับแผนกนี้`
    :z.v===0?`<b>ปัญหาคนเกิน</b> — ชั้น 1 เกิน ${nf(z.eA,1)} คน และชั้น 2 เกิน ${nf(z.eB,1)} คน · ใช้ค่าที่น้อยกว่าเป็นข้อแนะนำ = <b>${nf(z.raw,1)} คน</b>`
    :z.v===1?`<b>ปัญหายอดขาย</b> — ชั้น 1 เกิน ${nf(z.eA,1)} คน แต่จำนวนคน ${r[1]} คน ไม่เกินค่ากลาง ${r[5]} คน · % สูงเพราะยอดขายสาขาต่ำ ไม่ใช่เพราะคนเยอะ`
    :z.v===2?`<b>เฝ้าระวัง</b> — คนเกินค่ากลาง ${nf(z.eB,1)} คน แต่ % to sales ยังไม่เกิน ยังไม่ต้องทำอะไร`
    :`ไม่เกินเกณฑ์ทั้ง 2 ชั้น`}</div>
-  <div class="curve">
+  ${all?'':`<div class="curve">
    <div class="ctitle"><span>จำนวนคนเทียบ ${F[d[0]]} (${C.n} สาขา)</span><span class="pc" style="color:${posc}">อันดับ ${C.rank} จาก ${C.n} · ${posl}</span></div>
    <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" style="display:block;margin-top:5px">
     <path d="${C.d}" fill="#E9EDF2"/>
@@ -1503,7 +1571,7 @@ function cards(){const d=D[cur],v=calc();
    </svg>
    <div class="axis"><span class="n">${C.lo}</span><span class="n" style="left:${(C.mx/W*100).toFixed(1)}%">ค่ากลาง ${r[5]}</span><span class="n">${C.hi}</span></div>
    <div class="cdesc">สาขานี้มี <b>${now} คน</b> · มีคน<b>มากกว่า ${C.below} สาขา</b> และ<b>น้อยกว่า ${C.above} สาขา</b>${C.same>1?` (เท่ากัน ${C.same-1} สาขา)`:''} จาก ${C.n} สาขา ${F[d[0]]} ที่มีแผนกนี้ · ทั้งกลุ่มใช้ ${C.lo}–${C.hi} คน</div>
-  </div>
+  </div>`}
   ${z.zero?`<div class="dqw"><b>แผนกนี้ไม่มีค่าจ้างในระบบ</b> — ค่าจ้างที่บันทึกไว้เป็น 0 บาท ลดคนแล้ว % ของสาขาไม่เปลี่ยน ควรตรวจต้นทางว่าจ่ายผ่านช่องทางอื่นหรือไม่</div>`:''}
   ${mk?'':`<div class="rowf"><span class="slab">ปรับคน (ลด/เพิ่ม)</span>
    <div style="display:flex;gap:8px;align-items:center">
@@ -1542,7 +1610,10 @@ function download(filename, rows){
 
 /* บังคับให้ Excel อ่านเป็น text ไม่ตัด 0 นำหน้า */
 function txt(v){return '="'+String(v==null?'':v).replace(/"/g,'""')+'"';}
-function rowsFor(n){const d=D[n];return d[9].map(r=>{const z=ver(r);const mk=masked(r);return [txt(d[8]),n,R[d[6]],F[d[0]],B[d[7]],
+function rowsFor(n){const d=D[n];return d[9].map(r=>{const z=ver(r);const mk=masked(r);
+ /* ตัวรวมทุกสาขาไม่มี Region/Format/ขนาด เดียว จึงใส่ป้ายบอกแทนช่องว่าง */
+ return [txt(d[8]),isAll(n)?'รวมทุกสาขาที่กรอง':n,R[d[6]]||'รวมทุก Region',
+  F[d[0]]||'รวมทุก format',B[d[7]]||'—',
  (d[1]/1e6).toFixed(2),(d[2]/1e6).toFixed(2),(d[2]/d[1]*100).toFixed(4),d[3],d[4],d[5],
  S[r[0]],r[1],r[5],mk?'':r[3].toFixed(4),mk?'':r[4].toFixed(4),mk?'':Math.round(cph(r)),
  mk?'':z.eA.toFixed(1),z.eB.toFixed(1),z.noRec?'':z.rec.toFixed(1),mk?'':Math.round(z.rec*cph(r)),
@@ -1625,6 +1696,9 @@ function simResetAll(){
  $('rkN').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.n==='15'));
  $('rSel').value='-1';$('fSel').value='-1';
  cut={};
+ /* ออกจากโหมดรวมทุกสาขาด้วย · fillStores จะคงตัวเลือกนี้ไว้ตอนเปลี่ยนตัวกรอง
+    ซึ่งเป็นสิ่งที่ต้องการ แต่ Refresh หมายถึงคืนค่าเริ่มต้นทั้งหน้า */
+ if(cur===ALLK) cur=null;
  $('expMsg').className='expmsg';$('expMsg').innerHTML='';
  overview();ranking();fillStores(); // fillStores() รีเซ็ต cur, cut แล้วเรียก store() เอง
 }
