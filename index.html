@@ -605,7 +605,7 @@ table.etbl tr.res td{background:var(--yeL)}
 <div id="pgSim">
 <header><div class="wrap"><div class="refreshhd"><h1>Personnel Cost to Sales — Store Simulator</h1>
 <button class="refreshbtn" id="simRefresh" title="คืนค่าตัวกรอง เป้า % ขั้นต่ำที่ถือว่าเกิน และการจำลองลดคน กลับเป็นค่าเริ่มต้น แล้วคำนวณใหม่ทั้งหน้า (ไม่ต้องล็อกอินใหม่)"><span class="rico">&#10227;</span>Refresh</button></div>
-<div class="sub">ภาพรวมทั้งเครือ แล้วเจาะรายสาขา วิเคราะห์ 2 ชั้น (% to sales และจำนวนคนเทียบค่ากลางของ format เดียวกัน) พร้อมจำลองการลดคน · ยอดขาย Jul-26 · ค่าจ้าง Aug-26 · ค่าจ้างคำนวณจากรายชื่อพนักงาน Aug 2026 (ข้อมูล 17 Aug 26) (Active เต็มเดือน + Inactive คิดตามสัดส่วนวันฐาน 30 วัน) · เทียบกับ Aug 2026 (ข้อมูล 17 Aug 26) · 167 สาขา · 21 แผนก</div></div></header>
+<div class="sub">ภาพรวมทั้งเครือ แล้วเจาะรายสาขา วิเคราะห์ 2 ชั้น (% to sales และจำนวนคนเทียบค่ากลางของ format เดียวกัน) พร้อมจำลองการลดคน · ยอดขาย Aug-26 · ค่าจ้าง Sep-26 · ค่าจ้างคำนวณจากรายชื่อพนักงาน Aug 2026 (ข้อมูล 17 Aug 26) (Active เต็มเดือน + Inactive คิดตามสัดส่วนวันฐาน 30 วัน) · เทียบกับ Jul 2026 · 167 สาขา · 21 แผนก</div></div></header>
 
 <section class="blk"><div class="wrap">
 <h2><span class="b">1</span>ภาพรวมทั้งเครือ/สาขา</h2>
@@ -695,7 +695,7 @@ table.etbl tr.res td{background:var(--yeL)}
 <div class="pwrap">
 <div class="refreshhd" style="margin:0 0 16px">
  <div><h1>Personnel Summary</h1>
-  <div class="psub">กำลังคน Active เทียบยอดขายรายสาขา แยกตามตำแหน่งและโครงสร้างองค์กร · ยอดขาย Jul-26 · ค่าจ้าง Aug-26 · เทียบเป้าที่ตั้งไว้ด้านล่าง</div></div>
+  <div class="psub">กำลังคน Active เทียบยอดขายรายสาขา แยกตามตำแหน่งและโครงสร้างองค์กร · ยอดขาย Aug-26 · ค่าจ้าง Sep-26 · เทียบเป้าที่ตั้งไว้ด้านล่าง</div></div>
  <button class="refreshbtn" id="pRefresh" title="คืนค่าตัวกรองทุกช่อง เป้า % การจัดเรียงคอลัมน์ และการย่อ/ขยาย Division กลับเป็นค่าเริ่มต้น แล้วคำนวณใหม่ทั้ง 3 ตาราง (ไม่ต้องล็อกอินใหม่)"><span class="rico">&#10227;</span>Refresh</button></div>
 <div class="pkrow" id="pKRow"></div>
 <div class="pfilterbar" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:18px">
@@ -1344,8 +1344,8 @@ function overview(){
    b.c+=(r[2]||0);b.h+=r[1];b.rec+=z.rec;trec+=z.rec;tsave+=z.rec*cph(r);}}
  const p=tc/ts*100, pPrev=tcPrev/tsPrev*100;
  $('ovKpi').innerHTML=[
-  [ovSto?'ยอดขาย '+ovSto:(ovReg<0?'ยอดขายทั้งเครือ':'ยอดขาย '+R[ovReg]),nf(ts/1e9,2)+' พันล้าน','Jul-26 ต่อเดือน',''],
-  ['ค่าจ้างพนักงาน',mn(tc)+' ล้าน','Aug-26 · คน '+nf(thc)+' คน',''],
+  [ovSto?'ยอดขาย '+ovSto:(ovReg<0?'ยอดขายทั้งเครือ':'ยอดขาย '+R[ovReg]),nf(ts/1e9,2)+' พันล้าน','Aug-26 ต่อเดือน',''],
+  ['ค่าจ้างพนักงาน',mn(tc)+' ล้าน','Sep-26 · คน '+nf(thc)+' คน',''],
   ['% to sales',pc(p),'เป้าหลักทั้งเครือ '+pc(target/100),p>target/100?'bad':'ok'],
   ['สาขาที่เกินเป้า',over+' จาก '+list.length,nf(over/list.length*100,0)+'% ของสาขา · เทียบเป้าตาม format ของแต่ละสาขา',over>list.length/2?'bad':'ok'],
   ['คนเกินที่แนะนำให้ลด',nf(trec)+' คน','ประหยัด '+mn(tsave)+' ล้านบาท/เดือน',''],
@@ -1472,8 +1472,8 @@ function store(){const d=D[cur],v=calc(),tp=tgtFor(d[0])/100,ok=v.p<=tp,dl=dlt(c
  let trec=0,nOut=0,nSales=0;
  for(const r of d[9]){const z=ver(r);trec+=z.rec;if(z.v===0&&!z.noRec)nOut++;if(z.v===1)nSales++;}
  $('hero').innerHTML=`<div class="hero ${ok?'ok':'bad'}"><div class="hgrid">
- <div class="hg"><div class="k">${isAll(cur)?'ยอดขายรวม/เดือน':'ยอดขาย/เดือน'}</div><div class="v n">${mn(v.sales)}</div><div class="d">ล้านบาท · Jul-26</div></div>
- <div class="hg"><div class="k">ค่าจ้างพนักงาน/เดือน</div><div class="v n">${mn(v.cost)}</div><div class="d">${v.cutHC?'เดิม '+mn(v.cost0)+' ลบ.':'ล้านบาท · Aug-26'}</div></div>
+ <div class="hg"><div class="k">${isAll(cur)?'ยอดขายรวม/เดือน':'ยอดขาย/เดือน'}</div><div class="v n">${mn(v.sales)}</div><div class="d">ล้านบาท · Aug-26</div></div>
+ <div class="hg"><div class="k">ค่าจ้างพนักงาน/เดือน</div><div class="v n">${mn(v.cost)}</div><div class="d">${v.cutHC?'เดิม '+mn(v.cost0)+' ลบ.':'ล้านบาท · Sep-26'}</div></div>
  <div class="hg"><div class="k">${isAll(cur)?'คนทุกสาขาที่กรอง':'คนทั้งสาขา'}</div><div class="v n">${nf(v.hc)}</div><div class="d">${v.cutHC>0?'ตัดไป '+nf(v.cutHC)+' คน จาก '+nf(v.hc0):v.cutHC<0?'เพิ่ม '+nf(-v.cutHC)+' คน จาก '+nf(v.hc0):'Active '+nf(d[4])+' · ลาออก ส.ค. '+nf(d[5])+(isAll(cur)?' · '+d[9].length+' แผนก':' · ขนาด '+B[d[7]])}</div></div>
  <div class="hg"><div class="k">Personnel cost to sales</div><div class="v n" style="color:${ok?'var(--grD)':'var(--rdD)'}">${pc(v.p)}</div>
   <div class="d">${v.cutHC?'เดิม '+pc(v.p0)
