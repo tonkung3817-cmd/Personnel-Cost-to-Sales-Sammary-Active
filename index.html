@@ -616,7 +616,8 @@ table.etbl tr.res td{background:var(--yeL)}
     ส่วนการ์ดแผนกยังเป็นแนวตั้ง เพราะการ์ดสูง ~500px วางสองใบต่อหน้าได้
     ในแนวตั้ง แต่แนวนอนได้ใบเดียว เปลืองกระดาษเกือบเท่าตัว                    */
  @page wide{size:A4 landscape;margin:10mm 10mm 12mm}
- body.pdfall #secOv{page:wide}
+ /* หัวกระดาษต้องอยู่หน้าเดียวกับหัวข้อ 1 ไม่งั้นจะได้หน้าแรกที่มีแต่ชื่อเรื่อง */
+ body.pdfall #pgSim > header,body.pdfall #secOv{page:wide}
  html,body{background:#fff!important}
  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
  /* ซ่อนสิ่งที่ไม่มีความหมายบนกระดาษ: เมนู ตัวกรอง ปุ่มกด และหน้าอื่น */
@@ -636,7 +637,12 @@ table.etbl tr.res td{background:var(--yeL)}
  body.pdfall .kpis{break-inside:avoid;page-break-inside:avoid}
  body.pdfall table.rtbl thead{display:table-header-group}
  body.pdfall table.rtbl tr,body.pdfall .dvrow,body.pdfall .br{break-inside:avoid}
- body.pdfall .kpi .v{font-size:15px}
+ /* KPI 7 การ์ดเรียงแถวเดียวบนกระดาษแนวนอน · ปล่อย auto-fit จะตกไปแถวสองแล้ว
+    เหลือช่องว่างครึ่งแถว ดูไม่เรียบร้อย */
+ body.pdfall .kpis{grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+ body.pdfall .kpi{padding:8px 9px;border-radius:9px}
+ body.pdfall .kpi .v{font-size:14px}
+ body.pdfall .kpi .k,body.pdfall .kpi .d{font-size:8.5px;line-height:1.45}
  body.pdfall table.rtbl{font-size:8px}
  body.pdfall table.rtbl th,body.pdfall table.rtbl td{padding:3px 4px}
  body.pdfall .rkscroll{overflow:visible}
@@ -662,11 +668,28 @@ table.etbl tr.res td{background:var(--yeL)}
  .hg .v{font-size:19px}
  .hg .k{font-size:8.5px}
  .hg .d,.chg,.verdict{font-size:9.5px}
- /* การ์ดแผนก — ห้ามฉีกกลางการ์ด */
+ /* การ์ดแผนก — ห้ามฉีกกลางการ์ด แล้วย่อให้เตี้ยลงเท่าที่ไม่เสียความอ่านง่าย
+    ย่อที่ตัว svg ของกราฟระฆัง ไม่ใช่ที่กล่อง .curve — ถ้าบังคับความสูงกล่อง
+    หัวเรื่องกับแกนของกราฟจะล้นทะลุออกไปนอกการ์ด
+    คงไว้ 2 คอลัมน์ · วัดที่กล่องกระดาษจริง (718px) แล้ว 3 คอลัมน์เหลือการ์ด
+    กว้าง 234px ซึ่งเนื้อในล้นกรอบ · สาขาหนึ่งลงกระดาษ 5 หน้า (จาก 6)       */
  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:8px}
- .sc{break-inside:avoid;page-break-inside:avoid;padding:9px 11px;gap:7px;border-radius:9px;
+ .sc{break-inside:avoid;page-break-inside:avoid;padding:7px 9px;gap:4px;border-radius:9px;
      box-shadow:none!important}
  .sc .nm{font-size:11px}
+ .curve{padding:5px 8px 3px}
+ .curve svg{height:46px}
+ /* คำอธิบายวิธีพิมพ์เลขลงช่องปรับคน เป็นคำแนะนำการใช้ปุ่มบนหน้าจอ
+    บนกระดาษไม่มีความหมาย · เอาออกแล้วการ์ดเหลือ 465px วางได้ 2 แถวต่อหน้า
+    ทำให้แต่ละหน้าเต็ม 81-92% แทนที่จะเป็น 47-54% แล้วไปอัดหน้าสุดท้าย 95%
+    ช่องตัวเลขที่จำลองไว้ (.rowf) ยังอยู่ เพราะเป็นข้อมูล ไม่ใช่ปุ่ม        */
+ .sc .cdesc{display:none!important}
+ /* งานจัดหน้าให้ดูเรียบร้อย: หัวข้อห้ามค้างท้ายหน้าโดยไม่มีเนื้อหาตาม
+    และห้ามทิ้งบรรทัดเดียวโดดข้ามหน้า */
+ #pgSim h2,.cap,#rkCap,#dvCap,.dvrow.hd,table.rtbl thead{break-after:avoid;page-break-after:avoid}
+ #pdfHd,.dvsum,.hero{break-after:avoid;page-break-after:avoid}
+ #pgSim{orphans:3;widows:3}
+ .rmk,.note,.verdict,#pdfFoot{break-inside:avoid;page-break-inside:avoid}
  /* ท้ายกระดาษ ใส่ที่มาของข้อมูลไว้ให้ครบ */
  .pdffoot{margin-top:10px;padding-top:6px;border-top:1px solid var(--line);
           font-size:8.5px;color:var(--ink3);line-height:1.6}
