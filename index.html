@@ -1394,7 +1394,8 @@ function overview(){
   ['สาขาที่เกินเป้า',over+' จาก '+list.length,nf(over/list.length*100,0)+'% ของสาขา · เทียบเป้าตาม format ของแต่ละสาขา',over>list.length/2?'bad':'ok'],
   ['คนเกินที่แนะนำให้ลด',nf(trec)+' คน','ประหยัด '+mn(tsave)+' ล้านบาท/เดือน',''],
   ['คนลาออก Aug-26',nf(tlv)+' คน',nf(tlv/thc*100,1)+'% ของกำลังคน',''],
-  ['เทียบ '+PREVDATE,arrow(p-pPrev,true,4),'ค่าจ้าง '+nf((tc-tcPrev)/1e6,2)+' ลบ. · คน '+(thc-thcPrev>0?'+':'')+nf(thc-thcPrev)+' คน','']
+  ['เทียบ '+PREVDATE,arrow(p-pPrev,true,4),'ค่าจ้าง '+nf((tc-tcPrev)/1e6,2)+' ลบ. · คน '+(thc-thcPrev>0?'+':'')+nf(thc-thcPrev)+' คน'
+   +' · ยอดขาย '+(ts-tsPrev>0?'+':'')+nf((ts-tsPrev)/1e6,2)+' ลบ.','']
  ].map(k=>`<div class="kpi ${k[3]}"><div class="k">${k[0]}</div><div class="v n">${k[1]}</div><div class="d">${k[2]}</div></div>`).join('');
  const fs=Object.entries(byF).map(([i,v])=>[i,v.c/v.s*100,v.n]).sort((a,b)=>b[1]-a[1]);
  const fmx=Math.max(...fs.map(x=>x[1]));
@@ -1511,6 +1512,26 @@ function calc(){const d=D[cur];let ch=0,sv=0;
  for(const r of d[9]){const x=cut[r[0]]||0;if(!x)continue;ch+=x;sv+=x*cph(r);}
  const c=d[2]-sv,h=d[3]-ch;
  return{sales:d[1],cost0:d[2],cost:c,hc0:d[3],hc:h,cutHC:ch,saved:sv,p0:d[2]/d[1]*100,p:c/d[1]*100};}
+/* ---- ส่วนต่าง % to sales มาจากค่าจ้างเท่าไร มาจากยอดขายเท่าไร ---------------
+   % to sales = ค่าจ้าง / ยอดขาย · ส่วนต่างระหว่างสองงวดแยกได้ลงตัวเป็นสองก้อน
+     จากค่าจ้าง = (W - W0) / S      คิดที่ยอดขายงวดนี้
+     จากยอดขาย = W0 / S - W0 / S0   คิดที่ค่าจ้างงวดก่อน
+   บวกกันได้ W/S - W0/S0 = ส่วนต่างจริงเป๊ะ ไม่มีเศษเหลือ
+   แยกไว้เพราะ % ลดจากคุมค่าจ้างได้ กับ % ลดเพราะยอดขายโต คนละเรื่องกันคนละ
+   วิธีแก้ · ถ้าสองงวดอ้างยอดขายเดือนเดียวกัน ก้อนยอดขายจะเป็น 0 ตามจริง      */
+function split(d){
+ const S=d[1],S0=d[10][3],W=d[2],W0=d[10][1];
+ if(!(S>0&&S0>0)) return '';
+ const eW=(W-W0)/S*100, eS=W0/S*100-W0/S0*100;
+ const one=(lab,v)=>`<span>${lab} <b style="color:${v<-5e-4?'var(--grD)':v>5e-4?'var(--rdD)':'var(--ink3)'}">`
+  +`${v>5e-4?'+':''}${nf(v,3)}</b></span>`;
+ return `<div class="chg" style="border-top-style:dotted">
+  <span class="ct">ส่วนต่าง % มาจากไหน</span>
+  ${one('จากค่าจ้าง',eW)} ${one('จากยอดขาย',eS)}
+  <span style="color:var(--ink3)">รวม ${nf(eW+eS,3)} = ส่วนต่างจริง</span>
+  ${Math.abs(S-S0)<1?`<span style="color:var(--yeD)">· สองงวดอ้างยอดขายเดือนเดียวกัน ส่วนต่างจึงมาจากค่าจ้างทั้งหมด</span>`:''}</div>`;
+}
+
 /* ---- ป้ายที่โผล่เฉพาะตอนพิมพ์เป็น PDF ---------------------------------------
    ชื่อสาขาอยู่ในกล่อง dropdown ซึ่งถูกซ่อนตอนพิมพ์ จึงต้องพิมพ์ซ้ำลงกระดาษ
    พร้อมที่มาของตัวเลข เพื่อให้เอกสารอ่านเองได้เวลาส่งต่อให้สาขา             */
@@ -1551,8 +1572,9 @@ function store(){const d=D[cur],v=calc(),tp=tgtFor(d[0])/100,ok=v.p<=tp,dl=dlt(c
   <span>ค่าจ้าง ${arrow(dl.c,true,0,' บาท')}</span>
   <span>คน ${arrow(dl.h,true,0,' คน')}</span>
   <span>ลาออก ${arrow(dl.l,true,0,' คน')}</span>
-  ${dl.fmtChanged?`<span class="pill p2">ย้าย format จาก ${F[dl.prevFmt]||'—'} มา ${F[d[0]]}</span>`:''}
-  ${Math.abs(dl.s)>1?`<span>ยอดขาย ${arrow(dl.s,false,0,' บาท')}</span>`:''}</div>
+  <span>ยอดขาย ${arrow(dl.s,false,0,' บาท')} <span style="color:var(--ink3)">(เดิม ${mn(d[10][3])} ลบ.)</span></span>
+  ${dl.fmtChanged?`<span class="pill p2">ย้าย format จาก ${F[dl.prevFmt]||'—'} มา ${F[d[0]]}</span>`:''}</div>
+ ${split(d)}
  <div class="verdict">${ok
   ?`<b style="color:var(--grD)">อยู่ในเกณฑ์ — ไม่ต้องลดคน</b><span>ต่ำกว่าเป้า ${pc(tp-v.p)} คิดเป็นค่าจ้างที่ยังมีที่ว่างอีก ${nf((tp-v.p)/100*v.sales)} บาท/เดือน</span>`
   :`<b style="color:var(--rdD)">เกินเป้า</b><span>ต้องลดค่าจ้างอีก ${nf(need)} บาท/เดือน จึงจะถึงเป้า ≈ ${nf(need/(v.cost/v.hc),1)} คน ที่ค่าจ้างเฉลี่ยของสาขานี้</span>`}
