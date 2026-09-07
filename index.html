@@ -582,6 +582,47 @@ table.etbl tr.res td{background:var(--yeL)}
 .refreshbtn .rico{display:inline-block;font-size:15px;line-height:1}
 .refreshbtn.spin .rico{animation:rspin .6s linear}
 @keyframes rspin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+/* ===== บันทึกสาขาที่เลือกเป็น PDF ==========================================
+   ใช้ Save as PDF ของเบราว์เซอร์เอง จึงไม่ต้องพึ่งไลบรารีข้างนอกและใช้ได้แม้
+   ไม่มีเน็ต · ตัวอักษรใน PDF ยังเลือก/ค้นหาได้ ไม่ใช่ภาพ
+   ตอนพิมพ์เอาเฉพาะสาขาที่เลือก (หัวข้อ 2 กับ 3) · หัวข้อ 1 ภาพรวมทั้งเครือ
+   และตารางจัดอันดับไม่เข้า PDF เพราะเป็นข้อมูลสาขาอื่น                       */
+.pdfonly{display:none}
+@media print{
+ @page{size:A4 portrait;margin:11mm 10mm 13mm}
+ html,body{background:#fff!important}
+ *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+ /* ซ่อนทุกอย่างที่ไม่ใช่สาขาที่เลือก */
+ .pagenav,#loginGate,#pgPersonnel,#pgO2O,#pgOT,#pgMP,
+ #secOv,#secPick .ctlbar,#secPick .cap,#secDept .rmk,
+ #simRefresh,#expMsg,#pgSim .note,#deptBtns{display:none!important}
+ .pdfonly{display:block}
+ /* หัวกระดาษ */
+ header{padding:0 0 8px;border-bottom:1.5px solid var(--bl);background:#fff}
+ header h1{font-size:15px}
+ header .sub{font-size:9px;line-height:1.5}
+ .wrap{max-width:none;padding:0}
+ .blk{padding:0;border:0}
+ #secPick{margin-top:9px}
+ #secDept{margin-top:11px}
+ #pgSim h2{font-size:12.5px;margin:0 0 7px}
+ #pgSim h2 .b{width:17px;height:17px;font-size:10px}
+ .stickY{position:static!important}
+ /* ตัวเลขหลักของสาขา */
+ #hero{break-inside:avoid;page-break-inside:avoid}
+ .hg .v{font-size:19px}
+ .hg .k{font-size:8.5px}
+ .hg .d,.chg,.verdict{font-size:9.5px}
+ /* การ์ดแผนก — ห้ามฉีกกลางการ์ด */
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:8px}
+ .sc{break-inside:avoid;page-break-inside:avoid;padding:9px 11px;gap:7px;border-radius:9px;
+     box-shadow:none!important}
+ .sc .nm{font-size:11px}
+ /* ท้ายกระดาษ ใส่ที่มาของข้อมูลไว้ให้ครบ */
+ .pdffoot{margin-top:10px;padding-top:6px;border-top:1px solid var(--line);
+          font-size:8.5px;color:var(--ink3);line-height:1.6}
+}
 .refreshbtn.done{border-color:var(--gr);background:var(--grL);color:var(--grD)}
 .refreshhd{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
 </style></head><body>
@@ -607,7 +648,7 @@ table.etbl tr.res td{background:var(--yeL)}
 <button class="refreshbtn" id="simRefresh" title="คืนค่าตัวกรอง เป้า % ขั้นต่ำที่ถือว่าเกิน และการจำลองลดคน กลับเป็นค่าเริ่มต้น แล้วคำนวณใหม่ทั้งหน้า (ไม่ต้องล็อกอินใหม่)"><span class="rico">&#10227;</span>Refresh</button></div>
 <div class="sub">ภาพรวมทั้งเครือ แล้วเจาะรายสาขา วิเคราะห์ 2 ชั้น (% to sales และจำนวนคนเทียบค่ากลางของ format เดียวกัน) พร้อมจำลองการลดคน · ยอดขาย Aug-26 · ค่าจ้าง Sep-26 · ค่าจ้างคำนวณจากรายชื่อพนักงาน Aug 2026 (ข้อมูล 17 Aug 26) (Active เต็มเดือน + Inactive คิดตามสัดส่วนวันฐาน 30 วัน) · เทียบกับ Jul 2026 · 167 สาขา · 21 แผนก</div></div></header>
 
-<section class="blk"><div class="wrap">
+<section class="blk" id="secOv"><div class="wrap">
 <h2><span class="b">1</span>ภาพรวมทั้งเครือ/สาขา</h2>
 <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:4px">
  <p class="cap" style="margin:0">ตัวเลขในกล่องสีเปลี่ยนตามเป้า % ที่ตั้งด้านล่าง</p>
@@ -649,7 +690,7 @@ table.etbl tr.res td{background:var(--yeL)}
   <div class="cap" style="margin-bottom:10px">% ของยอดขายทั้งเครือ · ตัวเลขแดงคือคนที่แนะนำให้ลดรวมทุกสาขา</div><div class="bars" id="ovSec"></div></div>
 </div></div></section>
 
-<section class="blk"><div class="wrap">
+<section class="blk" id="secPick"><div class="wrap">
 <h2 id="secStore"><span class="b">2</span>เลือกสาขาและตั้งเป้า</h2>
 <p class="cap">ตั้งเป้า % personnel cost to sales ที่ยอมรับได้ แล้วเลือกสาขา</p>
 <div class="ctlbar stickY">
@@ -662,9 +703,10 @@ table.etbl tr.res td{background:var(--yeL)}
  <div><span class="lbl">Format</span><select id="fSel"></select></div>
  <div style="flex:1;min-width:300px"><span class="lbl">สาขา</span><select id="sSel" style="width:100%"></select></div>
 </div>
+<div class="pdfonly" id="pdfHd"></div>
 <div id="hero"></div></div></section>
 
-<section class="blk"><div class="wrap">
+<section class="blk" id="secDept"><div class="wrap">
 <h2 id="secDeptH"><span class="b">3</span>แผนกในสาขานี้</h2>
 <p class="cap" id="secDeptC">แต่ละการ์ดปรับจำนวนคนที่จะตัดได้ ตัวเลขด้านบนขยับตามทันที</p>
 <div class="rmk">
@@ -677,15 +719,17 @@ table.etbl tr.res td{background:var(--yeL)}
  <div class="rmkrow"><span class="rmkb rb3">Part time</span>
   <span>แผนก Temporary จ้างแบบ Part time อยู่แล้ว การ์ดยังแสดงตัวเลขให้ดูครบ แต่<b>ไม่แนะนำจำนวนคนที่ต้องลด</b> เพราะการลดหัวคนไม่ใช่เครื่องมือที่เหมาะกับแผนกนี้</span></div>
 </div>
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:2px">
+<div id="deptBtns" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:2px">
  <button class="chip" id="bSug">ใช้ตัวเลขที่แนะนำทุกแผนก</button>
  <button class="chip" id="bAuto">ตัดให้พอถึงเป้าโดยอัตโนมัติ</button>
  <button class="chip" id="bClr">ล้างทั้งหมด</button>
  <button class="chip xp" id="eExp">Export แผนกของสาขานี้</button>
  <button class="chip xp" id="eExpAll">Export ทุกสาขา</button>
+ <button class="chip xp" id="ePdf">บันทึกสาขานี้เป็น PDF</button>
 </div>
 <div id="expMsg" class="expmsg"></div>
 <div class="grid" id="cards"></div>
+<div class="pdfonly pdffoot" id="pdfFoot"></div>
 <div class="note"><b>หมายเหตุการอ่านกราฟ</b> — กราฟและชั้น 2 ใช้มาตรวัดเดียวกันคือจำนวนคน ดังนั้นถ้าเส้นทึบอยู่ซ้ายเส้นประ (คนน้อยกว่าค่ากลาง) การ์ดนั้นจะไม่ถูกตัดสินว่าปัญหาคนเกินเลย · ช่อง "ขั้นต่ำที่ถือว่าเกิน" ด้านบนกำหนดว่าต้องเกินกี่คนจึงนับ ตั้งไว้ที่ 1 คนเพราะคนเป็นจำนวนเต็ม</div>
 </div></section>
 
@@ -1467,8 +1511,29 @@ function calc(){const d=D[cur];let ch=0,sv=0;
  for(const r of d[9]){const x=cut[r[0]]||0;if(!x)continue;ch+=x;sv+=x*cph(r);}
  const c=d[2]-sv,h=d[3]-ch;
  return{sales:d[1],cost0:d[2],cost:c,hc0:d[3],hc:h,cutHC:ch,saved:sv,p0:d[2]/d[1]*100,p:c/d[1]*100};}
+/* ---- ป้ายที่โผล่เฉพาะตอนพิมพ์เป็น PDF ---------------------------------------
+   ชื่อสาขาอยู่ในกล่อง dropdown ซึ่งถูกซ่อนตอนพิมพ์ จึงต้องพิมพ์ซ้ำลงกระดาษ
+   พร้อมที่มาของตัวเลข เพื่อให้เอกสารอ่านเองได้เวลาส่งต่อให้สาขา             */
+function pdfLabels(d,v){
+ const all=isAll(cur);
+ const bits=all?[d[8],'ทุก format']
+   :['รหัสสาขา '+d[8],R[d[6]]||'—',F[d[0]],'ขนาด '+(B[d[7]]||'—')];
+ $('pdfHd').innerHTML=`<div style="display:flex;justify-content:space-between;gap:14px;align-items:baseline;
+   border-bottom:1px solid var(--line);padding-bottom:5px;margin-bottom:8px">
+  <div><div style="font-size:15px;font-weight:600">${all?'รวมทุกสาขาที่กรอง':cur}</div>
+   <div style="font-size:9.5px;color:var(--ink2)">${bits.join(' · ')}</div></div>
+  <div style="font-size:9.5px;color:var(--ink2);text-align:right;white-space:nowrap">
+   ยอดขาย Aug-26 · ค่าจ้าง Sep-26<br>เทียบงวด ${PREVDATE}</div></div>`;
+ const cutN=Object.values(cut).reduce((a,b)=>a+b,0);
+ $('pdfFoot').innerHTML=`ที่มาข้อมูล ${CURDATE} · เป้า % ที่ใช้ในเอกสารนี้ ${pc(tgtFor(d[0])/100)}`
+  + ` · ขั้นต่ำที่ถือว่าเกิน ${minH} คน`
+  + (cutN?` · <b style="color:var(--rdD)">เอกสารนี้รวมการจำลองตัดคน ${nf(cutN)} คน</b>`
+        + ` — ตัวเลขจริงก่อนจำลองคือ ${pc(v.p0)} · ${nf(v.hc0)} คน`:'')
+  + `<br>พิมพ์เมื่อ ${new Date().toLocaleString('th-TH')} · Personnel Cost to Sales — Store Simulator`;
+}
 function store(){const d=D[cur],v=calc(),tp=tgtFor(d[0])/100,ok=v.p<=tp,dl=dlt(cur);
  const need=Math.max(0,(v.p-tp)/100*v.sales);
+ pdfLabels(d,v);
  let trec=0,nOut=0,nSales=0;
  for(const r of d[9]){const z=ver(r);trec+=z.rec;if(z.v===0&&!z.noRec)nOut++;if(z.v===1)nSales++;}
  $('hero').innerHTML=`<div class="hero ${ok?'ok':'bad'}"><div class="hgrid">
@@ -1695,6 +1760,15 @@ $('bAuto').onclick=()=>{cut={};const d=D[cur],tp=tgtFor(d[0]);
  if(calc().p>tp/100)msg('ตัดครบทุกแผนกที่แนะนำแล้วแต่ยังไม่ถึงเป้า — เหลืออีก '+pc(calc().p-tp/100)+' ซึ่งต้องแก้ด้วยยอดขาย ไม่ใช่ด้วยการลดคน',1);};
 $('eExp').onclick=()=>doExport(rowsFor(cur),'sections_'+cur.replace(/[^A-Za-z0-9]+/g,'_')+'.csv');
 $('eExpAll').onclick=()=>doExport(names.flatMap(rowsFor),'sections_all_stores_20260817.csv');
+/* บันทึกเป็น PDF ผ่านหน้าต่างพิมพ์ของเบราว์เซอร์ · เลือกปลายทางเป็น
+   "Save as PDF" · CSS ใน @media print จะตัดเหลือเฉพาะสาขาที่เลือก */
+$('ePdf').onclick=()=>{
+ if(!cur){ msg('เลือกสาขาก่อน แล้วกดบันทึกเป็น PDF อีกครั้ง',true); return; }
+ msg('เปิดหน้าต่างพิมพ์แล้ว — เลือกปลายทางเป็น <b>Save as PDF / บันทึกเป็น PDF</b> '
+   + 'แล้วกด Save · เอกสารจะมีเฉพาะสาขา <b>'+(isAll(cur)?'รวมทุกสาขาที่กรอง':cur)+'</b> '
+   + 'ไม่มีข้อมูลสาขาอื่นและไม่มีตารางจัดอันดับ');
+ window.print();
+};
 
 /* ---- Refresh: คืนค่าเริ่มต้นทุกตัวควบคุมของหน้านี้ แล้วคำนวณใหม่ทั้งหน้า ----
    ข้อมูลฝังอยู่ในไฟล์และหน้าจอ login ตัดข้อมูลตามสิทธิ์ไปแล้ว จึงรีเซ็ตแบบไม่ reload
