@@ -608,15 +608,44 @@ table.etbl tr.res td{background:var(--yeL)}
    ตอนพิมพ์เอาเฉพาะสาขาที่เลือก (หัวข้อ 2 กับ 3) · หัวข้อ 1 ภาพรวมทั้งเครือ
    และตารางจัดอันดับไม่เข้า PDF เพราะเป็นข้อมูลสาขาอื่น                       */
 .pdfonly{display:none}
+.pdfwarn{border:1px solid var(--ye);background:var(--yeL);color:var(--yeD);
+ border-radius:7px;padding:6px 9px;margin-top:7px;font-size:9px;line-height:1.5}
 @media print{
  @page{size:A4 portrait;margin:11mm 10mm 13mm}
+ /* หัวข้อ 1 พิมพ์แนวนอน เพราะตารางจัดอันดับ 13 คอลัมน์ลง A4 ตั้งไม่ได้
+    ส่วนการ์ดแผนกยังเป็นแนวตั้ง เพราะการ์ดสูง ~500px วางสองใบต่อหน้าได้
+    ในแนวตั้ง แต่แนวนอนได้ใบเดียว เปลืองกระดาษเกือบเท่าตัว                    */
+ @page wide{size:A4 landscape;margin:10mm 10mm 12mm}
+ body.pdfall #secOv{page:wide}
  html,body{background:#fff!important}
  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
- /* ซ่อนทุกอย่างที่ไม่ใช่สาขาที่เลือก */
+ /* ซ่อนสิ่งที่ไม่มีความหมายบนกระดาษ: เมนู ตัวกรอง ปุ่มกด และหน้าอื่น */
  .pagenav,#loginGate,#pgPersonnel,#pgO2O,#pgOT,#pgMP,
- #secOv,#secPick .ctlbar,#secPick .cap,#secDept .rmk,
- #simRefresh,#expMsg,#pgSim .note,#deptBtns{display:none!important}
+ #secPick .ctlbar,#secPick .cap,
+ #simRefresh,#pdfAll,#expMsg,#deptBtns,#ovCtl,#rkCtl,#dvCtl{display:none!important}
  .pdfonly{display:block}
+ #pdfWarn{display:none!important}
+ body.pdfall #pdfWarn{display:block!important}
+ /* โหมดปกติ = เฉพาะสาขาที่เลือก · หัวข้อ 1 เป็นข้อมูลสาขาอื่นจึงไม่เข้า PDF */
+ #secOv,#secDept .rmk,#pgSim .note{display:none!important}
+ /* โหมดทั้งหน้า = เอาหัวข้อ 1 กลับมาด้วย (ผู้ใช้กด "PDF ทั้งหน้า")
+    ย่อตัวอักษรและบีบคอลัมน์ให้ตารางกว้าง 13 ช่องกับการ์ดยอดขายลง A4 ได้ */
+ body.pdfall #secOv{display:block!important}
+ /* KPI แถวเดียวสั้น ๆ ห้ามฉีก · ส่วนตารางกับรายการยาว ปล่อยไหลข้ามหน้าได้
+    ถ้าห้ามฉีกทั้งการ์ด จะเหลือที่ว่างท้ายหน้าเกือบครึ่งหน้าต่อการ์ด */
+ body.pdfall .kpis{break-inside:avoid;page-break-inside:avoid}
+ body.pdfall table.rtbl thead{display:table-header-group}
+ body.pdfall table.rtbl tr,body.pdfall .dvrow,body.pdfall .br{break-inside:avoid}
+ body.pdfall .kpi .v{font-size:15px}
+ body.pdfall table.rtbl{font-size:8px}
+ body.pdfall table.rtbl th,body.pdfall table.rtbl td{padding:3px 4px}
+ body.pdfall .rkscroll{overflow:visible}
+ body.pdfall .dvrow{font-size:8.5px;gap:6px;grid-template-columns:32px 132px 1fr 46px 54px 104px}
+ body.pdfall .dvrow.reg{grid-template-columns:170px 1fr 46px 54px 104px}
+ body.pdfall .dvtrk,body.pdfall .dvrow > div{height:auto}
+ body.pdfall .dvsum{padding:7px 10px;gap:12px}
+ body.pdfall .dvsum .v{font-size:13px}
+ body.pdfall .br{grid-template-columns:104px 1fr 78px;font-size:9px}
  /* หัวกระดาษ */
  header{padding:0 0 8px;border-bottom:1.5px solid var(--bl);background:#fff}
  header h1{font-size:15px}
@@ -664,14 +693,16 @@ table.etbl tr.res td{background:var(--yeL)}
 </div>
 <div id="pgSim">
 <header><div class="wrap"><div class="refreshhd"><h1>Personnel Cost to Sales — Store Simulator</h1>
+<button class="refreshbtn" id="pdfAll" title="บันทึกหน้านี้ทั้งหน้าเป็น PDF (ภาพรวมทั้งเครือ ตารางจัดอันดับ ยอดขาย ก.ค. เทียบ ส.ค. และสาขาที่เลือก)">PDF ทั้งหน้า</button>
 <button class="refreshbtn" id="simRefresh" title="คืนค่าตัวกรอง เป้า % ขั้นต่ำที่ถือว่าเกิน และการจำลองลดคน กลับเป็นค่าเริ่มต้น แล้วคำนวณใหม่ทั้งหน้า (ไม่ต้องล็อกอินใหม่)"><span class="rico">&#10227;</span>Refresh</button></div>
-<div class="sub">ภาพรวมทั้งเครือ แล้วเจาะรายสาขา วิเคราะห์ 2 ชั้น (% to sales และจำนวนคนเทียบค่ากลางของ format เดียวกัน) พร้อมจำลองการลดคน · ยอดขาย Aug-26 · ค่าจ้าง Sep-26 · ค่าจ้างคำนวณจากรายชื่อพนักงาน Aug 2026 (ข้อมูล 17 Aug 26) (Active เต็มเดือน + Inactive คิดตามสัดส่วนวันฐาน 30 วัน) · เทียบกับ Jul 2026 · 167 สาขา · 21 แผนก</div></div></header>
+<div class="sub">ภาพรวมทั้งเครือ แล้วเจาะรายสาขา วิเคราะห์ 2 ชั้น (% to sales และจำนวนคนเทียบค่ากลางของ format เดียวกัน) พร้อมจำลองการลดคน · ยอดขาย Aug-26 · ค่าจ้าง Sep-26 · ค่าจ้างคำนวณจากรายชื่อพนักงาน Aug 2026 (ข้อมูล 17 Aug 26) (Active เต็มเดือน + Inactive คิดตามสัดส่วนวันฐาน 30 วัน) · เทียบกับ Jul 2026 · 167 สาขา · 21 แผนก</div>
+<div class="pdfonly pdfwarn" id="pdfWarn">เอกสารนี้เป็น <b>PDF ทั้งหน้า</b> — มีข้อมูลหลายสาขา (ตารางจัดอันดับ และยอดขาย ก.ค. เทียบ ส.ค. รายสาขา) ใช้ภายในเท่านั้น <b>ไม่ควรส่งให้สาขาใดสาขาหนึ่ง</b> · ถ้าจะส่งให้สาขา ให้ใช้ปุ่ม "บันทึกสาขานี้เป็น PDF" ซึ่งจะได้เฉพาะสาขาที่เลือก</div></div></header>
 
 <section class="blk" id="secOv"><div class="wrap">
 <h2><span class="b">1</span>ภาพรวมทั้งเครือ/สาขา</h2>
 <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:4px">
  <p class="cap" style="margin:0">ตัวเลขในกล่องสีเปลี่ยนตามเป้า % ที่ตั้งด้านล่าง</p>
- <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+ <div id="ovCtl" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
   <span class="lbl" style="margin:0;white-space:nowrap">Region</span>
   <select id="ovReg"></select>
   <span class="lbl" style="margin:0;white-space:nowrap">สาขา</span>
@@ -683,7 +714,7 @@ table.etbl tr.res td{background:var(--yeL)}
  <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:9px">
   <div><div style="font-weight:600;font-size:13.5px">อันดับสาขาตาม % to sales</div>
    <div class="cap" style="margin:0" id="rkCap"></div></div>
-  <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+  <div id="rkCtl" style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
    <input type="text" id="rkQ" placeholder="ค้นหาสาขา / รหัส..." style="width:150px">
    <select id="rkReg"></select>
    <select id="rkFmt"></select>
@@ -702,7 +733,7 @@ table.etbl tr.res td{background:var(--yeL)}
  <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end">
   <div><div style="font-weight:600;font-size:13.5px">ยอดขาย ก.ค. เทียบ ส.ค.</div>
    <div class="cap" style="margin:0 0 2px" id="dvCap"></div></div>
-  <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+  <div id="dvCtl" style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
    <div class="chips" id="dvLvl"><button class="chip on" data-v="reg">ราย Region</button><button class="chip" data-v="sto">รายสาขา</button></div>
    <div class="chips" id="dvN"><button class="chip on" data-n="10">โต/ตก 10 อันดับ</button><button class="chip" data-n="25">25</button><button class="chip" data-n="0">ทุกสาขา</button></div>
   </div>
@@ -1903,13 +1934,21 @@ $('eExp').onclick=()=>doExport(rowsFor(cur),'sections_'+cur.replace(/[^A-Za-z0-9
 $('eExpAll').onclick=()=>doExport(names.flatMap(rowsFor),'sections_all_stores_20260817.csv');
 /* บันทึกเป็น PDF ผ่านหน้าต่างพิมพ์ของเบราว์เซอร์ · เลือกปลายทางเป็น
    "Save as PDF" · CSS ใน @media print จะตัดเหลือเฉพาะสาขาที่เลือก */
+/* สองโหมด · คลาส pdfall บน body เป็นตัวบอก CSS ว่าจะเอาหัวข้อ 1 เข้า PDF ด้วยไหม
+   เก็บคลาสคืนหลังพิมพ์เสร็จ (หรือกดยกเลิก) เพื่อไม่ให้ค้างไปรอบถัดไป */
+function toPdf(all){
+ document.body.classList.toggle('pdfall',!!all);
+ window.print();
+}
+addEventListener('afterprint',()=>document.body.classList.remove('pdfall'));
 $('ePdf').onclick=()=>{
  if(!cur){ msg('เลือกสาขาก่อน แล้วกดบันทึกเป็น PDF อีกครั้ง',true); return; }
  msg('เปิดหน้าต่างพิมพ์แล้ว — เลือกปลายทางเป็น <b>Save as PDF / บันทึกเป็น PDF</b> '
    + 'แล้วกด Save · เอกสารจะมีเฉพาะสาขา <b>'+(isAll(cur)?'รวมทุกสาขาที่กรอง':cur)+'</b> '
    + 'ไม่มีข้อมูลสาขาอื่นและไม่มีตารางจัดอันดับ');
- window.print();
+ toPdf(false);
 };
+$('pdfAll').onclick=()=>toPdf(true);
 
 /* ---- Refresh: คืนค่าเริ่มต้นทุกตัวควบคุมของหน้านี้ แล้วคำนวณใหม่ทั้งหน้า ----
    ข้อมูลฝังอยู่ในไฟล์และหน้าจอ login ตัดข้อมูลตามสิทธิ์ไปแล้ว จึงรีเซ็ตแบบไม่ reload
