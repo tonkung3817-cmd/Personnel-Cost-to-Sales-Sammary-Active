@@ -36,7 +36,8 @@ section.blk:first-of-type{border-top:none}
 /* ---- แถบเทียบยอดขายสองงวด · แถบกระจายสองข้างจากเส้นศูนย์ ----
    ทิศทางของแถบ (ซ้าย/ขวา) กับเครื่องหมาย +/- ในตัวเลข บอกขึ้น-ลงอยู่แล้ว
    สีจึงเป็นตัวช่วยซ้ำ ไม่ใช่ช่องทางเดียวที่บอกความหมาย                     */
-.dvrow{display:grid;grid-template-columns:204px 1fr 70px 84px 158px;gap:10px;align-items:center;font-size:12.5px}
+.dvrow{display:grid;grid-template-columns:54px 204px 1fr 70px 84px 158px;gap:10px;align-items:center;font-size:12.5px}
+.dvrow.reg{grid-template-columns:268px 1fr 70px 84px 158px}   /* ราย Region ไม่มีรหัส รวมสองช่องแรกให้แถบเริ่มตรงกัน */
 .dvrow > div:last-child{white-space:nowrap}
 .dvrow.hd{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);font-weight:600}
 .dvnm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1460,8 +1461,9 @@ function salesCmp(list){
  $('dvN').style.display = byReg ? 'none' : '';
  const g=new Map();
  for(const n of list){ const d=D[n]; const k=byReg?R[d[6]]:n;
-  let a=g.get(k); if(!a){a={p:0,c:0,n:0};g.set(k,a);} a.p+=d[10][3];a.c+=d[1];a.n++; }
- const all=[...g].map(([k,a])=>({k,p:a.p,c:a.c,n:a.n,pct:a.p>0?(a.c/a.p-1)*100:0}))
+  let a=g.get(k); if(!a){a={p:0,c:0,n:0,code:byReg?'':String(d[8])};g.set(k,a);}
+  a.p+=d[10][3];a.c+=d[1];a.n++; }
+ const all=[...g].map(([k,a])=>({k,p:a.p,c:a.c,n:a.n,code:a.code,pct:a.p>0?(a.c/a.p-1)*100:0}))
    .sort((x,y)=>y.pct-x.pct);
  const tp=all.reduce((t,r)=>t+r.p,0), tc=all.reduce((t,r)=>t+r.c,0), td=tc-tp;
  const tpct=tp>0?(tc/tp-1)*100:0;
@@ -1492,7 +1494,10 @@ function salesCmp(list){
   ['คิดเป็น', (tpct>0?'+':'')+nf(tpct,2)+'%', tpct>=0?'var(--grD)':'var(--rdD)'],
   [(byReg?'Region ':'สาขา')+'ที่โต / ที่ตก', nUp+' / '+nDn, '']
  ].map(x=>`<div><div class="k">${x[0]}</div><div class="v n"${x[2]?` style="color:${x[2]}"`:''}>${x[1]}</div></div>`).join('');
- $('dvRows').innerHTML=`<div class="dvrow hd"><div>${unit}</div><div>% ที่ยอดขายเปลี่ยน</div>`
+ const RC=byReg?' reg':'';   /* ราย Region ใช้ grid 5 ช่อง · รายสาขา 6 ช่อง (มีรหัส) */
+ $('dvRows').innerHTML=`<div class="dvrow hd${RC}">`
+  + (byReg?`<div>${unit}</div>`:`<div>รหัส</div><div>สาขา</div>`)
+  + `<div>% ที่ยอดขายเปลี่ยน</div>`
   + `<div class="rt">%</div><div class="rt">ลบ.</div><div class="rt">ก.ค. → ส.ค. (ลบ.)</div></div>`
   + rows.map(r=>{
    if(!r){ /* แถวรวมของช่วงกลางที่ไม่ได้โชว์ · อ่านคอลัมน์เดียวกันกับแถวอื่นได้ตรง ๆ
@@ -1503,15 +1508,19 @@ function salesCmp(list){
      +`${(cut[cut.length-1].pct>0?'+':'')+nf(cut[cut.length-1].pct,2)}% ถึง `
      +`${(cut[0].pct>0?'+':'')+nf(cut[0].pct,2)}% · รวมกันแล้ว ${(cpct>0?'+':'')+nf(cpct,2)}%`;
     const g='color:var(--ink3);font-size:11.5px';
-    return `<div class="dvrow" title="${tip}"><div class="dvnm" style="${g}">อีก ${cut.length} สาขา</div>
+    return `<div class="dvrow${RC}" title="${tip}">`
+    + (byReg?'':`<div class="n" style="${g}">—</div>`)
+    + `<div class="dvnm" style="${g}">อีก ${cut.length} สาขา</div>
     <div class="dvtrk" style="background:none"><div class="dvzero"></div></div>
     <div class="rt n" style="${g}">${(cpct>0?'+':'')+nf(cpct,2)}%</div>
     <div class="rt n" style="${g}">${(cd>0?'+':'')+nf(cd,2)}</div>
     <div class="rt n" style="${g}">${mn(cp)} → ${mn(cc)}</div></div>`; }
    const isUp=r.pct>0, dm=(r.c-r.p)/1e6;
-   const tip=`${r.k}${byReg?' · '+r.n+' สาขา':''}: ${mn(r.p)} → ${mn(r.c)} ลบ.`
+   const tip=`${byReg?'':'รหัส '+r.code+' '}${r.k}${byReg?' · '+r.n+' สาขา':''}: ${mn(r.p)} → ${mn(r.c)} ลบ.`
     +` (${(dm>0?'+':'')+nf(dm,2)} ลบ. · ${(isUp?'+':'')+nf(r.pct,2)}%)`;
-   return `<div class="dvrow"><div class="dvnm" title="${tip}">${r.k}</div>
+   return `<div class="dvrow${RC}">`
+   + (byReg?'':`<div class="n" style="color:var(--ink2)" title="${tip}">${r.code}</div>`)
+   + `<div class="dvnm" title="${tip}">${r.k}${byReg?` <span style="color:var(--ink3);font-size:11.5px">${r.n} สาขา</span>`:''}</div>
    <div class="dvtrk" title="${tip}"><div class="dvfill ${isUp?'up':'dn'}" style="width:${Math.abs(r.pct)/mx*50}%"></div><div class="dvzero"></div></div>
    <div class="rt n" style="font-weight:600;color:${isUp?'var(--grD)':'var(--rdD)'}">${(isUp?'+':'')+nf(r.pct,2)}%</div>
    <div class="rt n" style="color:var(--ink2)">${(dm>0?'+':'')+nf(dm,2)}</div>
