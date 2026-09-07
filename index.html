@@ -381,6 +381,17 @@ table.etbl tr.res td{background:var(--yeL)}
 :is(#pgO2O,#pgOT,#pgMP) .chd.nv{background:#1E4A85}
 :is(#pgO2O,#pgOT,#pgMP) .chd.rd{background:#DA3832}
 #pgMP .mpb2g{height:9px;border-radius:0 3px 3px 0;background:#9AA3AE;transition:width .25s}
+/* แถบเลือกช่วงวันที่ · แยกเป็นแถวของตัวเองเพราะเป็นตัวกรองที่คุมทุกการ์ดพร้อมกัน
+   จึงควรมองเห็นชัดว่าตอนนี้ดูช่วงไหนอยู่ ไม่ปนกับตัวกรองมิติอื่น */
+#pgMP .mpdbar{margin-top:-8px;border-top-left-radius:0;border-top-right-radius:0;
+ border-top:0;background:#FBFCFD}
+#pgMP .cfdate{min-width:154px;font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+#pgMP .mpdash{align-self:flex-end;padding-bottom:7px;color:var(--cink3)}
+#pgMP .mpqs{display:flex;gap:5px}
+#pgMP .mpqs button{font:inherit;font-size:11.5px;padding:6px 10px;border-radius:6px;
+ border:1px solid var(--cline);background:#fff;color:var(--cink2);cursor:pointer;white-space:nowrap}
+#pgMP .mpqs button:hover{background:var(--cblL);border-color:#B9CDE8;color:#1E4A85}
+#pgMP .mpqs button.on{background:#306FC7;border-color:#306FC7;color:#fff}
 /* ---- Manpower ---- */
 /* แท่งคู่ในแถวเดียว: บนคือคนเข้า ล่างคือคนออก · เว้น 2px สีพื้นคั่นให้ขอบแท่งอ่านออก */
 #pgMP .hbtrk.mpb2{background:#F1F3F6;padding:0}
@@ -1097,12 +1108,24 @@ table.etbl tr.res td{background:var(--yeL)}
   <select id="mpEth" class="cfsel" style="min-width:142px"></select></div>
  <div><div class="cflabel">Division</div>
   <select id="mpDiv" class="cfsel" style="min-width:176px"></select></div>
- <div><div class="cflabel">ตั้งแต่เดือน</div>
-  <select id="mpM1" class="cfsel" style="min-width:126px"></select></div>
- <div><div class="cflabel">ถึงเดือน</div>
-  <select id="mpM2" class="cfsel" style="min-width:126px"></select></div>
  <button id="mpClr" class="cghost">ล้าง filter</button>
  <div class="ctblcount n" id="mpCount"></div>
+</div>
+
+<div class="cfbar mpdbar">
+ <div><div class="cflabel">จากวันที่</div>
+  <input id="mpDt1" class="cfinp cfdate" type="date"></div>
+ <div class="mpdash">&ndash;</div>
+ <div><div class="cflabel">ถึงวันที่</div>
+  <input id="mpDt2" class="cfinp cfdate" type="date"></div>
+ <div><div class="cflabel">เลือกเป็นเดือน</div>
+  <select id="mpMon" class="cfsel" style="min-width:150px"></select></div>
+ <div><div class="cflabel">ช่วงสำเร็จรูป</div>
+  <div class="mpqs" id="mpQuick">
+   <button data-n="7">7 วัน</button><button data-n="14">14 วัน</button>
+   <button data-n="30">30 วัน</button><button data-n="90">90 วัน</button>
+   <button data-n="0">ทั้งช่วง</button></div></div>
+ <div class="ctblcount n" id="mpDayCount"></div>
 </div>
 
 <div class="ckpis" id="mpKpi"></div>
@@ -3626,7 +3649,9 @@ const mpDate = d => {
  return t.getUTCDate()+' '+MP_MON_TH[t.getUTCMonth()]+' '+String(t.getUTCFullYear()).slice(2);
 };
 
-let mpF = {reg:-1, sto:-1, cat:-1, eth:-1, div:-1, m1:0, m2:MPMON.length-1};
+/* ช่วงเวลาเก็บเป็น "วันที่เท่าไรของช่วงข้อมูล" (0 = วันแรก) ไม่ได้เก็บเป็นเลขเดือน
+   จึงเลือกได้ละเอียดถึงวัน และการ์ดรายเดือนก็ยังตัดเดือนตามช่วงที่เลือกได้ถูก */
+let mpF = {reg:-1, sto:-1, cat:-1, eth:-1, div:-1, d1:0, d2:MPDAYS-1};
 let mpSort = {k:'leave', dir:-1};
 let mpQ = '', mpView = 0;
 
@@ -3639,8 +3664,32 @@ function mpMatch(x){
  if(mpF.div>=0 && x[3]!==mpF.div) return false;
  return true;
 }
-const mpD1 = () => MPMON[mpF.m1].s;
-const mpD2 = () => MPMON[mpF.m2].e;
+const mpD1 = () => mpF.d1;
+const mpD2 = () => mpF.d2;
+/* แปลงเลขวันไปเป็น yyyy-mm-dd สำหรับ input type=date และแปลงกลับ */
+const MP_T0 = (function(){ const [y,m,d]=MPDATA.meta.from.split('-').map(Number);
+ return Date.UTC(y, m-1, d); })();
+const mpISO = d => new Date(MP_T0 + d*86400000).toISOString().slice(0,10);
+const mpOff = iso => {
+ const [y,m,d] = String(iso).split('-').map(Number);
+ if(!y || !m || !d) return null;
+ return Math.round((Date.UTC(y, m-1, d) - MP_T0)/86400000);
+};
+const mpClamp = d => Math.max(0, Math.min(MPDAYS-1, d));
+/* เดือนที่คาบเกี่ยวกับช่วงที่เลือก พร้อมขอบที่ถูกตัดตามช่วง
+   เดือนที่ถูกตัดจะมีป้ายบอกวันที่กำกับ ไม่ให้เข้าใจผิดว่าเป็นยอดเต็มเดือน */
+function mpMonSeg(){
+ const out = [];
+ MPMON.forEach(mm=>{
+  const s = Math.max(mm.s, mpF.d1), e = Math.min(mm.e, mpF.d2);
+  if(s > e) return;
+  const part = (s > mm.s || e < mm.e);
+  out.push({s, e, lab: mm.lab+' '+String(mm.y).slice(2),
+    full: mm.lab+' '+mm.y + (part ? ` (${mpDate(s)} – ${mpDate(e)})` : ''),
+    part, days: e-s+1});
+ });
+ return out;
+}
 
 /* เดินข้อมูลรอบเดียวแล้วเก็บทุกอย่างที่การ์ดต้องใช้
    หัวใจของหน้านี้คือ headcount ย้อนหลัง: นับคน active ณ ต้นช่วงก่อน แล้วบวก
@@ -4001,27 +4050,29 @@ function mpPairBars(el, rows, mx, opt){
 
 /* ---- 3 · รายเดือน ---- */
 function mpRenderMon(a){
- const rows = [];
- for(let m=mpF.m1;m<=mpF.m2;m++){
-  const mm = MPMON[m];
+ const rows = mpMonSeg().map(mm=>{
   let i=0,o=0,mi=0,mo=0;
   for(let d=mm.s;d<=mm.e;d++){ i+=a.hire[d]; o+=a.leave[d]; mi+=a.mmHire[d]; mo+=a.mmLeave[d]; }
-  rows.push({k:mm.lab+' '+String(mm.y).slice(2), i, o, hc:a.hc[mm.e],
-    tip:`<b>${mm.lab} ${mm.y}</b> · ${mm.e-mm.s+1} วัน`
+  return {k:mm.lab + (mm.part?'*':''), i, o, hc:a.hc[mm.e], part:mm.part,
+    tip:`<b>${mm.full}</b> · ${mm.days} วัน`
       + `<br>รับเข้า <span class="tn">${nf(i,0)}</span> · ลาออก <span class="tn">${nf(o,0)}</span>`
       + ` · สุทธิ <span class="tn">${i-o>0?'+':''}${nf(i-o,0)}</span>`
       + `<br>พม่า เข้า <span class="tn">${nf(mi,0)}</span> ออก <span class="tn">${nf(mo,0)}</span>`
-      + `<br>Active สิ้นเดือน <span class="tn">${nf(a.hc[mm.e],0)}</span>`});
- }
+      + `<br>Active วันสุดท้ายของช่วงนี้ <span class="tn">${nf(a.hc[mm.e],0)}</span>`
+      + (mm.part ? '<br>เดือนนี้ถูกตัดตามช่วงวันที่ที่เลือก ไม่ใช่ยอดเต็มเดือน' : '')};
+ });
  const mx = Math.max(1, ...rows.map(r=>Math.max(r.i,r.o)));
  mpPairBars(document.getElementById('mpMonBar'), rows, mx);
  const worst = rows.reduce((x,y)=>(y.i-y.o)<(x.i-x.o)?y:x, rows[0]);
  const best = rows.reduce((x,y)=>(y.i-y.o)>(x.i-x.o)?y:x, rows[0]);
+ const part = rows.filter(r=>r.part).length;
  document.getElementById('mpMonNote').innerHTML = rows.length ?
   `แถบน้ำเงินคือรับเข้า แถบแดงคือลาออก ใช้สเกลเดียวกันทุกเดือน · เดือนที่เสียคนมากสุดคือ`
   + ` <b>${worst.k}</b> (${worst.i-worst.o>0?'+':''}${nf(worst.i-worst.o,0)})`
   + ` เดือนที่ได้คนมากสุดคือ <b>${best.k}</b> (${best.i-best.o>0?'+':''}${nf(best.i-best.o,0)})`
-  + ` · เลขขวาสุดคือ เข้า / ออก และสุทธิ` : '';
+  + ` · เลขขวาสุดคือ เข้า / ออก และสุทธิ`
+  + (part ? ` · เดือนที่มีเครื่องหมาย * ถูกตัดตามช่วงวันที่ที่เลือก จึงไม่ใช่ยอดเต็มเดือน` : '')
+  : '';
 }
 
 /* ---- 4 · พนักงานพม่า ---- */
@@ -4040,16 +4091,14 @@ function mpRenderMm(a){
      (a.mmH-a.mmL>0?'+':'')+nf(a.mmH-a.mmL,0),
      a.mmH>0 ? `รับเข้า ${nf(a.mmH,0)} ลาออก ${nf(a.mmL,0)} คน` : 'ไม่มีการรับเข้าในช่วงนี้');
 
- const rows = [];
- for(let m=mpF.m1;m<=mpF.m2;m++){
-  const mm = MPMON[m];
+ const rows = mpMonSeg().map(mm=>{
   let i=0,o=0;
   for(let d=mm.s;d<=mm.e;d++){ i+=a.mmHire[d]; o+=a.mmLeave[d]; }
-  rows.push({k:mm.lab+' '+String(mm.y).slice(2), i, o,
-    tip:`<b>${mm.lab} ${mm.y}</b> · พนักงานพม่า`
+  return {k:mm.lab + (mm.part?'*':''), i, o,
+    tip:`<b>${mm.full}</b> · พนักงานพม่า`
       + `<br>รับเข้า <span class="tn">${nf(i,0)}</span> · ลาออก <span class="tn">${nf(o,0)}</span>`
-      + ` · สุทธิ <span class="tn">${i-o>0?'+':''}${nf(i-o,0)}</span>`});
- }
+      + ` · สุทธิ <span class="tn">${i-o>0?'+':''}${nf(i-o,0)}</span>`};
+ });
  const mx = Math.max(1, ...rows.map(r=>Math.max(r.i,r.o)));
  mpPairBars(document.getElementById('mpMmMon'), rows, mx);
 
@@ -4306,11 +4355,61 @@ function initMPUI(){
   document.getElementById('mpSto').value = mpF.sto;
  };
  fillSto();
- const monOpts = MPMON.map((mm,i)=>`<option value="${i}">${mm.lab} ${mm.y}</option>`).join('');
- document.getElementById('mpM1').innerHTML = monOpts;
- document.getElementById('mpM2').innerHTML = monOpts;
- document.getElementById('mpM1').value = mpF.m1;
- document.getElementById('mpM2').value = mpF.m2;
+ /* ช่วงวันที่ · input type=date ตรึง min/max ไว้ที่ขอบของข้อมูล จะเลือกเลยออกไปไม่ได้
+    แต่ยังกันไว้อีกชั้นในโค้ดด้วย เพราะบางเบราว์เซอร์ยอมให้พิมพ์ตัวเลขเลยขอบเข้ามา */
+ const dt1 = document.getElementById('mpDt1'), dt2 = document.getElementById('mpDt2');
+ const lo = mpISO(0), hi = mpISO(MPDAYS-1);
+ [dt1,dt2].forEach(el=>{ el.min = lo; el.max = hi; });
+ document.getElementById('mpMon').innerHTML =
+  '<option value="-1">กำหนดเอง</option>'
+  + MPMON.map((mm,i)=>`<option value="${i}">${mm.lab} ${mm.y}</option>`).join('')
+  + '<option value="-2">ทุกเดือน</option>';
+
+ /* ตัวคุมช่วงมี 3 ทาง (ช่องวันที่ · เลือกเดือน · ปุ่มสำเร็จรูป) จึงต้องมีจุดเดียว
+    ที่คอยตั้งค่าและซิงก์หน้าตาของทั้งสามให้ตรงกันเสมอ */
+ const syncRange = () => {
+  dt1.value = mpISO(mpF.d1); dt2.value = mpISO(mpF.d2);
+  const mi = MPMON.findIndex(mm=>mm.s===mpF.d1 && mm.e===mpF.d2);
+  document.getElementById('mpMon').value =
+   (mpF.d1===0 && mpF.d2===MPDAYS-1) ? -2 : (mi>=0 ? mi : -1);
+  document.querySelectorAll('#mpQuick button').forEach(b=>{
+   const n = +b.dataset.n;
+   const on = n===0 ? (mpF.d1===0 && mpF.d2===MPDAYS-1)
+     : (mpF.d2===MPDAYS-1 && mpF.d1===mpClamp(MPDAYS-n));
+   b.classList.toggle('on', on);
+  });
+  document.getElementById('mpDayCount').textContent =
+   nf(mpF.d2-mpF.d1+1,0) + ' วัน · ' + mpDate(mpF.d1) + ' – ' + mpDate(mpF.d2);
+ };
+ const setRange = (d1, d2) => {
+  mpF.d1 = mpClamp(Math.min(d1,d2)); mpF.d2 = mpClamp(Math.max(d1,d2));
+  syncRange(); mpRenderAll();
+ };
+ /* แก้ช่องเดียวแล้วสวนกัน ให้ "ดันอีกฝั่งตามไป" ไม่ใช่สลับสองช่อง
+    เพราะคนเลือกวันเริ่มเป็นเดือนหลัง แล้วได้ช่วงย้อนกลับไปเดือนก่อนจะงงมากกว่า */
+ dt1.onchange = () => {
+  const v = mpOff(dt1.value);
+  if(v == null){ syncRange(); return; }
+  setRange(mpClamp(v), Math.max(mpClamp(v), mpF.d2));
+ };
+ dt2.onchange = () => {
+  const v = mpOff(dt2.value);
+  if(v == null){ syncRange(); return; }
+  setRange(Math.min(mpClamp(v), mpF.d1), mpClamp(v));
+ };
+ document.getElementById('mpMon').onchange = e => {
+  const v = +e.target.value;
+  if(v === -2) setRange(0, MPDAYS-1);
+  else if(v >= 0) setRange(MPMON[v].s, MPMON[v].e);
+  else syncRange();
+ };
+ document.querySelectorAll('#mpQuick button').forEach(b=>{
+  b.onclick = () => {
+   const n = +b.dataset.n;
+   if(n === 0) setRange(0, MPDAYS-1);
+   else setRange(MPDAYS-n, MPDAYS-1);
+  };
+ });
 
  document.getElementById('mpReg').onchange = e => {
   mpF.reg = +e.target.value; mpF.sto = -1; fillSto(); mpRenderAll(); };
@@ -4318,24 +4417,13 @@ function initMPUI(){
  document.getElementById('mpCat').onchange = e => { mpF.cat = +e.target.value; mpRenderAll(); };
  document.getElementById('mpEth').onchange = e => { mpF.eth = +e.target.value; mpRenderAll(); };
  document.getElementById('mpDiv').onchange = e => { mpF.div = +e.target.value; mpRenderAll(); };
- /* เดือนเริ่มต้องไม่เลยเดือนสิ้นสุด ถ้าเลือกสวนกันให้ดันอีกช่องตามไป */
- document.getElementById('mpM1').onchange = e => {
-  mpF.m1 = +e.target.value;
-  if(mpF.m2 < mpF.m1){ mpF.m2 = mpF.m1; document.getElementById('mpM2').value = mpF.m2; }
-  mpRenderAll(); };
- document.getElementById('mpM2').onchange = e => {
-  mpF.m2 = +e.target.value;
-  if(mpF.m1 > mpF.m2){ mpF.m1 = mpF.m2; document.getElementById('mpM1').value = mpF.m1; }
-  mpRenderAll(); };
  const reset = () => {
-  mpF = {reg:-1, sto:-1, cat:-1, eth:-1, div:-1, m1:0, m2:MPMON.length-1};
+  mpF = {reg:-1, sto:-1, cat:-1, eth:-1, div:-1, d1:0, d2:MPDAYS-1};
   mpSort = {k:'leave', dir:-1}; mpQ = ''; mpView = 0;
   ['mpReg','mpCat','mpEth','mpDiv'].forEach(id=>document.getElementById(id).value = -1);
-  document.getElementById('mpM1').value = mpF.m1;
-  document.getElementById('mpM2').value = mpF.m2;
   document.getElementById('mpQ').value = '';
   document.getElementById('mpTop').value = '0';
-  fillSto(); mpRenderAll();
+  fillSto(); syncRange(); mpRenderAll();
  };
  document.getElementById('mpClr').onclick = reset;
  document.getElementById('mpRefresh').onclick = () => flashRefresh(
@@ -4362,12 +4450,14 @@ function initMPUI(){
  };
  document.getElementById('mpDlMon').onclick = () => {
   const a = mpAgg();
-  const out = [['เดือน','จำนวนวัน','รับเข้า','ลาออก','สุทธิ','พม่ารับเข้า','พม่าลาออก','Active สิ้นเดือน']];
-  for(let i=mpF.m1;i<=mpF.m2;i++){
-   const mm = MPMON[i]; let h=0,l=0,mh=0,ml=0;
+  const out = [['เดือน','ตั้งแต่','ถึง','จำนวนวัน','รับเข้า','ลาออก','สุทธิ',
+    'พม่ารับเข้า','พม่าลาออก','Active วันสุดท้าย','เต็มเดือนหรือไม่']];
+  mpMonSeg().forEach(mm=>{
+   let h=0,l=0,mh=0,ml=0;
    for(let d=mm.s;d<=mm.e;d++){ h+=a.hire[d]; l+=a.leave[d]; mh+=a.mmHire[d]; ml+=a.mmLeave[d]; }
-   out.push([mm.lab+' '+mm.y, mm.e-mm.s+1, h, l, h-l, mh, ml, a.hc[mm.e]]);
-  }
+   out.push([mm.lab, mpISO(mm.s), mpISO(mm.e), mm.days, h, l, h-l, mh, ml, a.hc[mm.e],
+     mm.part?'ถูกตัดตามช่วง':'เต็มเดือน']);
+  });
   download('manpower_monthly.csv', out);
  };
  document.getElementById('mpDlMm').onclick = () => {
@@ -4419,6 +4509,7 @@ function initMPUI(){
         s.mmAct, s.mmHire, s.mmLeave, s.loAct, s.loHire, s.loLeave];
      })));
  };
+ syncRange();
  mpRenderAll();
 }
 
