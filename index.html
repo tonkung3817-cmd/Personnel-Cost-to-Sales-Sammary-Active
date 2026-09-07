@@ -478,6 +478,27 @@ table.etbl tr.res td{background:var(--yeL)}
  vertical-align:baseline}
 #o2oTip .tsw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
 #pgO2O .hfsvg .stglab{fill:var(--cink)}
+/* ข้อความแจ้งรายสาขา · เลื่อนในกรอบเพื่อไม่ให้ยาวดันหน้าเว็บเมื่อเลือกทุกสาขา
+   แถบสีซ้ายบอกระดับ ควบคู่กับคำว่า ด่วน/เฝ้าระวัง/ปกติ ไม่ได้พึ่งสีอย่างเดียว */
+#pgO2O .msgl{display:flex;flex-direction:column;gap:9px;max-height:560px;overflow-y:auto;
+ padding-right:4px}
+#pgO2O .msgi{border:1px solid var(--cline);border-left-width:4px;border-radius:8px;
+ padding:10px 13px;background:#fff;font-size:12.5px;line-height:1.6}
+#pgO2O .msgi.crit{border-left-color:var(--ccr);background:#FEFAFA}
+#pgO2O .msgi.warn{border-left-color:var(--cwn);background:#FFFDF8}
+#pgO2O .msgi.good{border-left-color:var(--cgd)}
+#pgO2O .msgi .mh{font-weight:600;color:var(--cink);display:flex;flex-wrap:wrap;gap:0 9px;
+ align-items:baseline}
+#pgO2O .msgi .mlv{font-size:10.5px;font-weight:700;letter-spacing:.05em;padding:2px 7px;
+ border-radius:999px;text-transform:uppercase}
+#pgO2O .msgi.crit .mlv{background:var(--ccrL);color:#A5231E}
+#pgO2O .msgi.warn .mlv{background:var(--cwnL);color:#8A6500}
+#pgO2O .msgi.good .mlv{background:var(--cgdL);color:#146F6B}
+#pgO2O .msgi .mb{color:var(--cink2);margin-top:3px}
+#pgO2O .msgi .ma{margin-top:6px;padding-top:6px;border-top:1px dashed var(--cline);color:var(--cink)}
+#pgO2O .msgi .ma b{color:#1E4A85}
+#pgO2O .msgi .mn{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;
+ font-weight:600;color:var(--cink)}
 #pgO2O .hfsvg .hz{cursor:crosshair}
 
 /* tooltip ร่วมทุกกราฟ */
@@ -914,6 +935,29 @@ table.etbl tr.res td{background:var(--yeL)}
   <div class="cbody"><div class="hb" id="hfStoBar"></div></div>
   <div class="cnote" id="hfStoNote"></div>
  </div>
+</div>
+
+<div class="ckpis" id="hfMsgKpi"></div>
+
+<div class="ccard">
+ <div class="chd nv"><span>ข้อความแจ้งรายสาขา &mdash; สำหรับส่งต่อกะเข้างาน</span>
+  <button class="ciconbtn" id="hfDlMsg" title="Export CSV ข้อความรายสาขา">&#8681;</button></div>
+ <div class="ctblfilter">
+  <div><div class="cflabel">ระดับ</div><select id="hfMsgLv" class="cfsel" style="min-width:214px">
+   <option value="cw">ต้องเข้าดู (ด่วน + เฝ้าระวัง)</option>
+   <option value="crit">ด่วนเท่านั้น</option>
+   <option value="warn">เฝ้าระวังเท่านั้น</option>
+   <option value="all">ทุกสาขา</option></select></div>
+  <div><div class="cflabel">เรียงตาม</div><select id="hfMsgSort" class="cfsel" style="min-width:206px">
+   <option value="w">ค้าง picking มากสุด</option>
+   <option value="wp">%ค้าง picking สูงสุด</option>
+   <option value="st">ของกองรอขึ้นรถมากสุด</option>
+   <option value="sn">รหัสสาขา</option></select></div>
+  <button id="hfMsgCopy" class="cghost">คัดลอกข้อความทั้งหมด</button>
+  <div class="ctblcount n" id="hfMsgCount"></div>
+ </div>
+ <div class="cbody"><div class="msgl" id="hfMsgList"></div></div>
+ <div class="cnote" id="hfMsgNote"></div>
 </div>
 
 </div>
@@ -2976,6 +3020,165 @@ function hfRenderStores(list){
   + ` · แดงเข้ม = ค้างมากที่สุด ไล่อ่อนลงตามลำดับ`;
 }
 
+/* ==== ข้อความแจ้งรายสาขา =====================================================
+   แปลงตัวเลขสี่ด่านของแต่ละสาขาเป็นข้อความที่กะเข้างานอ่านแล้วรู้ว่าต้องทำอะไร
+   ระดับความเร่งด่วนวัดจากงานค้าง picking เพราะเป็นด่านที่สาขาคุมเองและเป็นด่าน
+   ที่บล็อกทุกด่านถัดไป · ใช้เกณฑ์จำนวนจริงคู่กับสัดส่วน สาขาเล็กที่ค้าง 40%
+   จึงไม่ถูกจัดด่วนกว่าสาขาใหญ่ที่ค้างหลายร้อยใบ และเทียบกับค่าเฉลี่ยเครือ
+   ในผลกรองนั้นด้วย เกณฑ์จึงขยับตามเวลาของวันเอง ไม่ต้องมาปรับมือ */
+let hfMsgF = {lv:'cw', sort:'w'};
+const HFMSG_LV = {crit:'ด่วน', warn:'เฝ้าระวัง', good:'ปกติ'};
+
+function hfMsgOne(o, chainWp, groupLast){
+ const n = o.placed.length - 1;
+ const P = o.placed[n], S = o.shipped[n], D = o.deliv[n];
+ const O = Math.max(o.outdel[n], D);
+ const wait = P - S, staged = S - O, moving = O - D;
+ const wp = P > 0 ? wait/P : 0;
+ /* ชั่วโมงสุดท้ายที่ตัวเลขของสาขานี้ยังขยับ ใช้จับสาขาที่งานหยุดนิ่ง */
+ let lm = 0;
+ for(let i=1;i<=n;i++)
+  if(o.placed[i]!==o.placed[i-1] || o.shipped[i]!==o.shipped[i-1]
+   || o.outdel[i]!==o.outdel[i-1] || o.deliv[i]!==o.deliv[i-1]) lm = i;
+ const stall = groupLast - lm;
+ const carry = o.placed[0] - o.shipped[0];       /* งานค้างยกมาก่อนเที่ยงคืน */
+ const lv = (wait>=300 || (wp>=.40 && wait>=100)) ? 'crit'
+   : (wait>=120 || (wp>=chainWp && wait>=50)) ? 'warn' : 'good';
+ /* ด่านที่มีของกองมากสุด บอกว่าปัญหาอยู่ที่ picking หรือที่รอบรถ */
+ const bins = [{k:'wait',v:wait},{k:'staged',v:staged},{k:'moving',v:moving}];
+ const top = bins.reduce((a,b)=>b.v>a.v?b:a);
+ /* ข้อเสนอเรียงตามความเร่งด่วน หยุดนิ่งมาก่อน เพราะถ้าไม่มีคนทำ อย่างอื่นไม่ขยับ
+    สาขาที่ถูกยกธงต้องนำด้วยเรื่อง picking ให้ตรงกับเหตุที่ถูกยกธง แล้วค่อยต่อ
+    ด้วยด่านที่กองมากสุด ไม่งั้นสาขาที่ค้าง picking สูงสุดของเครือจะได้ข้อความว่า
+    "งานส่วนใหญ่อยู่บนรถแล้ว" ซึ่งอ่านแล้วสวนทางกับป้ายด่วนที่ติดอยู่ */
+ const carryNote = carry>=wait*.5
+   ? ` โดยเคลียร์งานยกมาจากเมื่อวาน <b>${nf(carry,0)}</b> ใบให้จบก่อนรับงานใหม่` : '';
+ let act;
+ if(stall>=2 && P>0)
+  act = `ตัวเลขหยุดขยับตั้งแต่ <b>${hfLab(lm)}</b> ช้ากว่าภาพรวม ${stall} ชั่วโมง`
+      + ` — เช็คก่อนว่ามีคนเข้างานและระบบยิงข้อมูลปกติ ยังไม่ต้องดูตัวเลขด่านอื่น`;
+ else if(S===0 && P>0)
+  act = `ยังไม่ได้ pick เลยแม้แต่ใบเดียวจาก <b>${nf(P,0)}</b> ออเดอร์`
+      + ` — เปิดงาน picking ทันทีและแจ้งหัวหน้ากะ`;
+ else if(lv!=='good'){
+  act = `ค้าง picking <b>${nf(wait,0)}</b> ออเดอร์ (${cPct(wp,0)} ของที่รับเข้า)`
+      + ` — เพิ่มคนหยิบของเป็นอันดับแรก${carryNote}`;
+  if(top.k==='staged')
+   act += ` · ของที่ pick เสร็จก็กองรอขึ้นรถอีก <b>${nf(staged,0)}</b> ใบ ให้ประสานรอบรถขนานกันไป`;
+  else if(top.k==='moving')
+   act += ` · อีก <b>${nf(moving,0)}</b> ใบอยู่บนรถแล้ว ให้ตามรอบส่งควบคู่กัน`;
+ }
+ else if(top.k==='staged')
+  act = `picking ตามทัน ของหยิบเสร็จรอขึ้นรถ <b>${nf(staged,0)}</b> ออเดอร์`
+      + ` — ประสานรอบรถเข้ามารับ ยังไม่ต้องเพิ่มคนหยิบของ`;
+ else if(top.k==='wait')
+  act = `ค้าง picking <b>${nf(wait,0)}</b> ออเดอร์ ยังอยู่ในเกณฑ์ปกติ`
+      + ` — เดินงานตามปกติ ไล่จากออเดอร์ที่รับเข้าเร็วสุด${carryNote}`;
+ else
+  act = `งานส่วนใหญ่ออกจากสาขาแล้ว <b>${nf(moving,0)}</b> ออเดอร์อยู่บนรถ`
+      + ` — ติดตามรอบส่งและยืนยันเวลาถึงกับลูกค้า`;
+ if(D===0 && P>0) act += ` · ยังไม่มีออเดอร์ถึงมือลูกค้าเลย ให้ยืนยันว่ารถออกจริงหรือยัง`;
+ return {sn:o.sn, name:o.name, regName:o.regName, P, S, O, D,
+   wait, staged, moving, wp, lm, stall, carry, lv, top:top.k, act};
+}
+
+function hfMsgList(list, a){
+ const chainWp = a.p[a.lastAll]>0 ? a.rem[a.lastAll]/a.p[a.lastAll] : 0;
+ return list.map(o=>hfMsgOne(o, chainWp, a.lastAll));
+}
+
+function hfRenderMsg(list, a){
+ const all = hfMsgList(list, a);
+ const cnt = {crit:0, warn:0, good:0};
+ all.forEach(m=>cnt[m.lv]++);
+ const stalled = all.filter(m=>m.stall>=2 && m.P>0);
+ const dispatch = all.filter(m=>m.staged>m.wait);
+ const critW = all.filter(m=>m.lv==='crit').reduce((s,m)=>s+m.wait,0);
+ const k = (cls,lab,val,det) => '<div class="ckpi '+cls+'"><div class="k">'+lab+'</div>'
+   + '<div class="v n">'+val+'</div><div class="d">'+det+'</div></div>';
+ document.getElementById('hfMsgKpi').innerHTML =
+   k('crit','สาขาต้องเข้าดูด่วน', nf(cnt.crit,0),
+     `จาก ${all.length} สาขา · ค้าง picking รวม ${nf(critW,0)} ออเดอร์`)
+ + k('warn','สาขาเฝ้าระวัง', nf(cnt.warn,0),
+     `อีก ${nf(cnt.good,0)} สาขาอยู่ในเกณฑ์ปกติ`)
+ + k(stalled.length?'crit':'good','สาขาที่งานหยุดนิ่ง', nf(stalled.length,0),
+     stalled.length ? 'ตัวเลขไม่ขยับ ≥ 2 ชั่วโมง · '+stalled.slice(0,3).map(m=>m.sn+' '+m.name).join(', ')
+       : 'ทุกสาขายังส่งข้อมูลตามภาพรวม')
+ + k(dispatch.length>all.length/2?'warn':'good','สาขาที่ติดที่รอบรถ', nf(dispatch.length,0),
+     `ของกองรอขึ้นรถมากกว่าค้าง picking · ${cPct(all.length?dispatch.length/all.length:0,0)} ของสาขาที่กรอง`);
+
+ const lv = hfMsgF.lv;
+ let rows = all.filter(m=>lv==='all' ? true : lv==='cw' ? m.lv!=='good' : m.lv===lv);
+ const key = {w:'wait', wp:'wp', st:'staged', sn:'sn'}[hfMsgF.sort];
+ rows.sort((x,y)=> key==='sn' ? x.sn-y.sn : y[key]-x[key]);
+ document.getElementById('hfMsgCount').textContent = rows.length + ' ข้อความ';
+
+ const el = document.getElementById('hfMsgList');
+ if(!rows.length){
+  el.innerHTML = '<div class="cdim" style="padding:22px;text-align:center">'
+   + 'ไม่มีสาขาในระดับที่เลือก ตามเงื่อนไขที่กรองอยู่</div>';
+ } else {
+  el.innerHTML = rows.map(m=>
+   `<div class="msgi ${m.lv}">
+    <div class="mh"><span class="mlv">${HFMSG_LV[m.lv]}</span>
+     <span>${padCode(m.sn)} ${m.name}</span>
+     <span class="cdim" style="font-weight:400">${m.regName}</span>
+     <span style="margin-left:auto">ค้าง picking <span class="mn">${nf(m.wait,0)}</span>`
+     + ` (${cPct(m.wp,0)} ของ ${nf(m.P,0)})</span></div>
+    <div class="mb">pick แล้วรอขึ้นรถ <span class="mn">${nf(m.staged,0)}</span>`
+     + ` · กำลังจัดส่ง <span class="mn">${nf(m.moving,0)}</span>`
+     + ` · ถึงมือลูกค้าแล้ว <span class="mn">${nf(m.D,0)}</span> (${cPct(m.P?m.D/m.P:0,0)})`
+     + ` · ยกมาจากเมื่อวาน <span class="mn">${nf(m.carry,0)}</span>`
+     + ` · ข้อมูลขยับล่าสุด ${hfLab(m.lm)}</div>
+    <div class="ma">แนวทาง: ${m.act}</div></div>`).join('');
+ }
+ document.getElementById('hfMsgNote').innerHTML =
+  `เกณฑ์: <b>ด่วน</b> = ค้าง picking ≥ 300 ออเดอร์ หรือ ≥ 40% ของที่รับเข้าและ ≥ 100 ออเดอร์`
+  + ` · <b>เฝ้าระวัง</b> = ≥ 120 ออเดอร์ หรือสูงกว่าค่าเฉลี่ยของกลุ่มที่กรอง`
+  + ` (${cPct(a.p[a.lastAll]>0?a.rem[a.lastAll]/a.p[a.lastAll]:0)}) และ ≥ 50 ออเดอร์`
+  + ` · ข้อความอ้างข้อมูล ณ ${HFDATA.meta.date} เวลา ${HFDATA.meta.time}`
+  + ` · ปุ่มคัดลอกจะได้ข้อความล้วนไปวางในไลน์หรืออีเมลได้เลย ปุ่ม ⇩ ได้เป็น CSV`;
+}
+
+/* ข้อความล้วนสำหรับคัดลอก · เรียงและกรองตามที่เห็นบนหน้า */
+function hfMsgText(){
+ const list = hfList(), a = hfAgg(list);
+ const all = hfMsgList(list, a);
+ const lv = hfMsgF.lv;
+ let rows = all.filter(m=>lv==='all' ? true : lv==='cw' ? m.lv!=='good' : m.lv===lv);
+ const key = {w:'wait', wp:'wp', st:'staged', sn:'sn'}[hfMsgF.sort];
+ rows.sort((x,y)=> key==='sn' ? x.sn-y.sn : y[key]-x[key]);
+ const strip = s => s.replace(/<[^>]+>/g,'');
+ return [`สรุปงาน O2O รายสาขา · ข้อมูล ${HFDATA.meta.date} เวลา ${HFDATA.meta.time}`
+   + ` · ${rows.length} สาขา จากทั้งหมด ${all.length} สาขาในผลกรอง`]
+  .concat(rows.map(m=>
+   `[${HFMSG_LV[m.lv]}] ${padCode(m.sn)} ${m.name} · ${m.regName}\n`
+   + `  ค้าง picking ${nf(m.wait,0)} (${cPct(m.wp,0)} ของ ${nf(m.P,0)})`
+   + ` · รอขึ้นรถ ${nf(m.staged,0)} · กำลังจัดส่ง ${nf(m.moving,0)}`
+   + ` · ถึงมือลูกค้า ${nf(m.D,0)} · ยกมาจากเมื่อวาน ${nf(m.carry,0)}`
+   + ` · ข้อมูลขยับล่าสุด ${hfLab(m.lm)}\n`
+   + `  แนวทาง: ${strip(m.act)}`)).join('\n\n');
+}
+
+/* คัดลอกลงคลิปบอร์ด · clipboard API ใช้ไม่ได้เมื่อเปิดไฟล์จากเครื่องตรงๆ
+   จึงมี textarea + execCommand เป็นทางถอย ให้ปุ่มทำงานได้ทั้งสองแบบ */
+function hfCopy(text, btn){
+ const done = ok => {
+  const old = btn.textContent;
+  btn.textContent = ok ? 'คัดลอกแล้ว' : 'คัดลอกไม่ได้ ให้ใช้ปุ่ม ⇩';
+  btn.disabled = true;
+  setTimeout(()=>{ btn.textContent = old; btn.disabled = false; }, 1900);
+ };
+ if(navigator.clipboard && window.isSecureContext)
+  return navigator.clipboard.writeText(text).then(()=>done(true), ()=>done(false));
+ const ta = document.createElement('textarea');
+ ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+ document.body.appendChild(ta); ta.select();
+ let ok = false;
+ try { ok = document.execCommand('copy'); } catch(e) { ok = false; }
+ document.body.removeChild(ta); done(ok);
+}
+
 function hfRenderAll(){
  const list = hfList(), a = hfAgg(list);
  document.getElementById('hfCount').textContent = list.length + ' สาขา';
@@ -2993,11 +3196,16 @@ function hfRenderAll(){
   document.getElementById('hfRem').innerHTML = '';
   document.getElementById('hfRemX').innerHTML = '';
   document.getElementById('hfRemNote').textContent = '';
+  document.getElementById('hfMsgKpi').innerHTML = '';
+  document.getElementById('hfMsgList').innerHTML =
+   '<div class="cdim" style="padding:22px;text-align:center">ไม่มีสาขาตามเงื่อนไขที่กรอง</div>';
+  document.getElementById('hfMsgCount').textContent = '0 ข้อความ';
+  document.getElementById('hfMsgNote').textContent = '';
   hfRenderStores(list);
   return;
  }
  hfRenderKpi(a); hfRenderFlow(a); hfRenderStgBar(a); hfRenderStages(a);
- hfRenderRem(a); hfRenderStores(list);
+ hfRenderRem(a); hfRenderStores(list); hfRenderMsg(list, a);
 }
 
 function initHFUI(){
@@ -3029,6 +3237,9 @@ function initHFUI(){
  document.getElementById('hfRefresh').onclick = () => flashRefresh(
   document.getElementById('hfRefresh'), () => {
    hfF = {reg:-1, sto:-1};
+   hfMsgF = {lv:'cw', sort:'w'};
+   document.getElementById('hfMsgLv').value = 'cw';
+   document.getElementById('hfMsgSort').value = 'w';
    document.getElementById('hfReg').value = -1; fillSto(); hfRenderAll();
   });
 
@@ -3038,6 +3249,22 @@ function initHFUI(){
    'ค้าง picking','รับเข้าในชั่วโมงนี้','ส่งออกในชั่วโมงนี้']].concat(
    HFH.map((h,i)=>[hfLab(i), a.p[i], a.s[i], a.rem[i],
      i>0?a.p[i]-a.p[i-1]:'', i>0?a.s[i]-a.s[i-1]:''])));
+ };
+ document.getElementById('hfMsgLv').onchange = e => {
+  hfMsgF.lv = e.target.value; hfRenderAll(); };
+ document.getElementById('hfMsgSort').onchange = e => {
+  hfMsgF.sort = e.target.value; hfRenderAll(); };
+ document.getElementById('hfMsgCopy').onclick = e => hfCopy(hfMsgText(), e.target);
+ document.getElementById('hfDlMsg').onclick = () => {
+  const list = hfList(), a = hfAgg(list);
+  const strip = s => s.replace(/<[^>]+>/g,'');
+  download('o2o_store_messages.csv', [['ระดับ','ST No.','สาขา','Region','รับเข้า',
+   'ค้าง picking','%ค้าง picking','รอขึ้นรถ','กำลังจัดส่ง','ถึงมือลูกค้า',
+   'ยกมาจากเมื่อวาน','ข้อมูลขยับล่าสุด','ด่านที่กองมากสุด','แนวทาง']].concat(
+   hfMsgList(list, a).sort((x,y)=>y.wait-x.wait).map(m=>[HFMSG_LV[m.lv], m.sn, m.name,
+    m.regName, m.P, m.wait, (m.wp*100).toFixed(1), m.staged, m.moving, m.D, m.carry,
+    hfLab(m.lm), {wait:'ค้าง picking',staged:'รอขึ้นรถ',moving:'กำลังจัดส่ง'}[m.top],
+    strip(m.act)])));
  };
  document.getElementById('hfDlStg').onclick = () => {
   const a = hfAgg(hfList());
