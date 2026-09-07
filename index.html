@@ -467,6 +467,11 @@ table.etbl tr.res td{background:var(--yeL)}
 /* ป้ายกำกับปลายเส้นของกราฟการไหลรายชั่วโมง · ใช้แทน legend ให้อ่านได้ทันที */
 #pgO2O .hfsvg{height:auto}
 #pgO2O .hfsvg .dlab{font-family:"IBM Plex Sans Thai",sans-serif;font-size:12px;font-weight:600}
+/* ตัวเลขกำกับจุดบนกราฟ · ขอบขาวรอบตัวอักษรกันตัวเลขจมไปกับแถบสีและเส้นตาราง
+   สีเข้มกว่าสีเส้นหนึ่งขั้น เพราะตัวหนังสือ 10px ต้องผ่าน 4.5:1 ทั้งบนพื้นขาว
+   และบนแถบเหลือง (น้ำเงิน 6.87/5.26 · เขียว 5.97/4.57 · เหลือง 6.45/4.93) */
+#pgO2O .hfsvg .vlab{font-size:10px;font-weight:600;paint-order:stroke fill;
+ stroke:#fff;stroke-width:3px;stroke-linejoin:round;stroke-linecap:round}
 #pgO2O .hfsvg .hz{cursor:crosshair}
 
 /* tooltip ร่วมทุกกราฟ */
@@ -2695,6 +2700,40 @@ function hfRenderFlow(a){
  g += `<text class="dlab" x="${lx}" y="${(yp+4).toFixed(1)}" fill="${CC.bl}">Order Placed ${nf(a.P,0)}</text>`
    + `<text class="dlab" x="${lx}" y="${(ys+4).toFixed(1)}" fill="#146F6B">Shipped ${nf(a.S,0)}</text>`
    + `<text class="dlab" x="${lx}" y="${(ys+21).toFixed(1)}" fill="#8A6500" font-size="11">ค้าง picking ${nf(a.R,0)}</text>`;
+ /* ตัวเลขกำกับจุด · ใส่เฉพาะช่วงที่ข้อมูลยังขยับ ท้ายวันที่ค่าคงที่ไม่ต้องซ้ำ
+    และไม่ใส่ช่องสุดท้าย เพราะป้ายปลายเส้นบอกค่าเดียวกันอยู่แล้ว
+    ถ้าช่องแคบจนตัวเลขจะชนกันก็ข้ามไป แต่คงจุดเริ่มวัน จุดค้างสูงสุด
+    และจุดล่าสุดไว้เสมอ เพราะเป็นสามจุดที่การ์ดนี้เล่าเรื่อง */
+ const lim = Math.min(a.last, n-2);
+ /* ช่องแรกอยู่ชิดแกน y ถ้าจัดกลางตัวเลขจะเลยไปทับป้ายแกน จึงชิดซ้ายเข้ามาในกราฟ
+    ที่เหลือจัดกลางจุด · กว้างประมาณจากจำนวนตัวอักษร ฟอนต์ mono 10px กว้าง 6 ต่อตัว */
+ const lbW = i => Math.max(nf(a.p[i],0).length, nf(a.s[i],0).length, nf(a.rem[i],0).length) * 6;
+ const lbL = i => i===0 ? X(i)+5 : X(i)-lbW(i)/2;
+ const lbR = i => lbL(i)+lbW(i);
+ const must = new Set([0, a.peak, lim].filter(i=>i>=0 && i<=lim));
+ const keep = [];
+ for(let i=0;i<=lim;i++){
+  const near = j => lbL(i) - lbR(j) < 8;
+  if(!must.has(i) && keep.length && near(keep[keep.length-1])) continue;
+  /* จุดบังคับที่เบียดป้ายธรรมดา ให้ทิ้งป้ายธรรมดาแทน จุดบังคับจึงอยู่ครบ */
+  while(keep.length && near(keep[keep.length-1]) && !must.has(keep[keep.length-1])) keep.pop();
+  if(keep.length && near(keep[keep.length-1])) continue;
+  keep.push(i);
+ }
+ keep.forEach(i=>{
+  /* จัดกลางจุดได้เพราะ lbW คิดจากตัวเลขที่ยาวสุดของช่องนั้น ตัวสั้นกว่าจึงอยู่ในกรอบเดิม */
+  const x = (i===0 ? lbL(i) : X(i)).toFixed(1), an = i===0 ? 'start' : 'middle';
+  const yp = Y(a.p[i]), ys = Y(a.s[i]);
+  /* เลขเส้นน้ำเงินอยู่เหนือเส้นเสมอ ขอบบนยังมีที่ว่างของ margin ให้ยืมได้
+     เลขเส้นเขียวอยู่ใต้เส้น ยกเว้นตอน Shipped เกือบศูนย์จนชนแกน x
+     ค่อยสลับขึ้นไปอยู่ในแถบ ซึ่งตอนนั้นแถบกว้างมากอยู่แล้ว */
+  const sDn = ys+17 < mt+ph;
+  g += `<text class="vlab" x="${x}" y="${Math.max(yp-10,9).toFixed(1)}" text-anchor="${an}" fill="#2A5A9E">${nf(a.p[i],0)}</text>`
+     + `<text class="vlab" x="${x}" y="${(sDn?ys+17:ys-10).toFixed(1)}" text-anchor="${an}" fill="#146F6B">${nf(a.s[i],0)}</text>`;
+  const room = 34 + (sDn?0:22);
+  if(ys-yp >= room)
+   g += `<text class="vlab" x="${x}" y="${((yp+ys)/2+4).toFixed(1)}" text-anchor="${an}" fill="#7A5900">${nf(a.rem[i],0)}</text>`;
+ });
  /* พื้นที่รับ hover ทีละชั่วโมง กว้างเต็มช่อง อ่านค่าได้ง่ายกว่าจิ้มที่จุด */
  for(let i=0;i<n;i++){
   const w = pw/(n-1);
@@ -2723,7 +2762,9 @@ function hfRenderFlow(a){
   + ` ค้างสูงสุด <b>${nf(a.rem[a.peak],0)}</b> ที่ ${hfLab(a.peak)}`
   + ` แล้วไล่เคลียร์ลงมาเหลือ <b>${nf(a.R,0)}</b> ที่ ${hfLab(a.last)}`
   + ` · ชั่วโมงที่รับออเดอร์เข้ามากสุดคือ ${hfLab(bi)} (+${nf(inMax[bi],0)})`
-  + ` ชั่วโมงที่ส่งออกได้มากสุดคือ ${hfLab(oi)} (+${nf(outMax[oi],0)})`;
+  + ` ชั่วโมงที่ส่งออกได้มากสุดคือ ${hfLab(oi)} (+${nf(outMax[oi],0)})`
+  + ` · ตัวเลขบนกราฟคือยอดสะสมของชั่วโมงนั้น (น้ำเงินรับเข้า เขียวส่งออก เหลืองคืองานค้าง)`
+  + ` ชั่วโมงที่ป้ายเบียดกันจะข้ามไป เอาเมาส์ชี้ที่กราฟดูได้ครบทุกชั่วโมง`;
 }
 
 /* งานค้างรายชั่วโมง สเกลของตัวเอง เพราะบนกราฟใหญ่ช่องว่างท้ายวันมองไม่เห็น */
