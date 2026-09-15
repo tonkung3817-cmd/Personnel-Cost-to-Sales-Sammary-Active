@@ -287,6 +287,49 @@ table.etbl tr.res td{background:var(--yeL)}
 #pgPersonnel .pcaret{display:inline-block;width:13px;text-align:center;margin-right:5px;
  color:var(--pbl);font-size:9px;transition:transform .15s}
 #pgPersonnel .pcaret.open{transform:rotate(90deg)}
+/* ---- ตัวกรองแบบเลือกได้หลายค่า ----
+   ใช้ปุ่ม + กล่อง checkbox เอง ไม่ใช้ <select multiple> เพราะอันนั้นต้องกด ctrl ค้าง
+   จึงเลือกหลายค่าได้ ซึ่งคนใช้งานจริงบนแดชบอร์ดไม่มีทางเดาได้ และไม่มีช่องค้นหา
+   ในขณะที่รายการสาขามี 169 รายการ ตำแหน่ง 20 และ Department 72 */
+#pgPersonnel .pms{position:relative}
+#pgPersonnel .pmsbtn{width:100%;box-sizing:border-box;font:inherit;font-size:12.5px;
+ padding:7px 9px;border:1px solid var(--pline);border-radius:7px;background:#fff;
+ color:var(--pink);cursor:pointer;display:flex;align-items:center;gap:8px;
+ text-align:left;line-height:1.3}
+#pgPersonnel .pmsbtn:hover{border-color:#C9D2DE}
+#pgPersonnel .pmsbtn[aria-expanded="true"]{outline:2px solid var(--pbl);outline-offset:1px;
+ border-color:var(--pbl)}
+/* ช่องที่กำลังกรองอยู่ต้องเห็นได้จากการกวาดตาแถวเดียว ไม่ต้องอ่านข้อความในปุ่ม */
+#pgPersonnel .pmsbtn.on{border-color:var(--pbl);background:var(--pblL);font-weight:600}
+#pgPersonnel .pmstxt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pgPersonnel .pmscar{color:var(--pink3);font-size:9px}
+#pgPersonnel .pmspop{position:absolute;z-index:40;top:calc(100% + 4px);left:0;min-width:100%;
+ width:max-content;max-width:min(430px,82vw);background:#fff;border:1px solid var(--pline);
+ border-radius:9px;box-shadow:0 8px 26px rgba(18,22,28,.16);padding:8px}
+#pgPersonnel .pmspop input[type=text]{width:100%;box-sizing:border-box;font:inherit;
+ font-size:12.5px;padding:6px 8px;border:1px solid var(--pline);border-radius:6px;
+ margin-bottom:6px}
+#pgPersonnel .pmspop input[type=text]:focus{outline:2px solid var(--pbl);outline-offset:1px;
+ border-color:var(--pbl)}
+#pgPersonnel .pmslist{max-height:276px;overflow:auto;scrollbar-width:thin;
+ scrollbar-color:#CDD5E0 transparent}
+#pgPersonnel .pmslist::-webkit-scrollbar{width:9px}
+#pgPersonnel .pmslist::-webkit-scrollbar-thumb{background:#CDD5E0;border-radius:5px;
+ border:2px solid #fff}
+#pgPersonnel .pmsitem{display:flex;gap:8px;align-items:center;padding:5px 6px;border-radius:6px;
+ font-size:12.5px;cursor:pointer;white-space:nowrap}
+#pgPersonnel .pmsitem:hover{background:var(--pblL)}
+#pgPersonnel .pmsitem input{margin:0;cursor:pointer;accent-color:var(--pbl);flex:none}
+#pgPersonnel .pmsitem.hide{display:none}
+#pgPersonnel .pmsitem .pmsdim{color:var(--pink3);font-size:11.5px}
+#pgPersonnel .pmsfoot{display:flex;gap:6px;align-items:center;border-top:1px solid var(--pline);
+ margin-top:7px;padding-top:7px}
+#pgPersonnel .pmsfoot button{font:inherit;font-size:11.5px;padding:4px 9px;border-radius:6px;
+ border:1px solid var(--pline);background:#fff;color:var(--pink2);cursor:pointer;white-space:nowrap}
+#pgPersonnel .pmsfoot button:hover{background:var(--pbg);color:var(--pink)}
+#pgPersonnel .pmscnt{margin-left:auto;font-size:11px;color:var(--pink3);white-space:nowrap}
+#pgPersonnel .pmsempty{padding:10px;font-size:11.5px;color:var(--pink3);text-align:center}
+
 /* ---- แถวตารางกดเพื่อกรองข้ามการ์ดได้ ----
    แถวที่ถูกเลือกใช้แถบสีซ้าย 3px คู่กับพื้นสีอ่อน ไม่พึ่งพื้นสีอย่างเดียว
    เพราะพื้นสีอ่อนเท่ากับสีตอนเมาส์ชี้ ถ้าใช้แค่สีจะแยกไม่ออกว่าแถวไหนถูกเลือกอยู่ */
@@ -887,11 +930,11 @@ table.etbl tr.res td{background:var(--yeL)}
 <div class="pkrow" id="pKRow"></div>
 <div class="pfilterbar" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:18px">
  <div><div class="pflabel">ST No. / ST Name</div>
-  <select id="pStoreSel" class="pfsel" style="min-width:224px"></select></div>
- <div><div class="pflabel">Region</div><select id="pRegSel" class="pfsel"></select></div>
- <div><div class="pflabel">Division</div><select id="pDivSel" class="pfsel"></select></div>
- <div><div class="pflabel">Department</div><select id="pDeptSel" class="pfsel"></select></div>
- <div><div class="pflabel">Position</div><select id="pPosSel" class="pfsel"></select></div>
+  <div class="pms" id="pStoreSel" style="min-width:224px"></div></div>
+ <div><div class="pflabel">Region</div><div class="pms" id="pRegSel" style="min-width:170px"></div></div>
+ <div><div class="pflabel">Division</div><div class="pms" id="pDivSel" style="min-width:170px"></div></div>
+ <div><div class="pflabel">Department</div><div class="pms" id="pDeptSel" style="min-width:186px"></div></div>
+ <div><div class="pflabel">Position</div><div class="pms" id="pPosSel" style="min-width:178px"></div></div>
  <div style="border-left:1px solid var(--pline);padding-left:14px;margin-left:2px">
   <div class="pflabel">เป้า % to sales</div>
   <div class="pstep"><button id="pTgtDn" title="ลดเป้า 0.05%">&minus;</button>
@@ -917,7 +960,7 @@ table.etbl tr.res td{background:var(--yeL)}
   </tr></thead>
   <tbody id="branchBody"></tbody>
  </table></div>
- <div class="pfootnote">Sales หน่วยล้านบาท (ลบ.) · แนะนำลด/เพิ่มจำนวนคน ประมาณจากค่าจ้างเฉลี่ยต่อคนของสาขา เทียบเป้าที่ตั้งไว้ด้านบน · <b>คลิกแถวสาขาเพื่อให้ทั้งสามตารางแสดงเฉพาะสาขานั้น</b> คลิกซ้ำเพื่อยกเลิก · เมื่อกรอง Division/Department/ตำแหน่ง ช่อง Sales และ % จะคิดจากยอดขายส่วนที่เป็นของคนที่กรองไว้ (ฐานเดียวกับสองการ์ดล่าง) ตอนไม่กรองจะเท่ายอดขายเต็มสาขาเหมือนเดิม · คลิกหัวคอลัมน์เพื่อจัดเรียง</div>
+ <div class="pfootnote">Sales หน่วยล้านบาท (ลบ.) · แนะนำลด/เพิ่มจำนวนคน ประมาณจากค่าจ้างเฉลี่ยต่อคนของสาขา เทียบเป้าที่ตั้งไว้ด้านบน · <b>คลิกแถวสาขาเพื่อเพิ่มเข้าตัวกรอง เลือกได้หลายสาขา</b> คลิกซ้ำเพื่อถอนออก · เมื่อกรอง Division/Department/ตำแหน่ง ช่อง Sales และ % จะคิดจากยอดขายส่วนที่เป็นของคนที่กรองไว้ (ฐานเดียวกับสองการ์ดล่าง) ตอนไม่กรองจะเท่ายอดขายเต็มสาขาเหมือนเดิม · คลิกหัวคอลัมน์เพื่อจัดเรียง</div>
 </div>
 
 <div class="pcard" id="cardPosition">
@@ -933,7 +976,7 @@ table.etbl tr.res td{background:var(--yeL)}
   </tr></thead>
   <tbody id="positionBody"></tbody>
  </table></div>
- <div class="pfootnote"><b>คลิกแถวตำแหน่งเพื่อให้ทั้งสามตารางแสดงเฉพาะตำแหน่งนั้น</b> คลิกซ้ำเพื่อยกเลิก · คลิกหัวคอลัมน์เพื่อจัดเรียง</div>
+ <div class="pfootnote"><b>คลิกแถวตำแหน่งเพื่อเพิ่มเข้าตัวกรอง เลือกได้หลายตำแหน่ง</b> คลิกซ้ำเพื่อถอนออก · คลิกหัวคอลัมน์เพื่อจัดเรียง</div>
 </div>
 
 <div class="pcard" id="cardStructure">
@@ -950,7 +993,7 @@ table.etbl tr.res td{background:var(--yeL)}
   </tr></thead>
   <tbody id="structureBody"></tbody>
  </table></div>
- <div class="pfootnote"><b>คลิกแถว Division หรือ Department เพื่อให้ทั้งสามตารางแสดงเฉพาะกลุ่มนั้น</b> คลิกซ้ำเพื่อยกเลิก · คลิกที่ลูกศรหน้าชื่อ Division เพื่อย่อ/กางรายการ Department เฉย ๆ · ปุ่ม TOGGLE ALL ย่อ/กางทั้งหมด</div>
+ <div class="pfootnote"><b>คลิกแถว Division หรือ Department เพื่อเพิ่มเข้าตัวกรอง เลือกได้หลายกลุ่ม</b> คลิกซ้ำเพื่อถอนออก · คลิกที่ลูกศรหน้าชื่อ Division เพื่อย่อ/กางรายการ Department เฉย ๆ · ปุ่ม TOGGLE ALL ย่อ/กางทั้งหมด</div>
 </div>
 
 </div>
@@ -2215,16 +2258,20 @@ PSTORES.forEach(s=>{
  pStoreMap[s[0]] = {stName:s[1], regIdx:s[2], sales:s[3], wage:s[4], rate};
 });
 
-let pFilter = {store:-1, reg:-1, div:-1, dept:-1, pos:-1};
+/* ตัวกรองเก็บเป็น Set เพราะเลือกได้มากกว่า 1 ค่าต่อช่อง · Set ว่าง = ไม่กรองช่องนั้น
+   เช็ก "ไม่กรอง" ด้วยขนาดเซ็ต ไม่ใช่ค่า -1 แบบเดิม จึงไม่ต้องมีค่าพิเศษไว้แทน "ทั้งหมด" */
+let pFilter = {store:new Set(), reg:new Set(), div:new Set(), dept:new Set(), pos:new Set()};
+const pHas = (set, v) => set.size === 0 || set.has(v);
+const pOn = k => pFilter[k].size > 0;
 
 function pMatch(row){
  const stNo=row[0], divIdx=row[1], deptIdx=row[2], posIdx=row[3];
  const sm = pStoreMap[stNo];
- if(pFilter.store>=0 && stNo!==pFilter.store) return false;
- if(pFilter.reg>=0 && sm.regIdx!==pFilter.reg) return false;
- if(pFilter.div>=0 && divIdx!==pFilter.div) return false;
- if(pFilter.dept>=0 && deptIdx!==pFilter.dept) return false;
- if(pFilter.pos>=0 && posIdx!==pFilter.pos) return false;
+ if(!pHas(pFilter.store, stNo)) return false;
+ if(!pHas(pFilter.reg, sm.regIdx)) return false;
+ if(!pHas(pFilter.div, divIdx)) return false;
+ if(!pHas(pFilter.dept, deptIdx)) return false;
+ if(!pHas(pFilter.pos, posIdx)) return false;
  return true;
 }
 
@@ -2359,12 +2406,12 @@ function renderPKRow(){
     แบ่งภายในสาขาซึ่งไฟล์ EMP ใช้ผังคนละชุด จึงไม่นำมากรอง และเขียนกำกับไว้ */
  let ae=0, mm=0, la=0, ot=0;
  PSTORES.forEach(st=>{
-  if(pFilter.store>=0 && st[0]!==pFilter.store) return;
-  if(pFilter.reg>=0 && st[2]!==pFilter.reg) return;
+  if(!pHas(pFilter.store, st[0])) return;
+  if(!pHas(pFilter.reg, st[2])) return;
   const v = PAEC.st[String(st[0])];
   if(v){ ae+=v[0]; mm+=v[1]; la+=v[2]; ot+=v[3]; }
  });
- const narrowed = pFilter.div>=0 || pFilter.dept>=0 || pFilter.pos>=0;
+ const narrowed = pOn('div') || pOn('dept') || pOn('pos');
 
  const cards = [
   {c:'bl', t:'พนักงาน Active', v:nf(act,0),
@@ -2413,8 +2460,8 @@ function renderBranch(cur){
   return dir*((av||0)-(bv||0));
  });
  document.getElementById('branchBody').innerHTML = rows.length ? rows.map(r=>
-  `<tr class="pclk${pFilter.store===r.stNo?' psel':''}" data-sn="${r.stNo}"
-   title="คลิกเพื่อดูเฉพาะสาขานี้ทั้งสามตาราง${pFilter.store===r.stNo?' (คลิกซ้ำเพื่อยกเลิก)':''}">
+  `<tr class="pclk${pFilter.store.has(r.stNo)?' psel':''}" data-sn="${r.stNo}"
+   title="คลิกเพื่อเพิ่มสาขานี้เข้าตัวกรอง (เลือกได้หลายสาขา)${pFilter.store.has(r.stNo)?' (คลิกซ้ำเพื่อถอนออก)':''}">
    <td class="l num">${r.stNo}</td><td class="l prowname">${r.stName}</td>
    <td class="num"${r.salesFull!=null && r.sales!=null && Math.abs(r.salesFull-r.sales)>.005
      ? ` title="ยอดขายเต็มสาขา ${fmtSales(r.salesFull)} ลบ. · ช่องนี้แสดงเฉพาะส่วนที่เป็นของคนที่กรองไว้"` : ''}>${fmtSales(r.sales)}</td><td class="num">${fmtActive(r.active)}</td>
@@ -2435,8 +2482,8 @@ function renderPosition(cur){
   return dir*((av||0)-(bv||0));
  });
  document.getElementById('positionBody').innerHTML = rows.length ? rows.map(r=>
-  `<tr class="pclk${pFilter.pos===r.pi?' psel':''}" data-pi="${r.pi}"
-   title="คลิกเพื่อดูเฉพาะตำแหน่งนี้ทั้งสามตาราง${pFilter.pos===r.pi?' (คลิกซ้ำเพื่อยกเลิก)':''}">
+  `<tr class="pclk${pFilter.pos.has(r.pi)?' psel':''}" data-pi="${r.pi}"
+   title="คลิกเพื่อเพิ่มตำแหน่งนี้เข้าตัวกรอง (เลือกได้หลายตำแหน่ง)${pFilter.pos.has(r.pi)?' (คลิกซ้ำเพื่อถอนออก)':''}">
    <td class="l prowname">${r.position}</td>
    <td class="num">${fmtActive(r.active)}</td>
    <td class="num">${fmtPct(r.costPct)}</td><td class="num">${fmtRec(r.rec)}</td><td class="num">${fmtInc(r.inc)}</td></tr>`
@@ -2453,14 +2500,14 @@ function renderStructure(cur){
  const html = cur.structure.length ? cur.structure.map(d=>{
   const open = structOpen.has(d.name);
   const deptRows = d.depts.map(dp=>
-   `<tr class="pdeptrow pclk${pFilter.dept===dp.dpi?' psel':''} ${open?'':'hide'}"
+   `<tr class="pdeptrow pclk${pFilter.dept.has(dp.dpi)?' psel':''} ${open?'':'hide'}"
      data-parent="${cssesc(d.name)}" data-dpi="${dp.dpi}"
-     title="คลิกเพื่อดูเฉพาะ Department นี้ทั้งสามตาราง${pFilter.dept===dp.dpi?' (คลิกซ้ำเพื่อยกเลิก)':''}">
+     title="คลิกเพื่อเพิ่ม Department นี้เข้าตัวกรอง (เลือกได้หลายกลุ่ม)${pFilter.dept.has(dp.dpi)?' (คลิกซ้ำเพื่อถอนออก)':''}">
     <td class="l">${dp.name}</td><td class="num">${fmtActive(dp.active)}</td>
     <td class="num">${fmtPct(dp.costPct)}</td><td class="num">${fmtRec(dp.rec)}</td><td class="num">${fmtInc(dp.inc)}</td></tr>`
   ).join('');
-  return `<tr class="pdivrow pclk${pFilter.div===d.di?' psel':''}" data-div="${cssesc(d.name)}" data-di="${d.di}"
-   title="คลิกเพื่อดูเฉพาะ Division นี้ทั้งสามตาราง${pFilter.div===d.di?' (คลิกซ้ำเพื่อยกเลิก)':''} · คลิกที่ลูกศรเพื่อย่อ/กางเฉย ๆ">
+  return `<tr class="pdivrow pclk${pFilter.div.has(d.di)?' psel':''}" data-div="${cssesc(d.name)}" data-di="${d.di}"
+   title="คลิกเพื่อเพิ่ม Division นี้เข้าตัวกรอง (เลือกได้หลายกลุ่ม)${pFilter.div.has(d.di)?' (คลิกซ้ำเพื่อถอนออก)':''} · คลิกที่ลูกศรเพื่อย่อ/กางเฉย ๆ">
    <td class="l"><span class="pcaret ${open?'open':''}" title="ย่อ/กางรายการ Department">&#9656;</span>${d.name}</td>
    <td class="num">${fmtActive(d.active)}</td>
    <td class="num">${fmtPct(d.costPct)}</td><td class="num">${fmtRec(d.rec)}</td><td class="num">${fmtInc(d.inc)}</td></tr>${deptRows}`;
@@ -2491,16 +2538,101 @@ function cssesc(s){return s.replace(/"/g,'&quot;');}
    และปุ่ม "ล้าง filter" เดิมยังใช้ล้างของที่กดจากตารางได้เหมือนกัน
    Department กรองด้วยตัวเองได้ ไม่ต้องตั้ง Division ควบ เพราะ pMatch เช็กแยกช่อง
    ถ้าตั้งควบจะยกเลิกยากกว่าเดิมโดยไม่ได้ผลอะไรเพิ่ม */
-const P_PICK_SEL = {store:'pStoreSel', reg:'pRegSel', div:'pDivSel', dept:'pDeptSel', pos:'pPosSel'};
 function pPick(kind, val, divName){
- pFilter[kind] = (pFilter[kind] === val) ? -1 : val;
- const el = document.getElementById(P_PICK_SEL[kind]);
- if(el) el.value = String(pFilter[kind]);
+ const set = pFilter[kind], had = set.has(val);
+ if(had) set.delete(val); else set.add(val);
+ pmsSync(kind);
  /* กด Division หรือ Department แล้วกางรายการให้เลย เพราะที่กดคือ "อยากดูข้างใน" */
- if((kind === 'div' || kind === 'dept') && pFilter[kind] === val && divName && structOpen)
+ if((kind === 'div' || kind === 'dept') && !had && divName && structOpen)
   structOpen.add(divName);          /* กด Department ที่อยู่ใน Division ที่ย่อไว้ ต้องกางให้เห็น */
  pRenderAll();
 }
+
+/* ---- dropdown เลือกหลายค่า ----
+   สร้างเองทั้งก้อนเพราะต้องมีช่องค้นหา (สาขา 169 · Department 72) และต้องกดเลือก
+   หลายค่าได้โดยไม่ต้องกด ctrl ค้างแบบ <select multiple>
+   ทุกช่องใช้ตัวเดียวกันหมด ต่างกันแค่รายการกับคำที่ใช้เรียกหน่วย */
+const PMS = {};
+const PMS_LAB = {
+ store:{all:'ทุกสาขา',       unit:'สาขา',       ph:'ค้นหาสาขา'},
+ reg:  {all:'ทุก Region',    unit:'Region',     ph:'ค้นหา Region'},
+ div:  {all:'ทุก Division',  unit:'Division',   ph:'ค้นหา Division'},
+ dept: {all:'ทุก Department',unit:'Department', ph:'ค้นหา Department'},
+ pos:  {all:'ทุกตำแหน่ง',    unit:'ตำแหน่ง',    ph:'ค้นหาตำแหน่ง'}};
+function pmsBuild(kind, elId, items){
+ const el = document.getElementById(elId);
+ if(!el) return;
+ const L = PMS_LAB[kind];
+ el.innerHTML =
+  `<button type="button" class="pmsbtn" aria-expanded="false" aria-haspopup="true">
+    <span class="pmstxt"></span><span class="pmscar">&#9660;</span></button>
+   <div class="pmspop" hidden>
+    <input type="text" placeholder="${L.ph}..." spellcheck="false">
+    <div class="pmslist">${items.map(o=>
+      `<label class="pmsitem" data-s="${cssesc((o.t + ' ' + (o.sub||'')).toLowerCase())}">
+        <input type="checkbox" value="${o.v}"><span>${o.t}${
+          o.sub ? ` <span class="pmsdim">${o.sub}</span>` : ''}</span></label>`).join('')
+      || '<div class="pmsempty">ไม่มีรายการ</div>'}</div>
+    <div class="pmsfoot">
+     <button type="button" data-a="all">เลือกทั้งหมดที่เห็น</button>
+     <button type="button" data-a="none">ล้าง</button>
+     <span class="pmscnt"></span></div>
+   </div>`;
+ const btn = el.querySelector('.pmsbtn'), pop = el.querySelector('.pmspop');
+ const q = el.querySelector('input[type=text]');
+ PMS[kind] = {el, btn, pop, q, items, L};
+
+ btn.onclick = e => { e.stopPropagation(); pmsOpen(kind, pop.hidden); };
+ pop.onclick = e => e.stopPropagation();
+ q.oninput = () => {
+  const t = q.value.trim().toLowerCase();
+  el.querySelectorAll('.pmsitem').forEach(it=>
+   it.classList.toggle('hide', !!t && !it.dataset.s.includes(t)));
+ };
+ el.querySelectorAll('.pmsitem input').forEach(cb=>{
+  cb.onchange = () => {
+   const v = +cb.value;
+   if(cb.checked) pFilter[kind].add(v); else pFilter[kind].delete(v);
+   pmsSync(kind); pRenderAll();
+  };
+ });
+ /* "เลือกทั้งหมดที่เห็น" ทำงานกับรายการที่เหลือหลังค้นหา ไม่ใช่ทั้งลิสต์
+    เพื่อให้ค้นคำเดียวแล้วติ๊กทีเดียวได้ เช่น พิมพ์ AEC แล้วเลือกทุก Department ที่เป็น AEC */
+ el.querySelectorAll('.pmsfoot button').forEach(b=>{
+  b.onclick = () => {
+   if(b.dataset.a === 'none') pFilter[kind].clear();
+   else el.querySelectorAll('.pmsitem:not(.hide) input')
+         .forEach(cb=>pFilter[kind].add(+cb.value));
+   pmsSync(kind); pRenderAll();
+  };
+ });
+ pmsSync(kind);
+}
+function pmsOpen(kind, open){
+ Object.entries(PMS).forEach(([k,w])=>{
+  const on = (k === kind) && open;
+  w.pop.hidden = !on;
+  w.btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+  if(on){ w.q.value = ''; w.q.dispatchEvent(new Event('input')); w.q.focus(); }
+ });
+}
+function pmsSync(kind){
+ const w = PMS[kind]; if(!w) return;
+ const set = pFilter[kind];
+ w.el.querySelectorAll('.pmsitem input').forEach(cb=>{ cb.checked = set.has(+cb.value); });
+ const sel = w.items.filter(o=>set.has(o.v));
+ w.btn.querySelector('.pmstxt').textContent = sel.length === 0 ? w.L.all
+   : sel.length === 1 ? sel[0].t
+   : `เลือก ${nf(sel.length,0)} ${w.L.unit}`;
+ w.btn.classList.toggle('on', sel.length > 0);
+ w.btn.title = sel.length > 1 ? sel.map(o=>o.t).join(' · ') : '';
+ w.el.querySelector('.pmscnt').textContent =
+  `เลือก ${nf(sel.length,0)} จาก ${nf(w.items.length,0)}`;
+}
+const pmsSyncAll = () => Object.keys(PMS).forEach(pmsSync);
+/* คลิกที่อื่นหรือกด Esc ให้ปิดกล่อง · ผูกครั้งเดียวที่ document ไม่ผูกซ้ำตอน rebuild */
+document.addEventListener('click', () => pmsOpen(null, false));
+document.addEventListener('keydown', e => { if(e.key === 'Escape') pmsOpen(null, false); });
 
 document.getElementById('btnToggleAll').onclick=()=>{
  const cur = pRecompute();
@@ -2519,14 +2651,16 @@ function pRenderAll(){
  return cur;
 }
 function pFillSelects(){
- const mk = (arr) => '<option value="-1">ทั้งหมด</option>' + arr.map((x,i)=>`<option value="${i}">${x}</option>`).join('');
- const storesSorted = PSTORES.slice().sort((a,b)=>a[0]-b[0]);
- document.getElementById('pStoreSel').innerHTML = '<option value="-1">ทุกสาขา</option>' +
-  storesSorted.map(s=>`<option value="${s[0]}">${s[0]} — ${s[1]}</option>`).join('');
- document.getElementById('pRegSel').innerHTML = mk(PREG);
- document.getElementById('pDivSel').innerHTML = mk(PDIV);
- document.getElementById('pDeptSel').innerHTML = mk(PDEPT);
- document.getElementById('pPosSel').innerHTML = mk(PPOS);
+ const mk = arr => arr.map((x,i)=>({v:i, t:x}));
+ /* ใส่ Region ต่อท้ายชื่อสาขาเป็นตัวจาง เพื่อค้นหาสาขาด้วยชื่อ Region ได้ด้วย
+    เพราะรายการสาขายาว 169 บรรทัด และช่อง Region เป็นคนละช่องกัน */
+ const stores = PSTORES.slice().sort((a,b)=>a[0]-b[0])
+   .map(s=>({v:s[0], t:`${padCode(s[0])} — ${s[1]}`, sub:PREG[s[2]] || ''}));
+ pmsBuild('store','pStoreSel', stores);
+ pmsBuild('reg',  'pRegSel',  mk(PREG));
+ pmsBuild('div',  'pDivSel',  mk(PDIV));
+ pmsBuild('dept', 'pDeptSel', mk(PDEPT));
+ pmsBuild('pos',  'pPosSel',  mk(PPOS));
 }
 function syncArrows(cardId, sortState){
  document.querySelectorAll('#'+cardId+' thead th').forEach(th=>{
@@ -2538,15 +2672,10 @@ function syncArrows(cardId, sortState){
 }
 function initPersonnelUI(){
 pFillSelects();
-document.getElementById('pStoreSel').onchange = ()=>{ pFilter.store = +document.getElementById('pStoreSel').value; pRenderAll(); };
-document.getElementById('pRegSel').onchange = ()=>{ pFilter.reg = +document.getElementById('pRegSel').value; pRenderAll(); };
-document.getElementById('pDivSel').onchange = ()=>{ pFilter.div = +document.getElementById('pDivSel').value; pRenderAll(); };
-document.getElementById('pDeptSel').onchange = ()=>{ pFilter.dept = +document.getElementById('pDeptSel').value; pRenderAll(); };
-document.getElementById('pPosSel').onchange = ()=>{ pFilter.pos = +document.getElementById('pPosSel').value; pRenderAll(); };
 function pClearFilters(){
- pFilter = {store:-1, reg:-1, div:-1, dept:-1, pos:-1};
- ['pStoreSel','pRegSel','pDivSel','pDeptSel','pPosSel']
-  .forEach(id=>{ document.getElementById(id).value = '-1'; });
+ Object.values(pFilter).forEach(set=>set.clear());
+ pmsOpen(null, false);
+ pmsSyncAll();
 }
 document.getElementById('pClearBtn').onclick = ()=>{ pClearFilters(); pRenderAll(); };
 
