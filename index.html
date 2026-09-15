@@ -4175,10 +4175,10 @@ function paRenderKpi(S){
    เลือก dumbbell เพราะคำถามคือ "งวดนี้เทียบงวดก่อนเป็นอย่างไร" ซึ่งต้องอ่าน
    สามอย่างพร้อมกัน: ระดับของงวดนี้ · ระดับของงวดก่อน · ทิศทางและระยะที่ขยับ
    แท่งคู่จะกินพื้นที่เป็นสองเท่าและอ่านระยะที่ขยับได้ยากกว่า */
-/* คอลัมน์ตัวเลขท้ายแถวเรียงตามลำดับเวลา Previous Month -> Current MTD -> ผลต่าง
-   ให้ตาไล่จากซ้ายไปขวาได้เรื่องเดียวกับที่จุดบนกราฟเล่า */
+/* คอลัมน์ตัวเลขท้ายแถวเรียง Current MTD -> Previous Month -> ผลต่าง
+   ให้ตัวเลขของงวดปัจจุบันซึ่งเป็นค่าที่ใช้ตัดสินใจอยู่ติดกับกราฟมากที่สุด */
 const PAVB = 960, PAX0 = 186, PAX1 = 754, PARH = 23;
-const PACP = 816, PACC = 882, PACD = 956;      /* ขวาสุดของคอลัมน์ Prev · MTD · Δ */
+const PACC = 816, PACP = 882, PACD = 956;      /* ขวาสุดของคอลัมน์ MTD · Prev · Δ */
 function paScale(rows){
  const v = [];
  rows.forEach(o=>{ if(o.scC!=null) v.push(o.scC); if(o.scP!=null) v.push(o.scP); });
@@ -4218,8 +4218,8 @@ function paRenderDb(S){
   + `<text x="${PAX0-12}" y="16" text-anchor="end" class="nm">คะแนนเฉลี่ย &rarr;</text>`
   + s.t.map(v=>`<text x="${s.x(v).toFixed(1)}" y="16" text-anchor="middle">${nf(v,s.dec)}</text>`).join('')
   + `<line class="ax" x1="${PAX0}" y1="21" x2="${PAX1}" y2="21"/>`
-  + `<text x="${PACP}" y="16" text-anchor="end" class="nm">Previous</text>`
   + `<text x="${PACC}" y="16" text-anchor="end" class="nm">MTD</text>`
+  + `<text x="${PACP}" y="16" text-anchor="end" class="nm">Previous</text>`
   + `<text x="${PACD}" y="16" text-anchor="end" class="nm">&Delta;</text></svg>`;
  const H = rows.length*PARH + 10;
  const grid = s.t.map(v=>`<line class="gl" x1="${s.x(v).toFixed(1)}" y1="0" x2="${s.x(v).toFixed(1)}" y2="${H}"/>`).join('');
@@ -4234,8 +4234,8 @@ function paRenderDb(S){
       ? `<line x1="${xP.toFixed(1)}" y1="${y}" x2="${xC.toFixed(1)}" y2="${y}" stroke="${col}" stroke-width="2.6" stroke-linecap="round"/>` : '')
    + (xP!=null ? `<circle cx="${xP.toFixed(1)}" cy="${y}" r="4.2" fill="#8B94A1" stroke="#fff" stroke-width="1.6"/>` : '')
    + (xC!=null ? `<circle cx="${xC.toFixed(1)}" cy="${y}" r="5.4" fill="${CC.bl}" stroke="#fff" stroke-width="1.8"/>` : '')
-   + `<text x="${PACP}" y="${y+4}" text-anchor="end" class="vl" fill="#6B7480">${paTx(o.scP)}</text>`
    + `<text x="${PACC}" y="${y+4}" text-anchor="end" class="vl" fill="#12161C">${paTx(o.scC)}</text>`
+   + `<text x="${PACP}" y="${y+4}" text-anchor="end" class="vl" fill="#6B7480">${paTx(o.scP)}</text>`
    + `<text x="${PACD}" y="${y+4}" text-anchor="end" class="vl" fill="${o.dlt==null?'#8B94A1':(o.dlt>=0?'#146F6B':'#A5231E')}">${paSg(o.dlt)}</text>`
    + `</g>`;
  }).join('');
@@ -4260,8 +4260,8 @@ function paRenderDb(S){
   + ` <b>${padCode(worst.sn)} ${worst.name}</b> (${paSg(worst.dlt)})`
   + ` และ${best.dlt!=null&&best.dlt>0?'ดีขึ้นมากสุด':'ขยับดีที่สุด'}คือ`
   + ` <b>${padCode(best.sn)} ${best.name}</b> (${paSg(best.dlt)})`
-  + ` · ตัวเลขท้ายแถวเรียงตามลำดับเวลา Previous Month (เทา) แล้วต่อด้วย Current MTD`
-  + ` (ดำ) และผลต่าง · คะแนนเฉลี่ยคือค่าเฉลี่ยของ Average Grading2 ระดับพนักงาน`
+  + ` · ตัวเลขท้ายแถวเรียง Current MTD (ดำ) แล้วต่อด้วย Previous Month (เทา)`
+  + ` และผลต่าง · คะแนนเฉลี่ยคือค่าเฉลี่ยของ Average Grading2 ระดับพนักงาน`
   + ` ไม่ถ่วงน้ำหนักด้วย Transaction Count เพื่อให้สอดคล้องกับเกรดที่ให้เป็นรายคน`;
 }
 
