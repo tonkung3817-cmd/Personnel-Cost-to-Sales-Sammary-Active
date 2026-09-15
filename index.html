@@ -1260,11 +1260,14 @@ table.etbl tr.res td{background:var(--yeL)}
    <button data-k="low">คะแนน MTD ต่ำสุด</button>
    <button data-k="hc">คนมากสุด</button>
    <button data-k="sn">รหัสสาขา</button></div>
+  <div class="pachips" id="paDbSplit">
+   <button data-sp="1" class="on">แยก Picker / Loader</button>
+   <button data-sp="0">รวมสองบทบาท</button></div>
   <div class="pachips" id="paDbN">
-   <button data-n="15" class="on">15 สาขา</button>
-   <button data-n="30">30 สาขา</button>
-   <button data-n="60">60 สาขา</button>
-   <button data-n="0">ทุกสาขา</button></div>
+   <button data-n="15" class="on">15 รายการ</button>
+   <button data-n="30">30 รายการ</button>
+   <button data-n="60">60 รายการ</button>
+   <button data-n="0">ทั้งหมด</button></div>
   <div id="paDbAxis"></div>
   <div class="padbwrap" id="paDbWrap"></div>
  </div>
@@ -4275,7 +4278,7 @@ const PAREG = {};
 })();
 
 let paF = {reg:-1, sto:-1, role:-1, pos:-1};
-let paDb = {k:'dn', n:15};
+let paDb = {k:'dn', n:15, sp:1};      /* sp = 1 แยก Picker/Loader · 0 รวมสองบทบาท */
 let paHistSel = null;
 let paSort = {k:'dlt', dir:1};                 /* เริ่มจากสาขาที่แย่ลงมากสุด */
 
@@ -4305,9 +4308,12 @@ function paScan(){
   if(paF.reg>=0  && reg!==paF.reg) continue;
   let o = byst.get(sn);
   if(!o){ o = {sn, name:PADATA.stn[sn]||('สาขา '+sn), reg, regName:PAREGN[reg],
-               p:[paPer(),paPer()]}; byst.set(sn,o); }
+               p:[paPer(),paPer()],
+               /* pr[บทบาท][งวด] · เก็บแยก Picker/Loader ในสาขาเดียวกันไว้เลย
+                  เพราะการ์ดภาพรวมสาขาต้องสลับดูได้ทั้งแบบรวมและแบบแยกบทบาท */
+               pr:[[paPer(),paPer()],[paPer(),paPer()]]}; byst.set(sn,o); }
   const add = a => { a.n++; a.sc+=r[3]; a.tx+=r[2]; a.g[r[4]]++; if(rl===0) a.pk++; else a.ld++; };
-  add(o.p[r[1]]); add(role[rl][r[1]]); add(A.p[r[1]]);
+  add(o.p[r[1]]); add(o.pr[rl][r[1]]); add(role[rl][r[1]]); add(A.p[r[1]]);
   scores[r[1]].push({s:r[3], g:r[4], e:r[0], sn});
  }
  const av = a => a.n ? a.sc/a.n : null;
@@ -4323,7 +4329,14 @@ function paScan(){
    dlAB: (ab(o.p[0])!=null && ab(o.p[1])!=null) ? ab(o.p[0])-ab(o.p[1]) : null,
    dayC:dy(o.p[0]), dayP:dy(o.p[1]),
    rateC: o.p[0].n ? o.p[0].tx/o.p[0].n/PADAYS[0] : null,
-   rateP: o.p[1].n ? o.p[1].tx/o.p[1].n/PADAYS[1] : null};
+   rateP: o.p[1].n ? o.p[1].tx/o.p[1].n/PADAYS[1] : null,
+   prole: [0,1].map(rl=>{
+    const a = o.pr[rl], c = av(a[0]), pv = av(a[1]);
+    return {rl, scC:c, scP:pv, dlt:(c!=null && pv!=null) ? c-pv : null,
+      nC:a[0].n, nP:a[1].n, abC:ab(a[0]), abP:ab(a[1]), deC:de(a[0]), deP:de(a[1]),
+      dayC:a[0].n ? a[0].tx/a[0].n : null,
+      rateC:a[0].n ? a[0].tx/a[0].n/PADAYS[0] : null};
+   })};
  }).sort((a,b)=>a.sn-b.sn);
  return {stores, role, A, scores, av, ab, de};
 }
@@ -4362,11 +4375,12 @@ function paRenderKpi(S){
    เลือก dumbbell เพราะคำถามคือ "งวดนี้เทียบงวดก่อนเป็นอย่างไร" ซึ่งต้องอ่าน
    สามอย่างพร้อมกัน: ระดับของงวดนี้ · ระดับของงวดก่อน · ทิศทางและระยะที่ขยับ
    แท่งคู่จะกินพื้นที่เป็นสองเท่าและอ่านระยะที่ขยับได้ยากกว่า */
-/* คอลัมน์ตัวเลขท้ายแถวเรียง Current MTD -> Previous Month -> ผลต่าง
-   ให้ตัวเลขของงวดปัจจุบันซึ่งเป็นค่าที่ใช้ตัดสินใจอยู่ติดกับกราฟมากที่สุด */
-const PAVB = 960, PAX0 = 186, PAX1 = 754, PARH = 23;
-const PACC = 816, PACP = 882, PACD = 956;      /* ขวาสุดของคอลัมน์ MTD · Prev · Δ */
-function paScale(rows){
+/* คอลัมน์ตัวเลขท้ายแถวเรียงตามลำดับเวลา Previous Month -> Current MTD -> ผลต่าง
+   ช่องชื่อซ้ายกว้างขึ้นเมื่อแยกบทบาท เพราะต้องต่อคำว่า Picker/Loader ท้ายชื่อสาขา */
+const PAVB = 960, PAX1 = 754, PARH = 23;
+const PACP = 816, PACC = 882, PACD = 956;      /* ขวาสุดของคอลัมน์ Prev · MTD · Δ */
+const paX0 = () => paDb.sp ? 238 : 186;
+function paScale(rows, x0){
  const v = [];
  rows.forEach(o=>{ if(o.scC!=null) v.push(o.scC); if(o.scP!=null) v.push(o.scP); });
  if(!v.length) return null;
@@ -4378,22 +4392,37 @@ function paScale(rows){
  const step = [.5,1,2,2.5,5,10].find(s=>span/s<=8) || 20;
  const t = [];
  for(let x=Math.ceil(lo/step)*step; x<=hi+1e-9; x+=step) t.push(+x.toFixed(2));
- return {lo, hi, t, dec: step<1?1:0, x:v=>PAX0+(v-lo)/span*(PAX1-PAX0)};
+ return {lo, hi, t, dec: step<1?1:0, x0, x:v=>x0+(v-lo)/span*(PAX1-x0)};
 }
+/* แถวของกราฟภาพรวมสาขา · โหมดแยกบทบาทจะแตกสาขาหนึ่งเป็นสองแถว (Picker / Loader)
+   แล้วเรียงและตัดจำนวนที่ระดับแถว ไม่ใช่ระดับสาขา เพราะคำถามคือ "ที่ไหนบทบาทไหน
+   ขยับแย่ลงมากสุด" ซึ่งบางสาขาแย่เฉพาะ Loader ส่วน Picker ดีขึ้น ถ้าเฉลี่ยรวมกัน
+   สองอย่างจะหักกันหายไปเลย · บทบาทที่ไม่มีคนทั้งสองงวดไม่สร้างแถวทิ้งไว้ */
 function paDbRows(stores){
  const cmp = {
   dn:  (a,b)=>(a.dlt??1e9)-(b.dlt??1e9),
   up:  (a,b)=>(b.dlt??-1e9)-(a.dlt??-1e9),
   low: (a,b)=>(a.scC??1e9)-(b.scC??1e9),
   hc:  (a,b)=>b.nC-a.nC,
-  sn:  (a,b)=>a.sn-b.sn}[paDb.k];
- const r = stores.slice().sort(cmp);
+  sn:  (a,b)=>(a.sn-b.sn) || ((a.role??-1)-(b.role??-1))}[paDb.k];
+ let r;
+ if(paDb.sp){
+  r = [];
+  stores.forEach(o=>o.prole.forEach(pr=>{
+   if(!pr.nC && !pr.nP) return;
+   r.push({...o, ...pr, role:pr.rl,
+     label:`${padCode(o.sn)} ${paCut(o.name,13)} · ${PARN[pr.rl]}`});
+  }));
+ } else {
+  r = stores.map(o=>({...o, role:-1, label:`${padCode(o.sn)} ${paCut(o.name,16)}`}));
+ }
+ r.sort(cmp);
  return paDb.n>0 ? r.slice(0,paDb.n) : r;
 }
 function paRenderDb(S){
  const rows = paDbRows(S.stores);
  const axis = document.getElementById('paDbAxis'), wrap = document.getElementById('paDbWrap');
- const s = paScale(rows);
+ const s = paScale(rows, paX0());
  if(!rows.length || !s){
   axis.innerHTML = '';
   wrap.innerHTML = '<div class="cdim" style="padding:26px;text-align:center">ไม่มีสาขาตามเงื่อนไขที่กรอง</div>';
@@ -4402,11 +4431,11 @@ function paRenderDb(S){
   return;
  }
  axis.innerHTML = `<svg class="pasvg" viewBox="0 0 ${PAVB} 24">`
-  + `<text x="${PAX0-12}" y="16" text-anchor="end" class="nm">คะแนนเฉลี่ย &rarr;</text>`
+  + `<text x="${s.x0-12}" y="16" text-anchor="end" class="nm">คะแนนเฉลี่ย &rarr;</text>`
   + s.t.map(v=>`<text x="${s.x(v).toFixed(1)}" y="16" text-anchor="middle">${nf(v,s.dec)}</text>`).join('')
-  + `<line class="ax" x1="${PAX0}" y1="21" x2="${PAX1}" y2="21"/>`
-  + `<text x="${PACC}" y="16" text-anchor="end" class="nm">MTD</text>`
+  + `<line class="ax" x1="${s.x0}" y1="21" x2="${PAX1}" y2="21"/>`
   + `<text x="${PACP}" y="16" text-anchor="end" class="nm">Previous</text>`
+  + `<text x="${PACC}" y="16" text-anchor="end" class="nm">MTD</text>`
   + `<text x="${PACD}" y="16" text-anchor="end" class="nm">&Delta;</text></svg>`;
  const H = rows.length*PARH + 10;
  const grid = s.t.map(v=>`<line class="gl" x1="${s.x(v).toFixed(1)}" y1="0" x2="${s.x(v).toFixed(1)}" y2="${H}"/>`).join('');
@@ -4416,13 +4445,13 @@ function paRenderDb(S){
   const xC = o.scC!=null ? s.x(o.scC) : null, xP = o.scP!=null ? s.x(o.scP) : null;
   return `<g data-i="${i}">`
    + `<rect x="0" y="${y-PARH/2+2}" width="${PAVB}" height="${PARH}" fill="transparent"/>`
-   + `<text x="${PAX0-12}" y="${y+4}" text-anchor="end" class="nm">${padCode(o.sn)} ${paCut(o.name,16)}</text>`
+   + `<text x="${s.x0-12}" y="${y+4}" text-anchor="end" class="nm">${o.label}</text>`
    + (xC!=null && xP!=null
       ? `<line x1="${xP.toFixed(1)}" y1="${y}" x2="${xC.toFixed(1)}" y2="${y}" stroke="${col}" stroke-width="2.6" stroke-linecap="round"/>` : '')
    + (xP!=null ? `<circle cx="${xP.toFixed(1)}" cy="${y}" r="4.2" fill="#8B94A1" stroke="#fff" stroke-width="1.6"/>` : '')
    + (xC!=null ? `<circle cx="${xC.toFixed(1)}" cy="${y}" r="5.4" fill="${CC.bl}" stroke="#fff" stroke-width="1.8"/>` : '')
-   + `<text x="${PACC}" y="${y+4}" text-anchor="end" class="vl" fill="#12161C">${paTx(o.scC)}</text>`
    + `<text x="${PACP}" y="${y+4}" text-anchor="end" class="vl" fill="#6B7480">${paTx(o.scP)}</text>`
+   + `<text x="${PACC}" y="${y+4}" text-anchor="end" class="vl" fill="#12161C">${paTx(o.scC)}</text>`
    + `<text x="${PACD}" y="${y+4}" text-anchor="end" class="vl" fill="${o.dlt==null?'#8B94A1':(o.dlt>=0?'#146F6B':'#A5231E')}">${paSg(o.dlt)}</text>`
    + `</g>`;
  }).join('');
@@ -4430,25 +4459,33 @@ function paRenderDb(S){
  wrap.querySelectorAll('g[data-i]').forEach(g=>{
   const o = rows[+g.dataset.i];
   cBind(g, `<b>${padCode(o.sn)} ${o.name}</b> · ${o.regName}`
-   + `<br>Current MTD <span class="tn">${paNum(o.scC)}</span> จาก ${nf(o.nC,0)} คน`
+   + (o.role>=0 ? `<br>บทบาท <b>${PARN[o.role]}</b>` : '')
    + `<br>Previous Month <span class="tn">${paNum(o.scP)}</span> จาก ${nf(o.nP,0)} คน`
+   + `<br>Current MTD <span class="tn">${paNum(o.scC)}</span> จาก ${nf(o.nC,0)} คน`
    + `<br>เปลี่ยนแปลง <span class="tn">${paSg(o.dlt)}</span>`
    + `<br>A+B <span class="tn">${paPct(o.abC)}</span> · D+E <span class="tn">${paPct(o.deC)}</span>`
-   + `<br>Picker ${nf(o.nPk,0)} · Loader ${nf(o.nLd,0)} คน`);
+   + (o.role>=0 ? `<br>ทั้งสาขา Picker ${nf(o.nPk,0)} · Loader ${nf(o.nLd,0)} คน`
+                : `<br>Picker ${nf(o.nPk,0)} · Loader ${nf(o.nLd,0)} คน`));
  });
- const shown = rows.length, all = S.stores.length;
+ const shown = rows.length;
+ const all = paDb.sp
+   ? S.stores.reduce((a,o)=>a + o.prole.filter(pr=>pr.nC || pr.nP).length, 0)
+   : S.stores.length;
  document.getElementById('paDbRange').textContent =
-  `แสดง ${shown} จาก ${all} สาขา · สเกล ${nf(s.lo,1)}–${nf(s.hi,1)}`;
+  `แสดง ${shown} จาก ${all} ${paDb.sp?'แถว ('+S.stores.length+' สาขา)':'สาขา'}`
+  + ` · สเกล ${nf(s.lo,1)}–${nf(s.hi,1)}`;
  const worst = rows.reduce((a,b)=>(b.dlt??1e9)<(a.dlt??1e9)?b:a, rows[0]);
  const best  = rows.reduce((a,b)=>(b.dlt??-1e9)>(a.dlt??-1e9)?b:a, rows[0]);
  document.getElementById('paDbNote').innerHTML =
   `จุดเทาคือคะแนนเฉลี่ยงวดก่อน จุดน้ำเงินคืองวดนี้ · ความยาวเส้นคือระยะที่ขยับ`
   + ` เขียว = ดีขึ้น แดง = แย่ลง · ในชุดที่แสดง แย่ลงมากสุดคือ`
-  + ` <b>${padCode(worst.sn)} ${worst.name}</b> (${paSg(worst.dlt)})`
+  + ` <b>${worst.label}</b> (${paSg(worst.dlt)})`
   + ` และ${best.dlt!=null&&best.dlt>0?'ดีขึ้นมากสุด':'ขยับดีที่สุด'}คือ`
-  + ` <b>${padCode(best.sn)} ${best.name}</b> (${paSg(best.dlt)})`
-  + ` · ตัวเลขท้ายแถวเรียง Current MTD (ดำ) แล้วต่อด้วย Previous Month (เทา)`
-  + ` และผลต่าง · คะแนนเฉลี่ยคือค่าเฉลี่ยของ Average Grading2 ระดับพนักงาน`
+  + ` <b>${best.label}</b> (${paSg(best.dlt)})`
+  + (paDb.sp ? ` · กำลังแยกเป็นรายบทบาท หนึ่งสาขาจึงมีได้สองแถว คือ Picker และ`
+             + ` Loader คิดคะแนนแยกกัน` : '')
+  + ` · ตัวเลขท้ายแถวเรียงตามลำดับเวลา Previous Month (เทา) แล้วต่อด้วย Current MTD`
+  + ` (ดำ) และผลต่าง · คะแนนเฉลี่ยคือค่าเฉลี่ยของ Average Grading2 ระดับพนักงาน`
   + ` ไม่ถ่วงน้ำหนักด้วย Transaction Count เพื่อให้สอดคล้องกับเกรดที่ให้เป็นรายคน`;
 }
 
@@ -4791,7 +4828,7 @@ function initPAUI(){
   paF.pos = +e.target.value; paHistSel = null; paRenderAll(); };
  const reset = () => {
   paF = {reg:-1, sto:-1, role:-1, pos:-1};
-  paDb = {k:'dn', n:15}; paHistSel = null; paSort = {k:'dlt', dir:1};
+  paDb = {k:'dn', n:15, sp:1}; paHistSel = null; paSort = {k:'dlt', dir:1};
   document.getElementById('paReg').value = -1;
   document.getElementById('paRole').value = -1;
   fillSto(); fillPos();
@@ -4799,6 +4836,8 @@ function initPAUI(){
    .forEach(b=>b.classList.toggle('on', b.dataset.k==='dn'));
   document.getElementById('paDbN').querySelectorAll('button')
    .forEach(b=>b.classList.toggle('on', b.dataset.n==='15'));
+  document.getElementById('paDbSplit').querySelectorAll('button')
+   .forEach(b=>b.classList.toggle('on', b.dataset.sp==='1'));
   paRenderAll();
  };
  document.getElementById('paClr').onclick = reset;
@@ -4819,6 +4858,13 @@ function initPAUI(){
    paRenderDb(paScan());
   };
  });
+ document.getElementById('paDbSplit').querySelectorAll('button').forEach(b=>{
+  b.onclick = () => {
+   paDb.sp = +b.dataset.sp;
+   b.parentNode.querySelectorAll('button').forEach(x=>x.classList.toggle('on', x===b));
+   paRenderDb(paScan());
+  };
+ });
  document.querySelectorAll('#paTbl thead th').forEach(th=>{
   th.onclick = () => {
    const k = th.dataset.k; if(!k) return;
@@ -4831,14 +4877,20 @@ function initPAUI(){
  document.getElementById('paDlDb').onclick = () => {
   const S = paScan();
   download('product_activity_store.csv',
-   [['รหัสสาขา','สาขา','Region','คน MTD','คน Prev','คะแนน MTD','คะแนน Prev','Δ คะแนน',
-     '%A+B MTD','%A+B Prev','%D+E MTD','%D+E Prev','วันมีงาน/คน MTD','%วันมีงาน MTD',
-     'วันมีงาน/คน Prev','%วันมีงาน Prev','Picker MTD','Loader MTD']].concat(
-   S.stores.map(o=>[txt(padCode(o.sn)), o.name, o.regName, o.nC, o.nP,
-     o.scC==null?'':o.scC.toFixed(3), o.scP==null?'':o.scP.toFixed(3),
-     o.dlt==null?'':o.dlt.toFixed(3), pc2(o.abC), pc2(o.abP), pc2(o.deC), pc2(o.deP),
-     o.dayC==null?'':o.dayC.toFixed(2), pc2(o.rateC),
-     o.dayP==null?'':o.dayP.toFixed(2), pc2(o.rateP), o.nPk, o.nLd])));
+   [['รหัสสาขา','สาขา','Region','บทบาท','คน MTD','คน Prev','คะแนน MTD','คะแนน Prev',
+     'Δ คะแนน','%A+B MTD','%A+B Prev','%D+E MTD','%D+E Prev','วันมีงาน/คน MTD',
+     '%วันมีงาน MTD']].concat(
+   /* ออกทั้งแถวรวมของสาขาและแถวแยกบทบาท เพื่อให้ไฟล์ตรงกับกราฟทั้งสองโหมด */
+   S.stores.flatMap(o=>[
+     [txt(padCode(o.sn)), o.name, o.regName, 'รวมสองบทบาท', o.nC, o.nP,
+      o.scC==null?'':o.scC.toFixed(3), o.scP==null?'':o.scP.toFixed(3),
+      o.dlt==null?'':o.dlt.toFixed(3), pc2(o.abC), pc2(o.abP), pc2(o.deC), pc2(o.deP),
+      o.dayC==null?'':o.dayC.toFixed(2), pc2(o.rateC)],
+     ...o.prole.filter(pr=>pr.nC || pr.nP).map(pr=>
+      [txt(padCode(o.sn)), o.name, o.regName, PARN[pr.rl], pr.nC, pr.nP,
+       pr.scC==null?'':pr.scC.toFixed(3), pr.scP==null?'':pr.scP.toFixed(3),
+       pr.dlt==null?'':pr.dlt.toFixed(3), pc2(pr.abC), pc2(pr.abP), pc2(pr.deC), pc2(pr.deP),
+       pr.dayC==null?'':pr.dayC.toFixed(2), pc2(pr.rateC)])])));
  };
  document.getElementById('paDlGrd').onclick = () => {
   const S = paScan();
