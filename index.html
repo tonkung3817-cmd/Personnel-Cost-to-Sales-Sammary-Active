@@ -287,6 +287,17 @@ table.etbl tr.res td{background:var(--yeL)}
 #pgPersonnel .pcaret{display:inline-block;width:13px;text-align:center;margin-right:5px;
  color:var(--pbl);font-size:9px;transition:transform .15s}
 #pgPersonnel .pcaret.open{transform:rotate(90deg)}
+/* ---- แถวตารางกดเพื่อกรองข้ามการ์ดได้ ----
+   แถวที่ถูกเลือกใช้แถบสีซ้าย 3px คู่กับพื้นสีอ่อน ไม่พึ่งพื้นสีอย่างเดียว
+   เพราะพื้นสีอ่อนเท่ากับสีตอนเมาส์ชี้ ถ้าใช้แค่สีจะแยกไม่ออกว่าแถวไหนถูกเลือกอยู่ */
+#pgPersonnel tbody tr.pclk{cursor:pointer}
+#pgPersonnel tbody tr.psel>td{background:var(--pblL);font-weight:600}
+#pgPersonnel tbody tr.psel>td:first-child{box-shadow:inset 3px 0 0 var(--pbl)}
+#pgPersonnel #positionBody tr.psel>td{background:var(--pgrL)}
+#pgPersonnel #positionBody tr.psel>td:first-child{box-shadow:inset 3px 0 0 var(--pgr)}
+/* กรอบกดของลูกศรย่อ/กาง ขยายให้กดง่ายเพราะตอนนี้มันแยกหน้าที่กับการคลิกแถวแล้ว */
+#pgPersonnel .pcaret{padding:2px 3px;margin:-2px 2px -2px -3px;border-radius:4px}
+#pgPersonnel .pcaret:hover{background:rgba(48,111,199,.14)}
 #pgPersonnel .pfootnote{padding:9px 15px;font-size:11px;line-height:1.5;color:var(--pink3);
  border-top:1px solid var(--pline);background:#FCFDFE;margin-top:auto}
 
@@ -906,7 +917,7 @@ table.etbl tr.res td{background:var(--yeL)}
   </tr></thead>
   <tbody id="branchBody"></tbody>
  </table></div>
- <div class="pfootnote">Sales หน่วยล้านบาท (ลบ.) · แนะนำลด/เพิ่มจำนวนคน ประมาณจากค่าจ้างเฉลี่ยต่อคนของสาขา เทียบเป้าที่ตั้งไว้ด้านบน · คลิกหัวคอลัมน์เพื่อจัดเรียง</div>
+ <div class="pfootnote">Sales หน่วยล้านบาท (ลบ.) · แนะนำลด/เพิ่มจำนวนคน ประมาณจากค่าจ้างเฉลี่ยต่อคนของสาขา เทียบเป้าที่ตั้งไว้ด้านบน · <b>คลิกแถวสาขาเพื่อให้ทั้งสามตารางแสดงเฉพาะสาขานั้น</b> คลิกซ้ำเพื่อยกเลิก · เมื่อกรอง Division/Department/ตำแหน่ง ช่อง Sales และ % จะคิดจากยอดขายส่วนที่เป็นของคนที่กรองไว้ (ฐานเดียวกับสองการ์ดล่าง) ตอนไม่กรองจะเท่ายอดขายเต็มสาขาเหมือนเดิม · คลิกหัวคอลัมน์เพื่อจัดเรียง</div>
 </div>
 
 <div class="pcard" id="cardPosition">
@@ -922,7 +933,7 @@ table.etbl tr.res td{background:var(--yeL)}
   </tr></thead>
   <tbody id="positionBody"></tbody>
  </table></div>
- <div class="pfootnote">คลิกหัวคอลัมน์เพื่อจัดเรียง</div>
+ <div class="pfootnote"><b>คลิกแถวตำแหน่งเพื่อให้ทั้งสามตารางแสดงเฉพาะตำแหน่งนั้น</b> คลิกซ้ำเพื่อยกเลิก · คลิกหัวคอลัมน์เพื่อจัดเรียง</div>
 </div>
 
 <div class="pcard" id="cardStructure">
@@ -939,7 +950,7 @@ table.etbl tr.res td{background:var(--yeL)}
   </tr></thead>
   <tbody id="structureBody"></tbody>
  </table></div>
- <div class="pfootnote">คลิกแถว Division เพื่อขยาย/ย่อรายการ Department · ปุ่ม TOGGLE ALL ย่อ/กางทั้งหมด</div>
+ <div class="pfootnote"><b>คลิกแถว Division หรือ Department เพื่อให้ทั้งสามตารางแสดงเฉพาะกลุ่มนั้น</b> คลิกซ้ำเพื่อยกเลิก · คลิกที่ลูกศรหน้าชื่อ Division เพื่อย่อ/กางรายการ Department เฉย ๆ · ปุ่ม TOGGLE ALL ย่อ/กางทั้งหมด</div>
 </div>
 
 </div>
@@ -2256,8 +2267,14 @@ function pRecompute(){
   const share = storeTotalActive>0 ? active/storeTotalActive : 0;
   const proratedSales = (sm.sales!=null) ? sm.sales*share : null;
 
-  (branchAgg[stNo] = branchAgg[stNo] || {active:0, cost:0});
+  /* แถวสาขาก็ใช้ยอดขายตามสัดส่วนคนที่แสดง แบบเดียวกับ Position/Structure
+     ตอนไม่ได้กรอง Division/Department/ตำแหน่ง ผลรวมสัดส่วนของทุกแถวในสาขา = 1
+     จึงได้ยอดขายเต็มสาขาเท่าเดิมทุกบาท (ตรวจแล้วต่างกันไม่เกิน 4e-13 ทั้ง 167 สาขา)
+     แต่ตอนกรองลึก % ของแถวสาขาจะไม่ไปเทียบคนกลุ่มเล็กกับยอดขายเต็มสาขาอีก
+     ซึ่งเดิมทำให้อ่านได้ 0.07% ขณะที่อีกสองการ์ดอ่านได้ 1.68% จากคนชุดเดียวกัน */
+  (branchAgg[stNo] = branchAgg[stNo] || {active:0, cost:0, sales:0, hasSales:false});
   branchAgg[stNo].active += active; branchAgg[stNo].cost += cost;
+  if(proratedSales!=null){ branchAgg[stNo].sales += proratedSales; branchAgg[stNo].hasSales = true; }
 
   (posAgg[posIdx] = posAgg[posIdx] || {active:0, cost:0, sales:0, hasSales:false});
   posAgg[posIdx].active += active; posAgg[posIdx].cost += cost;
@@ -2273,23 +2290,25 @@ function pRecompute(){
  }
  const branch = Object.entries(branchAgg).map(([sn,v])=>{
   const sm = pStoreMap[sn];
-  const m = pCostMetrics(v.cost, sm.sales, v.active);
-  return {stNo:+sn, stName:sm.stName, sales:sm.sales, active:v.active, costPct:m.pct, rec:m.rec, inc:m.inc};
+  const sales = v.hasSales ? v.sales : null;
+  const m = pCostMetrics(v.cost, sales, v.active);
+  return {stNo:+sn, stName:sm.stName, sales, salesFull:sm.sales, active:v.active,
+    costPct:m.pct, rec:m.rec, inc:m.inc};
  });
  const position = Object.entries(posAgg).map(([pi,v])=>{
   const sales = v.hasSales ? v.sales : null;
   const m = pCostMetrics(v.cost, sales, v.active);
-  return {position:PPOS[pi], active:v.active, sales, costPct:m.pct, rec:m.rec, inc:m.inc};
+  return {pi:+pi, position:PPOS[pi], active:v.active, sales, costPct:m.pct, rec:m.rec, inc:m.inc};
  });
  const structure = Object.entries(divAgg).map(([di,v])=>{
   const dSales = v.hasSales ? v.sales : null;
   const dM = pCostMetrics(v.cost, dSales, v.active);
   return {
-   name:PDIV[di], active:v.active, sales:dSales, costPct:dM.pct, rec:dM.rec, inc:dM.inc,
+   di:+di, name:PDIV[di], active:v.active, sales:dSales, costPct:dM.pct, rec:dM.rec, inc:dM.inc,
    depts: Object.entries(v.depts).map(([dpi,dv])=>{
     const dpSales = dv.hasSales ? dv.sales : null;
     const dpM = pCostMetrics(dv.cost, dpSales, dv.active);
-    return {name:PDEPT[dpi], active:dv.active, sales:dpSales, costPct:dpM.pct, rec:dpM.rec, inc:dpM.inc};
+    return {dpi:+dpi, name:PDEPT[dpi], active:dv.active, sales:dpSales, costPct:dpM.pct, rec:dpM.rec, inc:dpM.inc};
    })
   };
  });
@@ -2394,10 +2413,15 @@ function renderBranch(cur){
   return dir*((av||0)-(bv||0));
  });
  document.getElementById('branchBody').innerHTML = rows.length ? rows.map(r=>
-  `<tr><td class="l num">${r.stNo}</td><td class="l prowname">${r.stName}</td>
-   <td class="num">${fmtSales(r.sales)}</td><td class="num">${fmtActive(r.active)}</td>
+  `<tr class="pclk${pFilter.store===r.stNo?' psel':''}" data-sn="${r.stNo}"
+   title="คลิกเพื่อดูเฉพาะสาขานี้ทั้งสามตาราง${pFilter.store===r.stNo?' (คลิกซ้ำเพื่อยกเลิก)':''}">
+   <td class="l num">${r.stNo}</td><td class="l prowname">${r.stName}</td>
+   <td class="num"${r.salesFull!=null && r.sales!=null && Math.abs(r.salesFull-r.sales)>.005
+     ? ` title="ยอดขายเต็มสาขา ${fmtSales(r.salesFull)} ลบ. · ช่องนี้แสดงเฉพาะส่วนที่เป็นของคนที่กรองไว้"` : ''}>${fmtSales(r.sales)}</td><td class="num">${fmtActive(r.active)}</td>
    <td class="num">${fmtPct(r.costPct)}</td><td class="num">${fmtRec(r.rec)}</td><td class="num">${fmtInc(r.inc)}</td></tr>`
  ).join('') : '<tr><td colspan="7" class="pdim" style="text-align:center;padding:14px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
+ document.querySelectorAll('#branchBody tr[data-sn]')
+  .forEach(tr=>{ tr.onclick = () => pPick('store', +tr.dataset.sn); });
  syncArrows('cardBranch', branchSort);
 }
 
@@ -2411,10 +2435,14 @@ function renderPosition(cur){
   return dir*((av||0)-(bv||0));
  });
  document.getElementById('positionBody').innerHTML = rows.length ? rows.map(r=>
-  `<tr><td class="l prowname">${r.position}</td>
+  `<tr class="pclk${pFilter.pos===r.pi?' psel':''}" data-pi="${r.pi}"
+   title="คลิกเพื่อดูเฉพาะตำแหน่งนี้ทั้งสามตาราง${pFilter.pos===r.pi?' (คลิกซ้ำเพื่อยกเลิก)':''}">
+   <td class="l prowname">${r.position}</td>
    <td class="num">${fmtActive(r.active)}</td>
    <td class="num">${fmtPct(r.costPct)}</td><td class="num">${fmtRec(r.rec)}</td><td class="num">${fmtInc(r.inc)}</td></tr>`
  ).join('') : '<tr><td colspan="5" class="pdim" style="text-align:center;padding:14px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
+ document.querySelectorAll('#positionBody tr[data-pi]')
+  .forEach(tr=>{ tr.onclick = () => pPick('pos', +tr.dataset.pi); });
  syncArrows('cardPosition', posSort);
 }
 
@@ -2425,25 +2453,54 @@ function renderStructure(cur){
  const html = cur.structure.length ? cur.structure.map(d=>{
   const open = structOpen.has(d.name);
   const deptRows = d.depts.map(dp=>
-   `<tr class="pdeptrow ${open?'':'hide'}" data-parent="${cssesc(d.name)}">
+   `<tr class="pdeptrow pclk${pFilter.dept===dp.dpi?' psel':''} ${open?'':'hide'}"
+     data-parent="${cssesc(d.name)}" data-dpi="${dp.dpi}"
+     title="คลิกเพื่อดูเฉพาะ Department นี้ทั้งสามตาราง${pFilter.dept===dp.dpi?' (คลิกซ้ำเพื่อยกเลิก)':''}">
     <td class="l">${dp.name}</td><td class="num">${fmtActive(dp.active)}</td>
     <td class="num">${fmtPct(dp.costPct)}</td><td class="num">${fmtRec(dp.rec)}</td><td class="num">${fmtInc(dp.inc)}</td></tr>`
   ).join('');
-  return `<tr class="pdivrow" data-div="${cssesc(d.name)}">
-   <td class="l"><span class="pcaret ${open?'open':''}">&#9656;</span>${d.name}</td>
+  return `<tr class="pdivrow pclk${pFilter.div===d.di?' psel':''}" data-div="${cssesc(d.name)}" data-di="${d.di}"
+   title="คลิกเพื่อดูเฉพาะ Division นี้ทั้งสามตาราง${pFilter.div===d.di?' (คลิกซ้ำเพื่อยกเลิก)':''} · คลิกที่ลูกศรเพื่อย่อ/กางเฉย ๆ">
+   <td class="l"><span class="pcaret ${open?'open':''}" title="ย่อ/กางรายการ Department">&#9656;</span>${d.name}</td>
    <td class="num">${fmtActive(d.active)}</td>
    <td class="num">${fmtPct(d.costPct)}</td><td class="num">${fmtRec(d.rec)}</td><td class="num">${fmtInc(d.inc)}</td></tr>${deptRows}`;
  }).join('') : '<tr><td colspan="5" class="pdim" style="text-align:center;padding:14px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
  document.getElementById('structureBody').innerHTML = html;
- document.querySelectorAll('#structureBody .pdivrow').forEach(tr=>{
-  tr.onclick=()=>{
-   const name = tr.dataset.div;
+ /* ลูกศรทำหน้าที่ย่อ/กางอย่างเดียว · คลิกที่แถวคือกรองข้ามการ์ด
+    แยกสองหน้าที่ออกจากกัน เพราะแถวเดียวกันจะทำสองอย่างพร้อมกันไม่ได้ */
+ document.querySelectorAll('#structureBody .pdivrow .pcaret').forEach(ct=>{
+  ct.onclick = e => {
+   e.stopPropagation();
+   const name = ct.closest('.pdivrow').dataset.div;
    if(structOpen.has(name)) structOpen.delete(name); else structOpen.add(name);
    renderStructure(pRecompute());
   };
  });
+ document.querySelectorAll('#structureBody .pdivrow').forEach(tr=>{
+  tr.onclick = () => pPick('div', +tr.dataset.di, tr.dataset.div);
+ });
+ document.querySelectorAll('#structureBody .pdeptrow[data-dpi]').forEach(tr=>{
+  tr.onclick = () => pPick('dept', +tr.dataset.dpi, tr.dataset.parent);
+ });
 }
 function cssesc(s){return s.replace(/"/g,'&quot;');}
+
+/* ---- กดแถวในตารางเพื่อกรอง · ผูกสามการ์ดให้เดินไปด้วยกัน ----
+   กดแถวเดิมซ้ำ = ยกเลิกการกรองมิตินั้น จึงถอยออกได้โดยไม่ต้องไปกดล้าง filter
+   ทุกครั้งที่กด จะซิงก์ค่าใน dropdown ด้านบนด้วย เพื่อให้เห็นว่ากำลังกรองอะไรอยู่
+   และปุ่ม "ล้าง filter" เดิมยังใช้ล้างของที่กดจากตารางได้เหมือนกัน
+   Department กรองด้วยตัวเองได้ ไม่ต้องตั้ง Division ควบ เพราะ pMatch เช็กแยกช่อง
+   ถ้าตั้งควบจะยกเลิกยากกว่าเดิมโดยไม่ได้ผลอะไรเพิ่ม */
+const P_PICK_SEL = {store:'pStoreSel', reg:'pRegSel', div:'pDivSel', dept:'pDeptSel', pos:'pPosSel'};
+function pPick(kind, val, divName){
+ pFilter[kind] = (pFilter[kind] === val) ? -1 : val;
+ const el = document.getElementById(P_PICK_SEL[kind]);
+ if(el) el.value = String(pFilter[kind]);
+ /* กด Division หรือ Department แล้วกางรายการให้เลย เพราะที่กดคือ "อยากดูข้างใน" */
+ if((kind === 'div' || kind === 'dept') && pFilter[kind] === val && divName && structOpen)
+  structOpen.add(divName);          /* กด Department ที่อยู่ใน Division ที่ย่อไว้ ต้องกางให้เห็น */
+ pRenderAll();
+}
 
 document.getElementById('btnToggleAll').onclick=()=>{
  const cur = pRecompute();
