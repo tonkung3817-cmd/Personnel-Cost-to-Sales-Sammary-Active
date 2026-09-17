@@ -994,6 +994,94 @@ table.etbl tr.res td{background:var(--yeL)}
  #pgMR .mbrow{grid-template-columns:130px 1fr 74px 88px;gap:8px}
  #pgMR .mframe > iframe{height:calc(100vh - 120px)}
 }
+
+/* ---- 4 หัวข้อของแดชบอร์ด · คิดจากรายชื่อพนักงานจริง ---- */
+#pgMR .manch button{font-weight:600}
+#pgMR .mcard.hit{box-shadow:0 0 0 2px var(--mye),0 1px 2px rgba(16,24,40,.04)}
+#pgMR .mgauge{display:grid;grid-template-columns:minmax(230px,320px) 1fr;gap:18px;align-items:start}
+#pgMR .mgwrap{background:#0E2138;border-radius:12px;padding:15px 17px;color:#fff}
+#pgMR .mgv{font-size:36px;font-weight:600;letter-spacing:-.03em;line-height:1;color:#fff}
+#pgMR .mgk{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+ color:#A9BCD4;margin-top:5px}
+#pgMR .mgtrack{position:relative;height:11px;border-radius:6px;background:rgba(255,255,255,.14);
+ margin:13px 0 8px;overflow:visible}
+#pgMR .mgfill{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--mye)}
+#pgMR .mgfill.ok{background:#4FC59B}
+#pgMR .mgtick{position:absolute;top:-4px;bottom:-4px;width:2px;background:#fff;opacity:.85}
+#pgMR .mgfoot{font-size:11px;color:#A9BCD4;line-height:1.5}
+#pgMR .mgfoot b{color:#fff}
+#pgMR .mgsteps{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:9px}
+#pgMR .mgstep{border:1px solid var(--mline);border-radius:9px;padding:9px 11px;background:#FBFCFD}
+#pgMR .mgstep .k{font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+ color:var(--mink3);line-height:1.3;min-height:26px}
+#pgMR .mgstep .v{font-size:19px;font-weight:600;margin-top:3px;line-height:1.1}
+#pgMR .mgstep.cr .v{color:var(--mcr)} #pgMR .mgstep.gd .v{color:var(--mgd)}
+#pgMR .mgstep.bl .v{color:var(--mblD)} #pgMR .mgstep.ye .v{color:var(--mye)}
+
+/* waterfall แบบแถวนอน · อ่านง่ายกว่าแท่งตั้งเมื่อมีแค่ 6 ขั้น */
+#pgMR .mwf{display:flex;flex-direction:column;gap:3px}
+#pgMR .mwfr{display:grid;grid-template-columns:200px 1fr 132px;gap:12px;align-items:center;
+ font-size:12px;padding:5px 0}
+#pgMR .mwfr + .mwfr{border-top:1px solid var(--mline2)}
+#pgMR .mwfr.tot{border-top:1px solid var(--mline);font-weight:600;margin-top:2px}
+#pgMR .mwfbar{position:relative;height:20px;background:var(--mline2);border-radius:4px}
+#pgMR .mwfseg{position:absolute;top:0;bottom:0;border-radius:4px}
+#pgMR .mwfr .v{text-align:right;font-weight:600}
+#pgMR .mwfr.neg .v{color:var(--mcr)} #pgMR .mwfr.pos .v{color:var(--mgd)}
+
+/* cost to sales รายสาขา */
+#pgMR .mcts{display:grid;grid-template-columns:186px 1fr 78px 118px;gap:11px;align-items:center;
+ font-size:12px;padding:4px 0}
+#pgMR .mcts + .mcts{border-top:1px solid var(--mline2)}
+#pgMR .mcts .bar{position:relative;height:16px;background:var(--mline2);border-radius:4px;overflow:hidden}
+#pgMR .mcts .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--mgd);border-radius:4px}
+#pgMR .mcts .bar i.over{background:var(--mcr)}
+#pgMR .mcts .bar u{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--mink3);
+ text-decoration:none}
+#pgMR .mcts .p{text-align:right;font-weight:600}
+#pgMR .mcts .p.over{color:var(--mcr)} #pgMR .mcts .p.under{color:var(--mgd)}
+#pgMR .mcts .s{text-align:right;color:var(--mink3)}
+
+/* ต้นไม้ Region → สาขา → Section → คน */
+#pgMR .mtree{max-height:640px;overflow:auto;scrollbar-width:thin;scrollbar-color:#CDD5E0 transparent}
+#pgMR .mtree::-webkit-scrollbar{width:9px}
+#pgMR .mtree::-webkit-scrollbar-thumb{background:#CDD5E0;border-radius:5px;border:2px solid #fff}
+#pgMR .mtn{border:1px solid var(--mline);border-radius:9px;margin-bottom:7px;overflow:hidden;
+ background:#fff}
+#pgMR .mtn.l2{margin:0 0 6px;border-left:3px solid var(--mbl)}
+#pgMR .mtn.l3{margin:0 0 5px;border-left:3px solid var(--mgd);background:#FBFCFD}
+#pgMR .mth{display:grid;grid-template-columns:1fr 78px 78px 116px 116px;gap:10px;align-items:center;
+ padding:9px 12px;cursor:pointer;font-size:12.5px}
+#pgMR .mth:hover{background:var(--mblL)}
+#pgMR .mth .nm{display:flex;align-items:center;gap:8px;overflow:hidden}
+#pgMR .mth .nm b{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pgMR .mtc{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:5px;
+ background:var(--mline2);color:var(--mink2);font-size:9px;flex:none;transition:transform .18s}
+#pgMR .mth[aria-expanded="true"] .mtc{transform:rotate(90deg);background:var(--mblL);color:var(--mblD)}
+#pgMR .mth .c{text-align:right;font-variant-numeric:tabular-nums}
+#pgMR .mth .c.out{color:var(--mcr);font-weight:600}
+#pgMR .mth .c.sv{color:var(--mgd);font-weight:600}
+#pgMR .mtk{padding:9px 11px;background:#F4F7FA;border-top:1px solid var(--mline2)}
+#pgMR .mtk[hidden]{display:none}
+#pgMR .mtemp{width:100%;border-collapse:collapse;font-size:11.5px;background:#fff;
+ border:1px solid var(--mline);border-radius:8px;overflow:hidden}
+#pgMR .mtemp th{background:#F7F9FB;font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;
+ color:var(--mink2);font-weight:600;text-align:right;padding:6px 9px;border-bottom:1px solid var(--mline)}
+#pgMR .mtemp th.l{text-align:left}
+#pgMR .mtemp td{padding:5px 9px;text-align:right;border-bottom:1px solid var(--mline2);white-space:nowrap}
+#pgMR .mtemp td.l{text-align:left}
+#pgMR .mtemp tr:last-child td{border-bottom:0}
+#pgMR .mtemp tr:hover td{background:var(--mblL)}
+#pgMR .mtmore{font:inherit;font-size:11px;margin-top:7px;padding:5px 10px;border-radius:6px;
+ border:1px solid var(--mline);background:#fff;color:var(--mblD);cursor:pointer}
+#pgMR .mtmore:hover{background:var(--mblL);border-color:#B9CDE8}
+@media (max-width:980px){
+ #pgMR .mgauge{grid-template-columns:1fr}
+ #pgMR .mwfr{grid-template-columns:132px 1fr 104px;gap:8px}
+ #pgMR .mcts{grid-template-columns:120px 1fr 60px 92px;gap:8px}
+ #pgMR .mth{grid-template-columns:1fr 56px 96px;gap:7px}
+ #pgMR .mth .c.hidesm{display:none}
+}
 </style></head><body>
 <div id="loginOverlay" style="position:fixed;inset:0;z-index:9999;background:#0f172a;display:flex;align-items:center;justify-content:center;font-family:inherit">
  <div style="background:#fff;border-radius:12px;padding:32px 28px;width:320px;max-width:90vw;box-shadow:0 10px 40px rgba(0,0,0,.3)">
@@ -1886,6 +1974,68 @@ table.etbl tr.res td{background:var(--yeL)}
 </div>
 
 <div class="mkpis" id="mrKpi"></div>
+
+<!-- 4 หัวข้อเดียวกับชิปบนหัวแดชบอร์ด แต่คิดจากรายชื่อพนักงานจริงและขยับตามตัวกรองด้านบน -->
+<div class="mchips manch" id="mrAnch" style="margin-bottom:14px">
+ <button data-go="mrCardHc">Headcount reduction</button>
+ <button data-go="mrCardPay">Payroll commitment</button>
+ <button data-go="mrCardCts">Cost to sales</button>
+ <button data-go="mrCardTree">Store drill-down</button>
+</div>
+
+<div class="mcard" id="mrCardHc">
+ <div class="mchd"><span>Headcount reduction &mdash; การลดกำลังคนเทียบเป้า</span>
+  <span class="s mdim" style="font-weight:400;font-size:11px" id="mrHcHint"></span></div>
+ <div class="mcbody">
+  <div class="mgauge">
+   <div class="mgwrap">
+    <div class="mgv n" id="mrHcNet">&ndash;</div>
+    <div class="mgk">ลดสุทธิในงวด (คน)</div>
+    <div class="mgtrack"><span class="mgfill" id="mrHcFill"></span><span class="mgtick" id="mrHcTick"></span></div>
+    <div class="mgfoot" id="mrHcFoot"></div>
+   </div>
+   <div class="mgsteps" id="mrHcSteps"></div>
+  </div>
+  <div id="mrHcBars" style="margin-top:15px"></div>
+ </div>
+ <div class="mnote" id="mrHcNote"></div>
+</div>
+
+<div class="mcard" id="mrCardPay">
+ <div class="mchd nv"><span>Payroll commitment &mdash; จากภาระเต็มเดือนถึงยอดจ่ายจริง</span>
+  <button class="micon" id="mrDlPay" title="Export CSV รายการกระทบยอด">&#8681;</button></div>
+ <div class="mcbody"><div id="mrPayWrap"></div></div>
+ <div class="mnote" id="mrPayNote"></div>
+</div>
+
+<div class="mcard" id="mrCardCts">
+ <div class="mchd gr"><span>Cost to sales &mdash; ค่าจ้างในงวดต่อยอดขายรายสาขา</span>
+  <button class="micon" id="mrDlCts" title="Export CSV รายสาขา">&#8681;</button></div>
+ <div class="mcbody">
+  <div class="mchips" id="mrCtsN" style="margin-bottom:11px">
+   <button data-n="15" class="on">15 สาขาสูงสุด</button>
+   <button data-n="30">30</button>
+   <button data-n="-15">15 สาขาต่ำสุด</button>
+   <button data-n="0">ทุกสาขา</button></div>
+  <div id="mrCtsWrap"></div>
+ </div>
+ <div class="mnote" id="mrCtsNote"></div>
+</div>
+
+<div class="mcard" id="mrCardTree">
+ <div class="mchd"><span>Store drill-down &mdash; Region &rarr; สาขา &rarr; Section &rarr; รายชื่อคน</span>
+  <span class="s mdim" style="font-weight:400;font-size:11px">คลิกเพื่อกาง · ระดับล่างสุดขึ้นรายชื่อพนักงาน</span></div>
+ <div class="mcbody">
+  <div class="mchips" id="mrTreeSort" style="margin-bottom:11px">
+   <button data-k="save" class="on">เรียงตามผลประหยัด</button>
+   <button data-k="out">ผู้ออกมากสุด</button>
+   <button data-k="wg">ค่าจ้างมากสุด</button>
+   <button data-k="n">คนมากสุด</button>
+   <button data-k="name">ชื่อ</button></div>
+  <div class="mtree" id="mrTreeWrap"></div>
+ </div>
+ <div class="mnote" id="mrTreeNote"></div>
+</div>
 
 <div class="mcard">
  <div class="mchd nv"><span>สรุปตามมิติ — เรียงตามผลประหยัดต่อเดือน</span>
@@ -8899,6 +9049,10 @@ function mrRender(){
  MR_ROWS_CUR = rows;
  const a = mrAgg(rows);
  mrRenderKpi(a);
+ mrRenderHc(rows, a);
+ mrRenderPay(rows, a);
+ mrRenderCts(rows);
+ mrRenderTree(rows);
  mrRenderSum(rows, a);
  mrRenderTbl(rows, a);
  const all = MRROWS.length;
@@ -9206,8 +9360,13 @@ function initMRUI(){
     (เขียนเป็นข้อความตรง ๆ ในคอมเมนต์ไม่ได้ เพราะจะไปปิดสคริปต์ของหน้านี้เสียก่อน) */
  const holder = document.getElementById('mrDoc');
  if(holder && !holder.dataset.done){
-  document.getElementById('mrIfr').srcdoc =
-   holder.textContent.split('<\\/script>').join('<\/script>');
+  const ifr = document.getElementById('mrIfr');
+  ifr.addEventListener('load', () => {
+   /* ชิปบนหัวแดชบอร์ดถูกวาดโดยสคริปต์ในไฟล์นั้น จึงลองผูกซ้ำสองสามรอบจนเจอ */
+   let tries = 0;
+   const t = setInterval(() => { if(mrWireChips() || ++tries > 12) clearInterval(t); }, 350);
+  });
+  ifr.srcdoc = holder.textContent.split('<\\/script>').join('<\/script>');
   holder.dataset.done = '1';
  }
  document.getElementById('mrSub').innerHTML =
@@ -9260,6 +9419,32 @@ function initMRUI(){
    mrPg = 0; mrRender();
   };
  });
+ /* ชิปลัด 4 หัวข้อ · ชื่อเดียวกับชิปบนหัวแดชบอร์ด */
+ document.getElementById('mrAnch').querySelectorAll('button').forEach(b => {
+  b.onclick = () => {
+   const t = document.getElementById(b.dataset.go);
+   t.scrollIntoView({ behavior:'smooth', block:'start' });
+   mrFlash(t);
+  };
+ });
+ document.getElementById('mrCtsN').querySelectorAll('button').forEach(b => {
+  b.onclick = () => {
+   mrCtsN = +b.dataset.n;
+   document.getElementById('mrCtsN').querySelectorAll('button')
+    .forEach(x => x.classList.toggle('on', x === b));
+   mrRender();
+  };
+ });
+ document.getElementById('mrTreeSort').querySelectorAll('button').forEach(b => {
+  b.onclick = () => {
+   mrTreeSort = b.dataset.k;
+   document.getElementById('mrTreeSort').querySelectorAll('button')
+    .forEach(x => x.classList.toggle('on', x === b));
+   mrRender();
+  };
+ });
+ document.getElementById('mrDlPay').onclick = mrExportPay;
+ document.getElementById('mrDlCts').onclick = mrExportCts;
  document.getElementById('mrClr').onclick = mrClear;
  document.getElementById('mrReset').onclick = mrClear;
  document.getElementById('mrDlTbl').onclick = mrExport;
@@ -9290,10 +9475,338 @@ function mrClear(){
  document.getElementById('mrScope').querySelectorAll('button')
   .forEach(b => b.classList.toggle('on', b.dataset.s === 'all'));
  mrSort = { k:'sa', d:-1 }; mrPg = 0; mrPer = 100;
+ mrCtsN = 15; mrTreeSort = 'save'; MR_TREE_OPEN.clear();
+ document.getElementById('mrCtsN').querySelectorAll('button')
+  .forEach(b => b.classList.toggle('on', b.dataset.n === '15'));
+ document.getElementById('mrTreeSort').querySelectorAll('button')
+  .forEach(b => b.classList.toggle('on', b.dataset.k === 'save'));
  document.getElementById('mrTbl').querySelectorAll('th .marr').forEach(s => s.textContent = '');
  mrmsBuild('sto', 'mrFSto', mrStoItems());
  mrmsSyncAll();
  mrSetPeriod(MRE.def);
+}
+
+/* ═══════════ 4 หัวข้อที่ชิปบนหัวแดชบอร์ดพูดถึง · คิดจากรายชื่อพนักงานจริง ═══════════
+   ทุกการ์ดในกลุ่มนี้ใช้ผลของตัวกรองชุดเดียวกับตารางรายชื่อ จึงเจาะได้ลึกกว่าแดชบอร์ด
+   ต้นฉบับซึ่งมีข้อมูลรวมถึงระดับ Section เท่านั้น                                  */
+
+/* ---- 1) Headcount reduction ---- */
+function mrRenderHc(rows, a){
+ const tgt = mrMeta.target || 0;
+ const net = a.out - a.hir;
+ const pctT = tgt > 0 ? net / tgt * 100 : 0;
+ const full = Math.max(100, pctT);            /* ถ้าเกินเป้า ให้เส้นเป้าขยับเข้ามาแทน */
+ document.getElementById('mrHcNet').textContent = nf(net);
+ const fill = document.getElementById('mrHcFill');
+ fill.style.width = Math.min(100, pctT / full * 100).toFixed(1) + '%';
+ fill.className = 'mgfill' + (net >= tgt ? ' ok' : '');
+ document.getElementById('mrHcTick').style.left = (100 / full * 100).toFixed(1) + '%';
+ document.getElementById('mrHcFoot').innerHTML = tgt > 0
+  ? `<b>${nf(pctT, 1)}%</b> ของเป้า <b>${nf(tgt)}</b> คน (เป้าระดับทั้งเครือ)`
+    + (net >= tgt ? ' · เกินเป้าแล้ว' : ` · เหลืออีก <b>${nf(tgt - net)}</b> คน`)
+  : 'ไม่มีเป้าในงวดนี้';
+ const S = [
+  ['ลาออก', a.res, 'cr'], ['เลิกจ้าง', a.ter, 'cr'],
+  ['ปรับสภาพการจ้าง', a.conv, 'ye'], ['รอมีผล', a.fut, 'ye'],
+  ['รับเข้าในงวด', a.hir, 'gd'], ['ลดสุทธิ', net, 'bl']];
+ document.getElementById('mrHcSteps').innerHTML = S.map(([k, v, c]) =>
+  `<div class="mgstep ${c}"><div class="k">${k}</div><div class="v n">${nf(v)}</div></div>`).join('');
+ /* ลดสุทธิราย Region · 14 แถวพอดีอ่านได้หมดไม่ต้องตัด */
+ const m = new Map();
+ for(const i of rows){
+  const k = MRE.reg[mrSrg(mrSto[i])];
+  let o = m.get(k); if(!o){ o = { k, out:0, hir:0, n:0 }; m.set(k, o); }
+  o.n++; if(mrCx[i]) o.out++; if(mrIsHire(i)) o.hir++;
+ }
+ const L = [...m.values()].map(o => ({ ...o, net:o.out - o.hir }))
+   .sort((x, y) => y.net - x.net);
+ const mx = Math.max(1, ...L.map(o => Math.abs(o.net)));
+ document.getElementById('mrHcBars').innerHTML = L.length ? (
+  `<div class="mbrow" style="font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--mink3);font-weight:600;border-bottom:1px solid var(--mline)">
+    <span>Region</span><span>ลดสุทธิ (คน)</span><span class="a">ออก / เข้า</span>
+    <span class="b">ลดสุทธิ</span></div>`
+  + L.map(o => `<div class="mbrow">
+     <span class="mbnm" title="${cssesc(o.k)}">${o.k}</span>
+     <span class="mbtrack"><span class="mbfill" style="width:${(Math.abs(o.net) / mx * 100).toFixed(1)}%${
+       o.net < 0 ? ';background:var(--mgd)' : ''}"></span></span>
+     <span class="a n">${nf(o.out)} / ${nf(o.hir)}</span>
+     <span class="b n">${o.net > 0 ? nf(o.net) : nf(o.net)}</span></div>`).join('')) : '';
+ document.getElementById('mrHcHint').textContent = `${nf(rows.length)} คนในผลกรอง`;
+ document.getElementById('mrHcNote').innerHTML =
+  `ลดสุทธิ = ผู้ออกที่นับเป็นการออก ลบ ผู้ที่รับเข้าในงวด · ไม่รวม "รอมีผล" ที่ยังไม่ถึงวันที่ออก`
+  + ` · เมื่อไม่ใส่ตัวกรอง ค่านี้เท่ากับหัวคน ${nf(mrMeta.hc_before)} ต้นงวด ลบ ${nf(mrMeta.hc_now)} ปัจจุบัน ของแดชบอร์ดด้านบน`
+  + ` · เป้า ${nf(tgt)} คนเป็นเป้าระดับทั้งเครือ เวลากรองย่อยให้อ่านเป็นสัดส่วนที่กลุ่มนี้ช่วยได้`;
+}
+
+/* ---- 2) Payroll commitment ---- */
+let MR_PAY_CUR = [];
+function mrRenderPay(rows, a){
+ const unw = a.cm - a.wg;                    /* ส่วนที่ไม่ได้คิดค่าจ้าง (ออก/เข้ากลางงวด) */
+ const L = [
+  ['ภาระเต็มเดือนของคนในผลกรอง', a.cm, 'base', 'ค่าตอบแทนรวมต่อเดือนทุกคน'],
+  ['หัก ส่วนที่ไม่ได้คิดค่าจ้าง', -unw, 'neg', 'ผู้ออกและผู้เข้ากลางงวด คิดตามสัดส่วนวันฐาน 30 วัน'],
+  ['ค่าจ้างจ่ายจริงในงวด', a.wg, 'sub', 'ตรงกับยอดของแดชบอร์ดเมื่อไม่ใส่ตัวกรอง'],
+  ['บวก เงินชดเชยในงวด', a.sv, 'add', 'Severance + Salary Gap + Advance ที่รับรู้ในงวดนี้'],
+  ['ภาระรวมทั้งสิ้น', a.wg + a.sv, 'tot', 'ยอดที่ต้องจ่ายจริงทั้งหมดในงวดนี้'],
+  ['ผลประหยัดต่อเดือนจากงวดถัดไป', a.save, 'pos', 'ค่าตอบแทนเต็มเดือนของผู้ออก ไม่รวมปรับสภาพการจ้าง']];
+ MR_PAY_CUR = L;
+ const mx = Math.max(1, a.cm, a.wg + a.sv);
+ const CO = { base:'var(--mbl)', neg:'var(--mcr)', sub:'#0E2138', add:'var(--mye)',
+              tot:'#0E2138', pos:'var(--mgd)' };
+ document.getElementById('mrPayWrap').innerHTML =
+  `<div class="mwf">` + L.map(([k, v, t, s]) => {
+   const w = Math.min(100, Math.abs(v) / mx * 100);
+   const left = t === 'add' ? Math.min(100, a.wg / mx * 100)
+              : t === 'neg' ? Math.min(100, a.wg / mx * 100) : 0;
+   return `<div class="mwfr ${t === 'neg' ? 'neg' : t === 'pos' ? 'pos' : ''}${t === 'tot' ? ' tot' : ''}">
+     <span title="${cssesc(s)}">${k}</span>
+     <span class="mwfbar"><span class="mwfseg" style="left:${left.toFixed(1)}%;width:${w.toFixed(1)}%;
+       background:${CO[t]}"></span></span>
+     <span class="v n">${nf(v, 2)}</span></div>`;
+  }).join('') + `</div>`;
+ document.getElementById('mrPayNote').innerHTML =
+  `หน่วยเป็นบาท · ${nf(rows.length)} คนในผลกรอง`
+  + ` · "ค่าจ้างจ่ายจริงในงวด" และ "ผลประหยัด" ตรงกับแดชบอร์ดด้านบนทุกสตางค์เมื่อไม่ใส่ตัวกรอง`
+  + ` · ภาระเต็มเดือนคือผลรวมค่าตอบแทนจากรายชื่อ ซึ่งอาจต่างจากแท่งแรกของ waterfall ด้านบนเล็กน้อย`
+  + ` เพราะแดชบอร์ดคิดฐานเต็มเดือนจากยอดรวมของงวด ไม่ใช่ผลรวมรายคน`;
+}
+function mrExportPay(){
+ download('manpower_reduction_payroll_' + MRE.per[mrPeriod].replace(/\s+/g, '') + '.csv',
+  [['รายการ', 'จำนวน (บาท)', 'คำอธิบาย', 'งวด'],
+   ...MR_PAY_CUR.map(([k, v, , s]) => [k, v.toFixed(2), s, MRE.per[mrPeriod]])]);
+}
+
+/* ---- 3) Cost to sales ---- */
+let mrCtsN = 15, MR_CTS_CUR = [];
+function mrCtsData(rows){
+ const m = new Map();
+ for(const i of rows){
+  const s = mrSto[i];
+  let o = m.get(s);
+  if(!o){ o = { s, n:0, out:0, wg:0, sv:0, save:0, sales:MRE.ssa[s] }; m.set(s, o); }
+  o.n++; if(mrCx[i]) o.out++;
+  o.wg += mrWg[i]; o.sv += mrSv[i]; o.save += mrSave(i);
+ }
+ return [...m.values()].map(o => ({ ...o, pct:o.sales > 0 ? o.wg / o.sales * 100 : null }))
+   .sort((x, y) => (y.pct == null ? -1 : y.pct) - (x.pct == null ? -1 : x.pct));
+}
+function mrRenderCts(rows){
+ const L = mrCtsData(rows);
+ MR_CTS_CUR = L;
+ const T = mrMeta.cts_target || 2.5;
+ const show = mrCtsN === 0 ? L : mrCtsN > 0 ? L.slice(0, mrCtsN) : L.slice(mrCtsN);
+ const mx = Math.max(T * 1.25, ...show.map(o => o.pct || 0));
+ const over = L.filter(o => o.pct != null && o.pct > T).length;
+ document.getElementById('mrCtsWrap').innerHTML = show.length ? (
+  `<div class="mcts" style="font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--mink3);font-weight:600;border-bottom:1px solid var(--mline)">
+    <span>สาขา</span><span>% ค่าจ้างต่อยอดขาย (เส้น = เป้า ${nf(T, 2)}%)</span>
+    <span class="p">%</span><span class="s">ค่าจ้าง / ยอดขาย (ลบ.)</span></div>`
+  + show.map(o => {
+   const p = o.pct, bad = p != null && p > T;
+   return `<div class="mcts">
+    <span class="mbnm" title="${cssesc(MRE.stc[o.s] + ' ' + MRE.stn[o.s])}"><span class="n">${
+      MRE.stc[o.s]}</span> ${MRE.stn[o.s]}</span>
+    <span class="bar"><i class="${bad ? 'over' : ''}" style="width:${
+      p == null ? 0 : Math.min(100, p / mx * 100).toFixed(1)}%"></i><u style="left:${
+      (T / mx * 100).toFixed(1)}%"></u></span>
+    <span class="p ${bad ? 'over' : 'under'}">${p == null ? '—' : nf(p, 3) + '%'}</span>
+    <span class="s n">${nf(o.wg / 1e6, 2)} / ${nf(o.sales / 1e6, 0)}</span></div>`;
+  }).join('')) : '<div class="mmsempty">ไม่มีข้อมูลตามตัวกรองนี้</div>';
+ document.getElementById('mrCtsNote').innerHTML =
+  `${nf(L.length)} สาขาในผลกรอง · เกินเป้า ${nf(T, 2)}% อยู่ <b>${nf(over)}</b> สาขา`
+  + ` · ยอดขายเป็นของ ${MRE.sl} ระดับสาขาทั้งสาขา`
+  + ` · <b>ถ้ากรองเฉพาะบางแผนกหรือบางประเภทพนักงาน</b> ตัวเลข % จะเป็นสัดส่วนของกลุ่มที่กรองต่อยอดขายเต็มของสาขา`
+  + ` ไม่ใช่ % ทั้งสาขา · % ของแดชบอร์ดด้านบน (2.19%) เป็นค่าจ้างต่อเนื่องหลังผู้ออกมีผล ซึ่งเป็นอีกนิยาม`;
+}
+function mrExportCts(){
+ if(!MR_CTS_CUR.length){ alert('ไม่มีข้อมูลให้ export'); return; }
+ download('manpower_reduction_cost_to_sales_' + MRE.per[mrPeriod].replace(/\s+/g, '') + '.csv',
+  [['รหัสสาขา', 'ST Name', 'Region', 'คนในผลกรอง', 'ผู้ออกในงวด', 'ค่าจ้างในงวด (บาท)',
+    'เงินชดเชยในงวด (บาท)', 'ผลประหยัดต่อเดือน (บาท)', 'ยอดขาย (บาท)', '% ค่าจ้างต่อยอดขาย',
+    'เป้า %', 'งวด'],
+   ...MR_CTS_CUR.map(o => ['="' + MRE.stc[o.s] + '"', MRE.stn[o.s], MRE.reg[mrSrg(o.s)],
+     o.n, o.out, o.wg.toFixed(2), o.sv.toFixed(2), o.save, o.sales.toFixed(2),
+     o.pct == null ? '' : o.pct.toFixed(4), (mrMeta.cts_target || 2.5).toFixed(2),
+     MRE.per[mrPeriod]])]);
+}
+
+/* ---- 4) Store drill-down · Region → สาขา → Section → รายชื่อคน ----
+   สร้างเฉพาะระดับที่กางแล้ว ไม่สร้างทั้งต้นตั้งแต่แรก เพราะเต็มที่มีถึง ~3,400 แผนก
+   กางค้างไว้ได้ ระดับที่เปิดจะถูกจำไว้และเปิดกลับให้เองเมื่อ render ใหม่ */
+let mrTreeSort = 'save';
+let MR_TREE = [], MR_TREE_NODE = new Map(), MR_TREE_OPEN = new Set();
+const MR_LEAF_MAX = 40;
+function mrTreeData(rows){
+ const R = new Map();
+ for(const i of rows){
+  const s = mrSto[i], rg = mrSrg(s), se = mrSec[i];
+  let r = R.get(rg);
+  if(!r){ r = { key:'r' + rg, lv:1, name:MRE.reg[rg], n:0, out:0, wg:0, sv:0, save:0,
+                kids:new Map() }; R.set(rg, r); }
+  let st = r.kids.get(s);
+  if(!st){ st = { key:'r' + rg + 's' + s, lv:2, name:MRE.stc[s] + ' ' + MRE.stn[s], sto:s,
+                  n:0, out:0, wg:0, sv:0, save:0, sales:MRE.ssa[s], kids:new Map() };
+           r.kids.set(s, st); }
+  let sc = st.kids.get(se);
+  if(!sc){ sc = { key:'r' + rg + 's' + s + 'e' + se, lv:3, name:MRE.sec[se] || 'ไม่ระบุ',
+                  sto:s, sec:se, n:0, out:0, wg:0, sv:0, save:0, rows:[] };
+           st.kids.set(se, sc); }
+  for(const o of [r, st, sc]){
+   o.n++; if(mrCx[i]) o.out++;
+   o.wg += mrWg[i]; o.sv += mrSv[i]; o.save += mrSave(i);
+  }
+  sc.rows.push(i);
+ }
+ MR_TREE_NODE = new Map();
+ R.forEach(r => { MR_TREE_NODE.set(r.key, r);
+  r.kids.forEach(st => { MR_TREE_NODE.set(st.key, st);
+   st.kids.forEach(sc => MR_TREE_NODE.set(sc.key, sc)); }); });
+ return [...R.values()];
+}
+function mrTreeCmp(a, b){
+ if(mrTreeSort === 'name') return String(a.name).localeCompare(String(b.name), 'th');
+ return (b[mrTreeSort] || 0) - (a[mrTreeSort] || 0) || b.n - a.n;
+}
+function mrNodeTag(o){
+ if(o.lv === 1) return ` <span class="mdim">${nf(o.kids.size)} สาขา</span>`;
+ if(o.lv === 2){ const p = o.sales > 0 ? o.wg / o.sales * 100 : null;
+  return p == null ? '' : ` <span class="mdim">${nf(p, 2)}% ต่อยอดขาย</span>`; }
+ return '';
+}
+function mrNodeHTML(o){
+ return `<div class="mtn${o.lv === 2 ? ' l2' : o.lv === 3 ? ' l3' : ''}">
+  <div class="mth" role="button" tabindex="0" data-k="${o.key}" aria-expanded="false">
+   <span class="nm"><span class="mtc">&#9654;</span><b title="${cssesc(o.name)}">${o.name}</b>${
+     mrNodeTag(o)}</span>
+   <span class="c">${nf(o.n)}</span>
+   <span class="c out hidesm">${o.out ? nf(o.out) : '<span class="mdim">—</span>'}</span>
+   <span class="c hidesm n">${nf(o.wg, 0)}</span>
+   <span class="c sv n">${o.save ? nf(o.save) : '<span class="mdim">—</span>'}</span></div>
+  <div class="mtk" hidden data-for="${o.key}"></div></div>`;
+}
+function mrTreeFill(box, list){
+ box.innerHTML = list.sort(mrTreeCmp).map(mrNodeHTML).join('')
+   || '<div class="mmsempty">ไม่มีข้อมูล</div>';
+ box.dataset.done = '1';
+ mrTreeWire(box);
+}
+function mrTreeWire(root){
+ root.querySelectorAll(':scope > .mtn > .mth[data-k]').forEach(h => {
+  const key = h.dataset.k, o = MR_TREE_NODE.get(key);
+  const box = h.parentElement.querySelector(`.mtk[data-for="${key}"]`);
+  if(!o || !box) return;
+  const open = want => {
+   box.hidden = !want;
+   h.setAttribute('aria-expanded', want ? 'true' : 'false');
+   want ? MR_TREE_OPEN.add(key) : MR_TREE_OPEN.delete(key);
+   if(want && !box.dataset.done){
+    if(o.lv === 3) mrLeaf(box, o); else mrTreeFill(box, [...o.kids.values()]);
+   }
+  };
+  h.onclick = () => open(box.hidden);
+  h.onkeydown = e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(box.hidden); } };
+  if(MR_TREE_OPEN.has(key)) open(true);
+ });
+}
+function mrRenderTree(rows){
+ MR_TREE = mrTreeData(rows);
+ const wrap = document.getElementById('mrTreeWrap');
+ wrap.innerHTML = `<div class="mth" style="cursor:default;font-size:10.5px;letter-spacing:.05em;
+   text-transform:uppercase;color:var(--mink3);font-weight:600;padding:0 12px 7px">
+   <span class="nm">Region / สาขา / Section</span><span class="c">คน</span>
+   <span class="c hidesm">ผู้ออก</span><span class="c hidesm">ค่าจ้างในงวด</span>
+   <span class="c">ประหยัด/เดือน</span></div><div id="mrTreeRoot"></div>`;
+ const root = document.getElementById('mrTreeRoot');
+ if(!MR_TREE.length){ root.innerHTML = '<div class="mmsempty">ไม่มีข้อมูลตามตัวกรองนี้</div>'; }
+ else mrTreeFill(root, MR_TREE);
+ document.getElementById('mrTreeNote').innerHTML =
+  `${nf(MR_TREE.length)} Region · ${nf(new Set(rows.map(i => mrSto[i])).size)} สาขา`
+  + ` · ${nf(rows.length)} คนในผลกรอง · กางถึงระดับ Section แล้วจะเห็นรายชื่อคนในแผนกนั้น`
+  + ` (แสดง ${MR_LEAF_MAX} คนแรก เรียงตามผลประหยัด แล้วกดปุ่มดูทั้งหมดในตารางด้านล่างได้)`
+  + ` · แดชบอร์ดต้นฉบับเจาะได้ลึกสุดถึงระดับ Section ส่วนนี้ลงไปถึงรายคน`;
+}
+function mrLeaf(box, sc){
+ const list = sc.rows.slice().sort((x, y) => mrSave(y) - mrSave(x) || mrCm[y] - mrCm[x]);
+ const show = list.slice(0, MR_LEAF_MAX);
+ box.innerHTML = `<table class="mtemp"><thead><tr>
+   <th class="l">รหัส</th><th class="l">ชื่อ &ndash; นามสกุล</th><th class="l">ตำแหน่ง</th>
+   <th class="l">ประเภทการออก</th><th>ค่าตอบแทน/เดือน</th><th>ค่าจ้างในงวด</th>
+   <th>เงินชดเชย</th><th>ประหยัด/เดือน</th></tr></thead><tbody>`
+  + show.map(i => `<tr data-i="${i}">
+    <td class="l n">${mrID(i)}</td><td class="l">${mrNM[i]}</td>
+    <td class="l">${MRE.pos[mrPos[i]]}</td>
+    <td class="l">${mrXt[i] === MR_XT_NONE ? '<span class="mdim">—</span>'
+      : `<span class="mtag ${mrXtTag(mrXt[i])}">${MRE.xt[mrXt[i]]}</span>`}</td>
+    <td class="n">${nf(mrCm[i])}</td><td class="n">${nf(mrWg[i], 2)}</td>
+    <td class="n">${mrSv[i] ? nf(mrSv[i], 2) : '<span class="mdim">—</span>'}</td>
+    <td class="n">${mrSave(i) ? nf(mrSave(i)) : '<span class="mdim">—</span>'}</td></tr>`).join('')
+  + `</tbody></table>`
+  + (list.length > show.length
+     ? `<button class="mtmore" data-sto="${sc.sto}" data-sec="${sc.sec}">ดูทั้ง ${
+        nf(list.length)} คนในตารางรายชื่อด้านล่าง</button>` : '');
+ box.dataset.done = '1';
+ box.querySelectorAll('tr[data-i]').forEach(tr => { tr.onclick = () => mrShow(+tr.dataset.i); });
+ const more = box.querySelector('.mtmore');
+ if(more) more.onclick = () => {
+  mrF.sto.clear(); mrF.sto.add(+more.dataset.sto);
+  mrF.sec.clear(); mrF.sec.add(+more.dataset.sec);
+  mrmsBuild('sto', 'mrFSto', mrStoItems());
+  mrmsSyncAll(); mrPg = 0; mrRender();
+  document.getElementById('mrTbl').scrollIntoView({ behavior:'smooth', block:'start' });
+ };
+}
+
+/* ---- ผูกชิป 4 ตัวบนหัวแดชบอร์ดตอน runtime ----
+   ชิปในไฟล์ต้นฉบับเป็นป้ายข้อความเปล่า ไม่มี handler และไม่มี id
+   ที่ทำคือใส่ event กับสไตล์ให้ทาง DOM หลัง iframe โหลดเสร็จ ตัวไฟล์ไม่ถูกแก้แม้แต่ไบต์เดียว
+   กดแล้วเลื่อนไปการ์ดที่ตรงกันในแดชบอร์ด แล้วไฮไลต์ให้เห็นว่าคือใบไหน */
+const MR_CHIP_MAP = [
+ ['headcount', '.target', 'mrCardHc'],
+ ['payroll',   '.payroll-card', 'mrCardPay'],
+ ['cost to sales', '.mc.pct', 'mrCardCts'],
+ ['drill', '.drill-zone', 'mrCardTree']];
+function mrWireChips(){
+ try{
+  const d = document.getElementById('mrIfr').contentDocument;
+  if(!d) return false;
+  const chips = d.querySelectorAll('.hero-tags span');
+  if(!chips.length) return false;
+  chips.forEach(c => {
+   if(c.dataset.mrWired) return;
+   const t = (c.textContent || '').toLowerCase();
+   const hit = MR_CHIP_MAP.find(([k]) => t.includes(k));
+   if(!hit) return;
+   const target = d.querySelector(hit[1]);
+   c.dataset.mrWired = '1';
+   c.style.cursor = 'pointer';
+   c.setAttribute('role', 'button');
+   c.setAttribute('tabindex', '0');
+   c.title = 'กดเพื่อไปที่การ์ดนี้ในแดชบอร์ด · กดค้าง Shift เพื่อไปที่ส่วนรายชื่อพนักงานของหัวข้อนี้';
+   const go = e => {
+    if(e.shiftKey){
+     document.getElementById(hit[2]).scrollIntoView({ behavior:'smooth', block:'start' });
+     mrFlash(document.getElementById(hit[2]));
+     return;
+    }
+    if(!target) return;
+    target.scrollIntoView({ behavior:'smooth', block:'center' });
+    const old = target.style.outline, oldO = target.style.outlineOffset;
+    target.style.outline = '2px solid #F6C24A';
+    target.style.outlineOffset = '3px';
+    setTimeout(() => { target.style.outline = old; target.style.outlineOffset = oldO; }, 1800);
+   };
+   c.onclick = go;
+   c.onkeydown = e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); go(e); } };
+  });
+  return true;
+ }catch(e){ return false; }
+}
+function mrFlash(el){
+ if(!el) return;
+ el.classList.add('hit');
+ setTimeout(() => el.classList.remove('hit'), 1800);
 }
 
 function padCode(n){ return String(n).padStart(3,'0'); }
