@@ -1082,6 +1082,43 @@ table.etbl tr.res td{background:var(--yeL)}
  #pgMR .mth{grid-template-columns:1fr 56px 96px;gap:7px}
  #pgMR .mth .c.hidesm{display:none}
 }
+
+/* ===== Manpower · dropdown เลือกหลายค่าพร้อมช่องค้นหา =====
+   คลาสแยกของหน้านี้เอง (mpms) เพื่อไม่ให้ทับกับ pms ของ Personnel Summary
+   หรือ mms ของ Manpower Reduction · ใช้ตัวแปรสีชุด --c* ที่หน้านี้มีอยู่แล้ว */
+#pgMP .mpms{position:relative}
+#pgMP .mpmsbtn{width:100%;box-sizing:border-box;font:inherit;font-size:12.5px;
+ padding:8px 10px;border:1px solid var(--cline);border-radius:7px;background:#fff;
+ color:var(--cink);cursor:pointer;display:flex;align-items:center;justify-content:space-between;
+ gap:8px;text-align:left}
+#pgMP .mpmsbtn:hover{border-color:#B9CDE8}
+#pgMP .mpmsbtn.on{border-color:var(--cbl);background:var(--cblL);color:#1E4A85;font-weight:600}
+#pgMP .mpmstxt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#pgMP .mpmscar{color:var(--cink3);font-size:9px;flex:none}
+#pgMP .mpmspop{position:absolute;z-index:60;top:calc(100% + 4px);left:0;min-width:100%;
+ width:max-content;max-width:370px;background:#fff;border:1px solid var(--cline);
+ border-radius:9px;box-shadow:0 10px 30px rgba(16,24,40,.14);padding:8px}
+#pgMP .mpmspop input[type=text]{width:100%;box-sizing:border-box;font:inherit;font-size:12.5px;
+ padding:7px 9px;border:1px solid var(--cline);border-radius:6px;margin-bottom:7px}
+#pgMP .mpmspop input[type=text]:focus{outline:2px solid var(--cbl);outline-offset:-1px}
+#pgMP .mpmslist{max-height:286px;overflow:auto;scrollbar-width:thin;
+ scrollbar-color:#CDD5E0 transparent}
+#pgMP .mpmslist::-webkit-scrollbar{width:9px}
+#pgMP .mpmslist::-webkit-scrollbar-thumb{background:#CDD5E0;border-radius:5px;
+ border:2px solid #fff}
+#pgMP .mpmsitem{display:flex;gap:8px;align-items:center;padding:5px 6px;border-radius:6px;
+ cursor:pointer;font-size:12.5px;line-height:1.35}
+#pgMP .mpmsitem:hover{background:var(--cblL)}
+#pgMP .mpmsitem.hide{display:none}
+#pgMP .mpmsitem input{margin:0;flex:none;accent-color:var(--cbl)}
+#pgMP .mpmsdim{color:var(--cink3);font-size:11px}
+#pgMP .mpmsempty{padding:9px 6px;font-size:12px;color:var(--cink3)}
+#pgMP .mpmsfoot{display:flex;gap:6px;align-items:center;border-top:1px solid var(--cline2);
+ margin-top:7px;padding-top:7px}
+#pgMP .mpmsfoot button{font:inherit;font-size:11px;padding:4px 9px;border-radius:5px;
+ border:1px solid var(--cline);background:#fff;color:var(--cink2);cursor:pointer}
+#pgMP .mpmsfoot button:hover{background:var(--cblL);border-color:#B9CDE8;color:#1E4A85}
+#pgMP .mpmscnt{margin-left:auto;font-size:10.5px;color:var(--cink3)}
 </style></head><body>
 <div id="loginOverlay" style="position:fixed;inset:0;z-index:9999;background:#0f172a;display:flex;align-items:center;justify-content:center;font-family:inherit">
  <div style="background:#fff;border-radius:12px;padding:32px 28px;width:320px;max-width:90vw;box-shadow:0 10px 40px rgba(0,0,0,.3)">
@@ -1735,20 +1772,20 @@ table.etbl tr.res td{background:var(--yeL)}
  <button class="refreshbtn" id="mpRefresh" title="คืนค่าตัวกรองทุกช่องและช่วงเวลากลับเป็นค่าเริ่มต้น"><span class="rico">&#10227;</span>Refresh</button></div>
 
 <div class="cfbar">
- <div><div class="cflabel">Region</div>
-  <select id="mpReg" class="cfsel" style="min-width:184px"></select></div>
- <div><div class="cflabel">สาขา</div>
-  <select id="mpSto" class="cfsel" style="min-width:228px"></select></div>
- <div><div class="cflabel">ประเภทพนักงาน</div>
-  <select id="mpCat" class="cfsel" style="min-width:176px"></select></div>
- <div><div class="cflabel">สัญชาติ</div>
-  <select id="mpEth" class="cfsel" style="min-width:142px"></select></div>
- <div><div class="cflabel">Division</div>
-  <select id="mpDiv" class="cfsel" style="min-width:176px"></select></div>
- <div><div class="cflabel">แผนก</div>
-  <select id="mpDep" class="cfsel" style="min-width:198px"></select></div>
- <div><div class="cflabel">ตำแหน่ง</div>
-  <select id="mpPos" class="cfsel" style="min-width:214px"></select></div>
+ <div style="min-width:184px"><div class="cflabel">Region</div>
+  <div class="mpms" id="mpReg"></div></div>
+ <div style="min-width:228px"><div class="cflabel">สาขา</div>
+  <div class="mpms" id="mpSto"></div></div>
+ <div style="min-width:176px"><div class="cflabel">ประเภทพนักงาน</div>
+  <div class="mpms" id="mpCat"></div></div>
+ <div style="min-width:142px"><div class="cflabel">สัญชาติ</div>
+  <div class="mpms" id="mpEth"></div></div>
+ <div style="min-width:176px"><div class="cflabel">Division</div>
+  <div class="mpms" id="mpDiv"></div></div>
+ <div style="min-width:198px"><div class="cflabel">แผนก</div>
+  <div class="mpms" id="mpDep"></div></div>
+ <div style="min-width:214px"><div class="cflabel">ตำแหน่ง</div>
+  <div class="mpms" id="mpPos"></div></div>
  <button id="mpClr" class="cghost">ล้าง filter</button>
  <div class="ctblcount n" id="mpCount"></div>
 </div>
@@ -7917,20 +7954,22 @@ const mpDate = d => {
 
 /* ช่วงเวลาเก็บเป็น "วันที่เท่าไรของช่วงข้อมูล" (0 = วันแรก) ไม่ได้เก็บเป็นเลขเดือน
    จึงเลือกได้ละเอียดถึงวัน และการ์ดรายเดือนก็ยังตัดเดือนตามช่วงที่เลือกได้ถูก */
-let mpF = {reg:-1, sto:-1, cat:-1, eth:-1, div:-1, dep:-1, pos:-1,
-           d1:0, d2:MPDAYS-1};
+/* ตัวกรองทุกช่องเลือกได้หลายค่า เก็บเป็น Set ของดัชนี · Set ว่าง = ไม่กรอง
+   (ความหมายเดียวกับ "ทุก..." ของ dropdown ชุดเดิม) ช่วงวันที่ยังเป็นเลขวันเหมือนเดิม */
+let mpF = {reg:new Set(), sto:new Set(), cat:new Set(), eth:new Set(),
+           div:new Set(), dep:new Set(), pos:new Set(), d1:0, d2:MPDAYS-1};
 let mpSort = {k:'leave', dir:-1};
 let mpQ = '', mpView = 0;
 
 const mpStReg = i => MPST[i][2];
 function mpMatch(x){
- if(mpF.sto>=0 && x[0]!==mpF.sto) return false;
- if(mpF.reg>=0 && mpStReg(x[0])!==mpF.reg) return false;
- if(mpF.cat>=0 && x[1]!==mpF.cat) return false;
- if(mpF.eth>=0 && x[2]!==mpF.eth) return false;
- if(mpF.div>=0 && x[3]!==mpF.div) return false;
- if(mpF.dep>=0 && x[8]!==mpF.dep) return false;
- if(mpF.pos>=0 && x[9]!==mpF.pos) return false;
+ if(mpF.sto.size && !mpF.sto.has(x[0])) return false;
+ if(mpF.reg.size && !mpF.reg.has(mpStReg(x[0]))) return false;
+ if(mpF.cat.size && !mpF.cat.has(x[1])) return false;
+ if(mpF.eth.size && !mpF.eth.has(x[2])) return false;
+ if(mpF.div.size && !mpF.div.has(x[3])) return false;
+ if(mpF.dep.size && !mpF.dep.has(x[8])) return false;
+ if(mpF.pos.size && !mpF.pos.has(x[9])) return false;
  return true;
 }
 const mpD1 = () => mpF.d1;
@@ -7976,13 +8015,13 @@ function mpAgg(){
  let act = 0, mmAct = 0, start = 0;   /* start = active ณ วันที่ 0 ของช่วงข้อมูล */
 
  for(const b of MPBASE){
-  if(mpF.sto>=0 && b[0]!==mpF.sto) continue;
-  if(mpF.reg>=0 && mpStReg(b[0])!==mpF.reg) continue;
-  if(mpF.cat>=0 && b[1]!==mpF.cat) continue;
-  if(mpF.eth>=0 && b[2]!==mpF.eth) continue;
-  if(mpF.div>=0 && b[3]!==mpF.div) continue;
-  if(mpF.dep>=0 && b[5]!==mpF.dep) continue;
-  if(mpF.pos>=0 && b[6]!==mpF.pos) continue;
+  if(mpF.sto.size && !mpF.sto.has(b[0])) continue;
+  if(mpF.reg.size && !mpF.reg.has(mpStReg(b[0]))) continue;
+  if(mpF.cat.size && !mpF.cat.has(b[1])) continue;
+  if(mpF.eth.size && !mpF.eth.has(b[2])) continue;
+  if(mpF.div.size && !mpF.div.has(b[3])) continue;
+  if(mpF.dep.size && !mpF.dep.has(b[5])) continue;
+  if(mpF.pos.size && !mpF.pos.has(b[6])) continue;
   start += b[4]; act += b[4];
   st[b[0]].act += b[4]; cat[b[1]].act += b[4];
   if(b[2]===MP_ETH_MM){ mmAct += b[4]; st[b[0]].mmAct += b[4]; }
@@ -8602,6 +8641,94 @@ function mpRenderAll(){
  return a;
 }
 
+/* ---- dropdown เลือกหลายค่าของหน้า Manpower ----
+   สร้างเองเพราะต้องมีช่องค้นหา (สาขา 169 · แผนก 107 · ตำแหน่ง 308) และต้องติ๊กได้
+   หลายค่าโดยไม่ต้องกด ctrl ค้างแบบ <select multiple>
+   ทุกช่องใช้ตัวเดียวกันหมด ต่างกันแค่รายการกับคำที่ใช้เรียกหน่วย */
+const MPMS = {};
+let mpmsAfter = () => {};
+const MPMS_LAB = {
+ reg:{all:'ทุก Region',      unit:'Region',   ph:'ค้นหา Region'},
+ sto:{all:'ทุกสาขา',         unit:'สาขา',      ph:'ค้นหาสาขา / รหัส'},
+ cat:{all:'ทุกประเภท',       unit:'ประเภท',    ph:'ค้นหาประเภท'},
+ eth:{all:'ทุกสัญชาติ',      unit:'สัญชาติ',   ph:'ค้นหาสัญชาติ'},
+ div:{all:'ทุก Division',    unit:'Division', ph:'ค้นหา Division'},
+ dep:{all:'ทุกแผนก',         unit:'แผนก',      ph:'ค้นหาแผนก'},
+ pos:{all:'ทุกตำแหน่ง',      unit:'ตำแหน่ง',   ph:'ค้นหาตำแหน่ง'}};
+function mpmsBuild(kind, items){
+ const host = document.getElementById('mp' + kind[0].toUpperCase() + kind.slice(1));
+ if(!host) return;
+ const L = MPMS_LAB[kind];
+ host.innerHTML =
+  `<button type="button" class="mpmsbtn" aria-expanded="false" aria-haspopup="true">
+    <span class="mpmstxt"></span><span class="mpmscar">&#9660;</span></button>
+   <div class="mpmspop" hidden>
+    <input type="text" placeholder="${L.ph}..." spellcheck="false">
+    <div class="mpmslist">${items.map(o=>
+      `<label class="mpmsitem" data-s="${cssesc((o.t + ' ' + (o.sub||'')).toLowerCase())}">
+        <input type="checkbox" value="${o.v}"><span>${o.t}${
+          o.sub ? ` <span class="mpmsdim">${o.sub}</span>` : ''}</span></label>`).join('')
+      || '<div class="mpmsempty">ไม่มีรายการ</div>'}</div>
+    <div class="mpmsfoot">
+     <button type="button" data-a="all">เลือกทั้งหมดที่เห็น</button>
+     <button type="button" data-a="none">ล้าง</button>
+     <span class="mpmscnt"></span></div>
+   </div>`;
+ const btn = host.querySelector('.mpmsbtn'), pop = host.querySelector('.mpmspop');
+ const q = host.querySelector('input[type=text]');
+ MPMS[kind] = {host, btn, pop, q, items, L};
+ btn.onclick = e => { e.stopPropagation(); mpmsOpen(kind, pop.hidden); };
+ pop.onclick = e => e.stopPropagation();
+ q.oninput = () => {
+  const t = q.value.trim().toLowerCase();
+  host.querySelectorAll('.mpmsitem').forEach(it=>
+   it.classList.toggle('hide', !!t && !it.dataset.s.includes(t)));
+ };
+ host.querySelectorAll('.mpmsitem input').forEach(cb=>{
+  cb.onchange = () => {
+   const v = +cb.value;
+   if(cb.checked) mpF[kind].add(v); else mpF[kind].delete(v);
+   mpmsAfter(kind);
+  };
+ });
+ /* "เลือกทั้งหมดที่เห็น" ทำงานกับรายการที่เหลือหลังค้นหา ไม่ใช่ทั้งลิสต์
+    เพื่อให้พิมพ์คำเดียวแล้วติ๊กทีเดียวได้ เช่น พิมพ์ Picker แล้วเลือกทุกตำแหน่งที่เป็น Picker */
+ host.querySelectorAll('.mpmsfoot button').forEach(b=>{
+  b.onclick = () => {
+   if(b.dataset.a === 'none') mpF[kind].clear();
+   else host.querySelectorAll('.mpmsitem:not(.hide) input').forEach(cb=>mpF[kind].add(+cb.value));
+   mpmsAfter(kind);
+  };
+ });
+ mpmsSync(kind);
+}
+function mpmsOpen(kind, open){
+ Object.entries(MPMS).forEach(([k,w])=>{
+  const on = (k === kind) && open;
+  w.pop.hidden = !on;
+  w.btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+  if(on){ w.q.value = ''; w.q.dispatchEvent(new Event('input')); w.q.focus(); }
+ });
+}
+function mpmsSync(kind){
+ const w = MPMS[kind]; if(!w) return;
+ const set = mpF[kind];
+ w.host.querySelectorAll('.mpmsitem input').forEach(cb=>{ cb.checked = set.has(+cb.value); });
+ const sel = w.items.filter(o=>set.has(o.v));
+ w.btn.querySelector('.mpmstxt').textContent =
+  sel.length === 0 ? `${w.L.all} (${nf(w.items.length,0)})`
+  : sel.length === 1 ? sel[0].t
+  : `เลือก ${nf(sel.length,0)} ${w.L.unit}`;
+ w.btn.classList.toggle('on', sel.length > 0);
+ w.btn.title = sel.length > 1 ? sel.map(o=>o.t).join(' · ') : '';
+ w.host.querySelector('.mpmscnt').textContent =
+  `เลือก ${nf(sel.length,0)} จาก ${nf(w.items.length,0)}`;
+}
+const mpmsSyncAll = () => Object.keys(MPMS).forEach(mpmsSync);
+/* คลิกที่อื่นหรือกด Esc ให้ปิดกล่อง · ผูกครั้งเดียวที่ document ไม่ผูกซ้ำตอน rebuild */
+document.addEventListener('click', () => mpmsOpen(null, false));
+document.addEventListener('keydown', e => { if(e.key === 'Escape') mpmsOpen(null, false); });
+
 function initMPUI(){
  const m = MPDATA.meta;
  document.getElementById('mpSub').innerHTML =
@@ -8609,48 +8736,46 @@ function initMPUI(){
   + ` · ลาออกในช่วง ${nf(m.tot-m.active,0)}) · ${MPST.length} สาขา`
   + ` · ที่มา ${m.src}`;
 
- const fill = (id, arr, lab) => {
-  document.getElementById(id).innerHTML = `<option value="-1">${lab}</option>`
-   + arr.map((x,i)=>`<option value="${i}">${x}</option>`).join('');
- };
- fill('mpReg', MPREG, 'ทุก Region');
- fill('mpCat', MPCAT, 'ทุกประเภท');
- fill('mpEth', MPETH, 'ทุกสัญชาติ');
- fill('mpDiv', MPDIV, 'ทุก Division');
+ /* ช่องที่ไม่มีลูกโซ่ สร้างครั้งเดียวจบ */
+ mpmsBuild('cat', MPCAT.map((x,i)=>({v:i, t:x})));
+ mpmsBuild('eth', MPETH.map((x,i)=>({v:i, t:x})));
+ mpmsBuild('reg', MPREG.map((x,i)=>({v:i, t:x})));
+ mpmsBuild('div', MPDIV.map((x,i)=>({v:i, t:x})));
+ /* สาขาเป็นลูกโซ่ของ Region · แผนก/ตำแหน่ง เป็นลูกโซ่ของ Division แล้วต่อด้วยแผนก
+    แผนกอยู่ใต้ Division เดียวเสมอ (ตรวจจากไฟล์ต้นทางแล้ว) จึงอ่านจาก MPDEPDIV ได้ตรง
+    ส่วนตำแหน่งมีบางตำแหน่งคาบหลายแผนก จึงต้องไล่ข้อมูลจริงว่าตำแหน่งไหนอยู่ในขอบเขต
+    ที่เลือกไว้ · ไล่ทั้ง rows และ base รอบเดียว เร็วพอที่จะทำตอนเปลี่ยนตัวกรองทุกครั้ง
+    ค่าที่เคยติ๊กไว้แต่หลุดขอบเขตใหม่ ต้องปลดออก ไม่งั้นผลจะกลายเป็นว่าง */
+ const depInScope = i => mpF.div.size === 0 || mpF.div.has(MPDEPDIV[i]);
  const fillSto = () => {
-  const opts = MPST.map((s,i)=>({i, sn:s[0], name:s[1], reg:s[2]}))
-    .filter(s=>mpF.reg<0 || s.reg===mpF.reg);
-  document.getElementById('mpSto').innerHTML =
-   `<option value="-1">ทุกสาขา (${opts.length})</option>`
-   + opts.map(s=>`<option value="${s.i}">${padCode(s.sn)} — ${s.name}</option>`).join('');
-  document.getElementById('mpSto').value = mpF.sto;
+  const opts = MPST.map((s,i)=>({v:i, t:padCode(s[0]) + ' — ' + s[1], sub:MPREG[s[2]], reg:s[2]}))
+    .filter(s=>mpF.reg.size === 0 || mpF.reg.has(s.reg));
+  const keep = new Set(opts.map(o=>o.v));
+  [...mpF.sto].forEach(v=>{ if(!keep.has(v)) mpF.sto.delete(v); });
+  mpmsBuild('sto', opts);
  };
- fillSto();
- /* แผนก/ตำแหน่ง เป็นลูกโซ่ต่อจาก Division เหมือนที่สาขาเป็นลูกโซ่ต่อจาก Region
-    แผนกอยู่ใต้ Division เดียวเสมอ (ตรวจจากไฟล์ต้นทางแล้ว) จึงกรองจาก MPDEPDIV ได้ตรง
-    ส่วนตำแหน่งมีบางตำแหน่งคาบหลายแผนก จึงต้องไล่ข้อมูลจริงว่าตำแหน่งไหนมีอยู่ในขอบเขต
-    ที่เลือกไว้ · ไล่ทั้ง rows และ base รอบเดียว เร็วพอที่จะทำตอนเปลี่ยนตัวกรองทุกครั้ง */
- const depInScope = i => mpF.div < 0 || MPDEPDIV[i] === mpF.div;
  const fillDep = () => {
-  const opts = MPDEP.map((n, i) => ({ i, n })).filter(o => depInScope(o.i));
-  document.getElementById('mpDep').innerHTML =
-   `<option value="-1">ทุกแผนก (${opts.length})</option>`
-   + opts.map(o => `<option value="${o.i}">${o.n}</option>`).join('');
-  document.getElementById('mpDep').value = mpF.dep;
+  const opts = MPDEP.map((n,i)=>({v:i, t:n, sub:MPDIV[MPDEPDIV[i]]})).filter(o=>depInScope(o.v));
+  const keep = new Set(opts.map(o=>o.v));
+  [...mpF.dep].forEach(v=>{ if(!keep.has(v)) mpF.dep.delete(v); });
+  mpmsBuild('dep', opts);
  };
  const fillPos = () => {
   const seen = new Set();
-  const okDep = d => (mpF.dep < 0 ? depInScope(d) : d === mpF.dep);
+  const okDep = d => (mpF.dep.size ? mpF.dep.has(d) : depInScope(d));
   for(const x of MPROWS) if(okDep(x[8])) seen.add(x[9]);
   for(const b of MPBASE) if(okDep(b[5])) seen.add(b[6]);
-  const opts = MPPOS.map((n, i) => ({ i, n })).filter(o => seen.has(o.i));
-  document.getElementById('mpPos').innerHTML =
-   `<option value="-1">ทุกตำแหน่ง (${opts.length})</option>`
-   + opts.map(o => `<option value="${o.i}">${o.n}</option>`).join('');
-  if(!seen.has(mpF.pos)) mpF.pos = -1;
-  document.getElementById('mpPos').value = mpF.pos;
+  [...mpF.pos].forEach(v=>{ if(!seen.has(v)) mpF.pos.delete(v); });
+  mpmsBuild('pos', MPPOS.map((n,i)=>({v:i, t:n})).filter(o=>seen.has(o.v)));
  };
- fillDep(); fillPos();
+ fillSto(); fillDep(); fillPos();
+ /* ติ๊กช่องใดก็แล้วแต่ ให้ rebuild ช่องที่เป็นลูกของมันก่อนแล้วค่อยวาดหน้าใหม่ */
+ mpmsAfter = kind => {
+  if(kind === 'reg') fillSto();
+  if(kind === 'div'){ fillDep(); fillPos(); }
+  if(kind === 'dep') fillPos();
+  mpmsSync(kind); mpRenderAll();
+ };
  /* ช่วงวันที่ · input type=date ตรึง min/max ไว้ที่ขอบของข้อมูล จะเลือกเลยออกไปไม่ได้
     แต่ยังกันไว้อีกชั้นในโค้ดด้วย เพราะบางเบราว์เซอร์ยอมให้พิมพ์ตัวเลขเลยขอบเข้ามา */
  const dt1 = document.getElementById('mpDt1'), dt2 = document.getElementById('mpDt2');
@@ -8707,28 +8832,13 @@ function initMPUI(){
   };
  });
 
- document.getElementById('mpReg').onchange = e => {
-  mpF.reg = +e.target.value; mpF.sto = -1; fillSto(); mpRenderAll(); };
- document.getElementById('mpSto').onchange = e => { mpF.sto = +e.target.value; mpRenderAll(); };
- document.getElementById('mpCat').onchange = e => { mpF.cat = +e.target.value; mpRenderAll(); };
- document.getElementById('mpEth').onchange = e => { mpF.eth = +e.target.value; mpRenderAll(); };
- document.getElementById('mpDiv').onchange = e => {
-  mpF.div = +e.target.value; mpF.dep = -1; mpF.pos = -1;
-  fillDep(); fillPos(); mpRenderAll(); };
- document.getElementById('mpDep').onchange = e => {
-  mpF.dep = +e.target.value; mpF.pos = -1;
-  fillPos(); mpRenderAll(); };
- document.getElementById('mpPos').onchange = e => {
-  mpF.pos = +e.target.value; mpRenderAll(); };
  const reset = () => {
-  mpF = {reg:-1, sto:-1, cat:-1, eth:-1, div:-1, dep:-1, pos:-1,
-         d1:0, d2:MPDAYS-1};
+  ['reg','sto','cat','eth','div','dep','pos'].forEach(k=>mpF[k].clear());
+  mpF.d1 = 0; mpF.d2 = MPDAYS-1;
   mpSort = {k:'leave', dir:-1}; mpQ = ''; mpView = 0;
-  ['mpReg','mpCat','mpEth','mpDiv','mpDep','mpPos']
-    .forEach(id=>document.getElementById(id).value = -1);
   document.getElementById('mpQ').value = '';
   document.getElementById('mpTop').value = '0';
-  fillSto(); fillDep(); fillPos(); syncRange(); mpRenderAll();
+  fillSto(); fillDep(); fillPos(); mpmsSyncAll(); syncRange(); mpRenderAll();
  };
  document.getElementById('mpClr').onclick = reset;
  document.getElementById('mpRefresh').onclick = () => flashRefresh(
