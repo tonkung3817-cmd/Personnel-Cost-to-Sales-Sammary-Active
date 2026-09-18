@@ -199,15 +199,12 @@ table.etbl tr.res td{background:var(--yeL)}
 #pgPersonnel .pghost:hover{background:var(--pbg);border-color:#C9D2DE;color:var(--pink)}
 
 /* ---- การ์ดตาราง ---- */
-/* 3 คอลัมน์เมื่อจอกว้างพอ · จอกลาง BRANCH กินเต็มแถว (ตารางหลัก 7 คอลัมน์ 169 แถว)
+/* BRANCH เป็นตารางหลัก 9 คอลัมน์ 169 แถว จึงกินเต็มแถวเสมอ ไม่บีบให้เหลือ 1/3 ของจอ
    แล้ว POSITION กับ STRUCTURE วางคู่กันด้านล่าง · จอแคบเรียงเดี่ยว */
-#pgPersonnel .pgrid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start}
-@media(max-width:1700px){
- #pgPersonnel .pgrid3{grid-template-columns:repeat(2,minmax(0,1fr))}
- #pgPersonnel .pgrid3 #cardBranch{grid-column:1/-1}}
+#pgPersonnel .pgrid3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+#pgPersonnel .pgrid3 #cardBranch{grid-column:1/-1}
 @media(max-width:1180px){
- #pgPersonnel .pgrid3{grid-template-columns:1fr}
- #pgPersonnel .pgrid3 #cardBranch{grid-column:auto}}
+ #pgPersonnel .pgrid3{grid-template-columns:1fr}}
 #pgPersonnel .pcard{background:#fff;border:1px solid var(--pline);border-radius:10px;overflow:hidden;
  box-shadow:0 1px 3px rgba(18,22,28,.06),0 1px 2px rgba(18,22,28,.03);display:flex;flex-direction:column}
 
@@ -251,14 +248,26 @@ table.etbl tr.res td{background:var(--yeL)}
 #pgPersonnel tbody td.l{text-align:left;white-space:normal;overflow-wrap:break-word}
 #pgPersonnel tbody td.num{white-space:nowrap}
 
-/* สัดส่วนคอลัมน์ */
-#pgPersonnel #cardBranch th:nth-child(1){width:8%}
-#pgPersonnel #cardBranch th:nth-child(2){width:17%}
-#pgPersonnel #cardBranch th:nth-child(3){width:11%}
-#pgPersonnel #cardBranch th:nth-child(4){width:10%}
-#pgPersonnel #cardBranch th:nth-child(5){width:22%}
-#pgPersonnel #cardBranch th:nth-child(6){width:15%}
-#pgPersonnel #cardBranch th:nth-child(7){width:17%}
+/* สัดส่วนคอลัมน์ · BRANCH 9 ช่อง (รวม 100%)
+   ตัวเลข 5 ช่องขวาได้ที่เท่า ๆ กัน ชื่อสาขายังกว้างพอไม่ตัดบรรทัดถี่ */
+#pgPersonnel #cardBranch th:nth-child(1){width:6%}
+#pgPersonnel #cardBranch th:nth-child(2){width:18%}
+#pgPersonnel #cardBranch th:nth-child(3){width:9%}
+#pgPersonnel #cardBranch th:nth-child(4){width:8%}
+#pgPersonnel #cardBranch th:nth-child(5){width:8.5%}
+#pgPersonnel #cardBranch th:nth-child(6){width:9.5%}
+#pgPersonnel #cardBranch th:nth-child(7){width:14%}
+#pgPersonnel #cardBranch th:nth-child(8){width:13.5%}
+#pgPersonnel #cardBranch th:nth-child(9){width:13.5%}
+/* คนไทย/ต่างชาติ เป็นคู่ที่มาจากไฟล์อีกชุด คั่นด้วยเส้นบางทั้งสองข้างให้อ่านเป็นกลุ่มเดียว
+   ไม่ใช้พื้นหลังหรือสีเข้ม เพราะตารางนี้มี 169 แถว จะกลายเป็นแถบรบกวนตา */
+#pgPersonnel #cardBranch th:nth-child(5),
+#pgPersonnel #cardBranch td:nth-child(5){border-left:1px solid var(--pline)}
+#pgPersonnel #cardBranch th:nth-child(6),
+#pgPersonnel #cardBranch td:nth-child(6){border-right:1px solid var(--pline)}
+/* ป้ายที่มา/หน่วยใต้หัวคอลัมน์ · ตัวเล็กและจางกว่า ไม่แย่งความสนใจจากชื่อคอลัมน์ */
+#pgPersonnel thead th .pthsub{display:block;font-size:9px;font-weight:500;letter-spacing:.02em;
+ text-transform:none;color:var(--pink3);margin-top:1px}
 #pgPersonnel #cardPosition th:nth-child(1),
 #pgPersonnel #cardStructure th:nth-child(1){width:32%}
 #pgPersonnel #cardPosition th:nth-child(2),
@@ -1277,13 +1286,15 @@ table.etbl tr.res td{background:var(--yeL)}
    <th class="l" data-k="stName" data-t="s">ST Name<span class="parr"></span></th>
    <th data-k="sales" data-t="n">Sales<span class="parr"></span></th>
    <th data-k="active" data-t="n">Active<span class="parr"></span></th>
+   <th data-k="thai" data-t="n" title="พนักงาน Active สัญชาติไทย · นับจากไฟล์ ER ซึ่งเป็นไฟล์เดียวที่มีสัญชาติ">คนไทย<span class="pthsub">ER 15 ก.ย.</span><span class="parr"></span></th>
+   <th data-k="foreign" data-t="n" title="พนักงาน Active สัญชาติอื่นที่ระบุไว้ (พม่า · ลาว · จีน) · ไม่รวมคนที่ไม่ได้ระบุสัญชาติ">ต่างชาติ<span class="pthsub">ER 15 ก.ย.</span><span class="parr"></span></th>
    <th data-k="costPct" data-t="n">Personnel Cost<br>to Sales (%)<span class="parr"></span></th>
    <th data-k="rec" data-t="n">แนะนำลด<br>(คน)<span class="parr"></span></th>
    <th data-k="inc" data-t="n">แนะนำเพิ่ม<br>(คน)<span class="parr"></span></th>
   </tr></thead>
   <tbody id="branchBody"></tbody>
  </table></div>
- <div class="pfootnote">Sales หน่วยล้านบาท (ลบ.) · แนะนำลด/เพิ่มจำนวนคน ประมาณจากค่าจ้างเฉลี่ยต่อคนของสาขา เทียบเป้าที่ตั้งไว้ด้านบน · <b>คลิกแถวสาขาเพื่อเพิ่มเข้าตัวกรอง เลือกได้หลายสาขา</b> คลิกซ้ำเพื่อถอนออก · เมื่อกรอง Division/Department/ตำแหน่ง ช่อง Sales และ % จะคิดจากยอดขายส่วนที่เป็นของคนที่กรองไว้ (ฐานเดียวกับสองการ์ดล่าง) ตอนไม่กรองจะเท่ายอดขายเต็มสาขาเหมือนเดิม · คลิกหัวคอลัมน์เพื่อจัดเรียง</div>
+ <div class="pfootnote"><b>คนไทย / ต่างชาติ</b> นับจากไฟล์ ER (ข้อมูลสัญชาติ ณ 15 ก.ย. 26) เพราะไฟล์ EM ที่การ์ดนี้ใช้ไม่มีคอลัมน์สัญชาติ &mdash; สองไฟล์คนละวันตัด (EM Active 28,408 · ER 28,038) <b>สองช่องนี้จึงไม่บวกได้เท่าช่อง Active</b> ต่างกันได้ถึง ±30 คนต่อสาขา &middot; ต่างชาติ = สัญชาติอื่นที่ระบุไว้ (พม่า &middot; ลาว &middot; จีน) ไม่รวมคนที่ไม่ได้ระบุสัญชาติ (66 คนทั้งเครือ) &middot; ชี้ที่ตัวเลขเพื่อดูส่วนประกอบ &middot; เมื่อกรอง Department หรือตำแหน่ง สองช่องนี้จะขึ้น &mdash; เพราะสองไฟล์ใช้รหัสแผนก/ตำแหน่งต่างชุดกัน จับคู่กันไม่ได้<br>Sales หน่วยล้านบาท (ลบ.) · แนะนำลด/เพิ่มจำนวนคน ประมาณจากค่าจ้างเฉลี่ยต่อคนของสาขา เทียบเป้าที่ตั้งไว้ด้านบน · <b>คลิกแถวสาขาเพื่อเพิ่มเข้าตัวกรอง เลือกได้หลายสาขา</b> คลิกซ้ำเพื่อถอนออก · เมื่อกรอง Division/Department/ตำแหน่ง ช่อง Sales และ % จะคิดจากยอดขายส่วนที่เป็นของคนที่กรองไว้ (ฐานเดียวกับสองการ์ดล่าง) ตอนไม่กรองจะเท่ายอดขายเต็มสาขาเหมือนเดิม · คลิกหัวคอลัมน์เพื่อจัดเรียง</div>
 </div>
 
 <div class="pcard" id="cardPosition">
@@ -5219,7 +5230,10 @@ function pRecompute(){
   const sm = pStoreMap[sn];
   const sales = v.hasSales ? v.sales : null;
   const m = pCostMetrics(v.cost, sales, v.active);
+  const e = pEthFor(sn);
   return {stNo:+sn, stName:sm.stName, sales, salesFull:sm.sales, active:v.active,
+    thai:e ? e[0] : null, foreign:e ? e[1] : null, ethNA:e ? e[2] : null,
+    ethAll:e ? e[0]+e[1]+e[2] : null,
     costPct:m.pct, rec:m.rec, inc:m.inc};
  });
  const position = Object.entries(posAgg).map(([pi,v])=>{
@@ -5242,6 +5256,47 @@ function pRecompute(){
  return {branch, position, structure};
 }
 
+/* ---- คนไทย / ต่างชาติ ราย สาขา ----
+   EM0909 ที่การ์ดนี้ใช้ไม่มีคอลัมน์สัญชาติ ไฟล์เดียวในแอปที่มีคือ ER (payload MPDATA)
+   จึงนับจากที่นั่น: Active ณ วันตัดของ ER แยกตามสัญชาติ ทั้งระดับสาขาและระดับ Division
+   ชื่อ Division ของสองไฟล์ตรงกัน 11 ค่า จึงกรองตาม Division ได้ แต่ชื่อแผนก/ตำแหน่ง
+   คนละระบบกันสิ้นเชิง (ตรงกัน 0 ค่า) เวลากรองสองช่องนั้นจึงตอบไม่ได้ ต้องขึ้นขีดแทน
+   สร้างแบบ lazy เพราะ MPROWS/MPBASE ถูกกรองตามสิทธิ์สาขาตอนล็อกอิน ต้องรอให้เสร็จก่อน */
+let PETH = null;
+function pEthBuild(){
+ const TH = MPETH.indexOf('Thai'), NA = MPETH.indexOf('ไม่ระบุ');
+ const m = new Map();                     /* ST No. -> {all:[th,fo,na], div:Map} */
+ const bump = (sn, divIdx, eth, n) => {
+  let o = m.get(sn);
+  if(!o){ o = {all:[0,0,0], div:new Map()}; m.set(sn, o); }
+  const slot = eth===TH ? 0 : eth===NA ? 2 : 1;
+  o.all[slot] += n;
+  const dn = MPDIV[divIdx];
+  let d = o.div.get(dn);
+  if(!d){ d = [0,0,0]; o.div.set(dn, d); }
+  d[slot] += n;
+ };
+ for(const x of MPROWS) if(x[5] === -1) bump(MPST[x[0]][0], x[3], x[2], 1);
+ for(const b of MPBASE) bump(MPST[b[0]][0], b[3], b[2], b[4]);
+ PETH = m;
+}
+/* คืน [คนไทย, ต่างชาติ, ไม่ระบุ] ของสาขานี้ตามตัวกรองที่ยังตอบได้ · null = ตอบไม่ได้ */
+function pEthFor(stNo){
+ if(!PETH) pEthBuild();
+ const o = PETH.get(+stNo);
+ if(!o) return null;
+ if(pFilter.dept.size || pFilter.pos.size) return null;   /* แผนก/ตำแหน่งจับคู่กันไม่ได้ */
+ if(!pFilter.div.size) return o.all;
+ const names = [...pFilter.div].map(i => PDIV[i]);
+ if(names.some(n => MPDIV.indexOf(n) < 0)) return null;   /* Division ที่ ER ไม่มี */
+ const out = [0,0,0];
+ names.forEach(n => { const d = o.div.get(n); if(d) for(let i=0;i<3;i++) out[i] += d[i]; });
+ return out;
+}
+const pEthWhy = () =>
+ (pFilter.dept.size || pFilter.pos.size)
+  ? 'กรองแผนกหรือตำแหน่งอยู่ · ไฟล์สัญชาติ (ER) ใช้รหัสแผนก/ตำแหน่งต่างชุดกับไฟล์ของหน้านี้ (EM) จับคู่กันไม่ได้'
+  : 'ไฟล์สัญชาติ (ER) ไม่มี Division ที่เลือกไว้';
 const fmtSales = v => v==null ? '<span class="pdim">-</span>' : nf(v,1);
 const fmtActive = v => nf(v,0);
 const fmtPct = v => v==null ? '<span class="pdim">-</span>' : pc(v,2);
@@ -5329,6 +5384,16 @@ function renderPKRow(){
 }
 
 /* ---------- Branch Summary ---------- */
+/* สองช่องสัญชาติมาจากไฟล์อีกชุด (ER) tooltip จึงบอกทั้งส่วนประกอบและยอด Active ของ
+   ไฟล์นั้น เพื่อให้เห็นเองว่าทำไมคนไทย + ต่างชาติ ไม่เท่าช่อง Active ของ EM */
+const fmtEth = v => v==null ? '<span class="pdim">&mdash;</span>' : nf(v,0);
+function pEthTitle(r){
+ if(r.thai==null) return ` title="${cssesc('ยังบอกไม่ได้ — ' + pEthWhy())}"`;
+ const t = `ไทย ${nf(r.thai,0)} · ต่างชาติ ${nf(r.foreign,0)}`
+  + (r.ethNA ? ` · ไม่ระบุสัญชาติ ${nf(r.ethNA,0)}` : '')
+  + ` · Active ตามไฟล์ ER ${nf(r.ethAll,0)} คน (ช่อง Active ใช้ไฟล์ EM จึงต่างกันได้)`;
+ return ` title="${cssesc(t)}"`;
+}
 let branchSort={k:'stNo',dir:1};
 function renderBranch(cur){
  const rows = cur.branch.slice().sort((a,b)=>{
@@ -5345,8 +5410,10 @@ function renderBranch(cur){
    <td class="l num">${r.stNo}</td><td class="l prowname">${r.stName}</td>
    <td class="num"${r.salesFull!=null && r.sales!=null && Math.abs(r.salesFull-r.sales)>.005
      ? ` title="ยอดขายเต็มสาขา ${fmtSales(r.salesFull)} ลบ. · ช่องนี้แสดงเฉพาะส่วนที่เป็นของคนที่กรองไว้"` : ''}>${fmtSales(r.sales)}</td><td class="num">${fmtActive(r.active)}</td>
+   <td class="num"${pEthTitle(r)}>${fmtEth(r.thai)}</td>
+   <td class="num"${pEthTitle(r)}>${fmtEth(r.foreign)}</td>
    <td class="num">${fmtPct(r.costPct)}</td><td class="num">${fmtRec(r.rec)}</td><td class="num">${fmtInc(r.inc)}</td></tr>`
- ).join('') : '<tr><td colspan="7" class="pdim" style="text-align:center;padding:14px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
+ ).join('') : '<tr><td colspan="9" class="pdim" style="text-align:center;padding:14px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
  document.querySelectorAll('#branchBody tr[data-sn]')
   .forEach(tr=>{ tr.onclick = () => pPick('store', +tr.dataset.sn); });
  syncArrows('cardBranch', branchSort);
@@ -5592,8 +5659,13 @@ document.querySelectorAll('[data-dl]').forEach(btn=>{
   const t = btn.dataset.dl;
   const cur = pRecompute();
   if(t==='branch'){
-   download('branch_summary.csv', [['ST No.','ST Name','Sales','Active','Personnel Cost to Sales (%)','แนะนำลดจำนวนคน','แนะนำเพิ่มจำนวนคน'],
-    ...cur.branch.map(r=>[r.stNo, r.stName, r.sales==null?'':r.sales, r.active, r.costPct==null?'':r.costPct.toFixed(2), r.rec==null?'':r.rec, r.inc==null?'':r.inc])]);
+   download('branch_summary.csv', [['ST No.','ST Name','Sales','Active',
+     'คนไทย (ER)','ต่างชาติ (ER)','ไม่ระบุสัญชาติ (ER)','Active ตามไฟล์ ER',
+     'Personnel Cost to Sales (%)','แนะนำลดจำนวนคน','แนะนำเพิ่มจำนวนคน'],
+    ...cur.branch.map(r=>[r.stNo, r.stName, r.sales==null?'':r.sales, r.active,
+      r.thai==null?'':r.thai, r.foreign==null?'':r.foreign,
+      r.ethNA==null?'':r.ethNA, r.ethAll==null?'':r.ethAll,
+      r.costPct==null?'':r.costPct.toFixed(2), r.rec==null?'':r.rec, r.inc==null?'':r.inc])]);
   } else if(t==='position'){
    download('position_summary.csv', [['M_Position','Active','Personnel Cost to Sales (%)','แนะนำลดจำนวนคน','แนะนำเพิ่มจำนวนคน'],
     ...cur.position.map(r=>[r.position, r.active, r.costPct==null?'':r.costPct.toFixed(2), r.rec==null?'':r.rec, r.inc==null?'':r.inc])]);
