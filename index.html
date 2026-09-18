@@ -199,12 +199,19 @@ table.etbl tr.res td{background:var(--yeL)}
 #pgPersonnel .pghost:hover{background:var(--pbg);border-color:#C9D2DE;color:var(--pink)}
 
 /* ---- การ์ดตาราง ---- */
-/* BRANCH เป็นตารางหลัก 9 คอลัมน์ 169 แถว จึงกินเต็มแถวเสมอ ไม่บีบให้เหลือ 1/3 ของจอ
-   แล้ว POSITION กับ STRUCTURE วางคู่กันด้านล่าง · จอแคบเรียงเดี่ยว */
-#pgPersonnel .pgrid3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
-#pgPersonnel .pgrid3 #cardBranch{grid-column:1/-1}
+/* 3 การ์ดเรียงหน้ากระดานเหมือนเดิม · BRANCH มี 9 คอลัมน์ จึงบีบช่องไฟของตารางใบนี้
+   ให้อยู่ใน 1/3 ของหน้าได้ (ดูบล็อก "ช่องไฟของ BRANCH" ด้านล่าง)
+   ต่ำกว่า 1400px ที่ 9 คอลัมน์อยู่ไม่ได้จริง ๆ BRANCH จะกินเต็มแถว แล้ว POSITION กับ
+   STRUCTURE วางคู่กันด้านล่าง · ต่ำกว่า 1180px เรียงเดี่ยว */
+#pgPersonnel .pgrid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start}
+/* 1800px คือจุดที่ BRANCH ยังได้ราว 570px ซึ่งวัดแล้วว่า 9 คอลัมน์อยู่ได้ครบไม่ตัดคำ
+   แคบกว่านั้นหัวคอลัมน์จะเริ่มถูกตัด จึงให้ BRANCH กินเต็มแถวแทน */
+@media(max-width:1800px){
+ #pgPersonnel .pgrid3{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #pgPersonnel .pgrid3 #cardBranch{grid-column:1/-1}}
 @media(max-width:1180px){
- #pgPersonnel .pgrid3{grid-template-columns:1fr}}
+ #pgPersonnel .pgrid3{grid-template-columns:1fr}
+ #pgPersonnel .pgrid3 #cardBranch{grid-column:auto}}
 #pgPersonnel .pcard{background:#fff;border:1px solid var(--pline);border-radius:10px;overflow:hidden;
  box-shadow:0 1px 3px rgba(18,22,28,.06),0 1px 2px rgba(18,22,28,.03);display:flex;flex-direction:column}
 
@@ -250,13 +257,13 @@ table.etbl tr.res td{background:var(--yeL)}
 
 /* สัดส่วนคอลัมน์ · BRANCH 9 ช่อง (รวม 100%)
    ตัวเลข 5 ช่องขวาได้ที่เท่า ๆ กัน ชื่อสาขายังกว้างพอไม่ตัดบรรทัดถี่ */
-#pgPersonnel #cardBranch th:nth-child(1){width:6%}
-#pgPersonnel #cardBranch th:nth-child(2){width:18%}
-#pgPersonnel #cardBranch th:nth-child(3){width:9%}
-#pgPersonnel #cardBranch th:nth-child(4){width:8%}
-#pgPersonnel #cardBranch th:nth-child(5){width:8.5%}
-#pgPersonnel #cardBranch th:nth-child(6){width:9.5%}
-#pgPersonnel #cardBranch th:nth-child(7){width:14%}
+#pgPersonnel #cardBranch th:nth-child(1){width:7%}
+#pgPersonnel #cardBranch th:nth-child(2){width:15%}
+#pgPersonnel #cardBranch th:nth-child(3){width:9.5%}
+#pgPersonnel #cardBranch th:nth-child(4){width:9%}
+#pgPersonnel #cardBranch th:nth-child(5){width:9%}
+#pgPersonnel #cardBranch th:nth-child(6){width:10%}
+#pgPersonnel #cardBranch th:nth-child(7){width:13.5%}
 #pgPersonnel #cardBranch th:nth-child(8){width:13.5%}
 #pgPersonnel #cardBranch th:nth-child(9){width:13.5%}
 /* คนไทย/ต่างชาติ เป็นคู่ที่มาจากไฟล์อีกชุด คั่นด้วยเส้นบางทั้งสองข้างให้อ่านเป็นกลุ่มเดียว
@@ -265,19 +272,25 @@ table.etbl tr.res td{background:var(--yeL)}
 #pgPersonnel #cardBranch td:nth-child(5){border-left:1px solid var(--pline)}
 #pgPersonnel #cardBranch th:nth-child(6),
 #pgPersonnel #cardBranch td:nth-child(6){border-right:1px solid var(--pline)}
+/* ช่องไฟของ BRANCH · 9 คอลัมน์ในพื้นที่ 1/3 ของหน้า (ราว 600px) จึงบีบระยะข้างเซลล์
+   และลดขนาดตัวเลขลงครึ่งขั้น ตัวเลขทุกช่องยังอยู่ในบรรทัดเดียวไม่ตัดคำ
+   ตารางอีกสองใบไม่ถูกแตะ ยังใช้ช่องไฟเดิม */
+#pgPersonnel #cardBranch table{font-size:11.5px}
+#pgPersonnel #cardBranch thead th{padding:9px 6px;font-size:9px;letter-spacing:.01em}
+#pgPersonnel #cardBranch tbody td{padding:8px 6px}
 /* ป้ายที่มา/หน่วยใต้หัวคอลัมน์ · ตัวเล็กและจางกว่า ไม่แย่งความสนใจจากชื่อคอลัมน์ */
 #pgPersonnel thead th .pthsub{display:block;font-size:9px;font-weight:500;letter-spacing:.02em;
  text-transform:none;color:var(--pink3);margin-top:1px}
+/* POSITION / STRUCTURE เหลือ 4 คอลัมน์หลังเอา % ออก · ชื่อได้ที่กว้างขึ้น
+   สองช่องคำแนะนำได้ที่เท่ากัน อ่านเทียบกันง่ายขึ้น */
 #pgPersonnel #cardPosition th:nth-child(1),
-#pgPersonnel #cardStructure th:nth-child(1){width:32%}
+#pgPersonnel #cardStructure th:nth-child(1){width:38%}
 #pgPersonnel #cardPosition th:nth-child(2),
-#pgPersonnel #cardStructure th:nth-child(2){width:13%}
+#pgPersonnel #cardStructure th:nth-child(2){width:16%}
 #pgPersonnel #cardPosition th:nth-child(3),
-#pgPersonnel #cardStructure th:nth-child(3){width:22%}
+#pgPersonnel #cardStructure th:nth-child(3){width:23%}
 #pgPersonnel #cardPosition th:nth-child(4),
-#pgPersonnel #cardStructure th:nth-child(4){width:15%}
-#pgPersonnel #cardPosition th:nth-child(5),
-#pgPersonnel #cardStructure th:nth-child(5){width:18%}
+#pgPersonnel #cardStructure th:nth-child(4){width:23%}
 #pgPersonnel tbody tr:last-child td{border-bottom:0}
 #pgPersonnel tbody tr:first-child td{border-top:0}
 #pgPersonnel tbody tr:hover{background:var(--pblL)}
@@ -1304,7 +1317,6 @@ table.etbl tr.res td{background:var(--yeL)}
   <thead><tr>
    <th class="l" data-k="position" data-t="s">M_Position<span class="parr"></span></th>
    <th data-k="active" data-t="n">Active<span class="parr"></span></th>
-   <th data-k="costPct" data-t="n">Personnel Cost<br>to Sales (%)<span class="parr"></span></th>
    <th data-k="rec" data-t="n">แนะนำลด<br>(คน)<span class="parr"></span></th>
    <th data-k="inc" data-t="n">แนะนำเพิ่ม<br>(คน)<span class="parr"></span></th>
   </tr></thead>
@@ -1321,7 +1333,6 @@ table.etbl tr.res td{background:var(--yeL)}
   <thead><tr>
    <th class="l">Division / Department</th>
    <th>Active</th>
-   <th>Personnel Cost<br>to Sales (%)</th>
    <th>แนะนำลด<br>(คน)</th>
    <th>แนะนำเพิ่ม<br>(คน)</th>
   </tr></thead>
@@ -5433,8 +5444,8 @@ function renderPosition(cur){
    title="คลิกเพื่อเพิ่มตำแหน่งนี้เข้าตัวกรอง (เลือกได้หลายตำแหน่ง)${pFilter.pos.has(r.pi)?' (คลิกซ้ำเพื่อถอนออก)':''}">
    <td class="l prowname">${r.position}</td>
    <td class="num">${fmtActive(r.active)}</td>
-   <td class="num">${fmtPct(r.costPct)}</td><td class="num">${fmtRec(r.rec)}</td><td class="num">${fmtInc(r.inc)}</td></tr>`
- ).join('') : '<tr><td colspan="5" class="pdim" style="text-align:center;padding:14px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
+   <td class="num">${fmtRec(r.rec)}</td><td class="num">${fmtInc(r.inc)}</td></tr>`
+ ).join('') : '<tr><td colspan="4" class="pdim" style="text-align:center;padding:14px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
  document.querySelectorAll('#positionBody tr[data-pi]')
   .forEach(tr=>{ tr.onclick = () => pPick('pos', +tr.dataset.pi); });
  syncArrows('cardPosition', posSort);
@@ -5451,14 +5462,14 @@ function renderStructure(cur){
      data-parent="${cssesc(d.name)}" data-dpi="${dp.dpi}"
      title="คลิกเพื่อเพิ่ม Department นี้เข้าตัวกรอง (เลือกได้หลายกลุ่ม)${pFilter.dept.has(dp.dpi)?' (คลิกซ้ำเพื่อถอนออก)':''}">
     <td class="l">${dp.name}</td><td class="num">${fmtActive(dp.active)}</td>
-    <td class="num">${fmtPct(dp.costPct)}</td><td class="num">${fmtRec(dp.rec)}</td><td class="num">${fmtInc(dp.inc)}</td></tr>`
+    <td class="num">${fmtRec(dp.rec)}</td><td class="num">${fmtInc(dp.inc)}</td></tr>`
   ).join('');
   return `<tr class="pdivrow pclk${pFilter.div.has(d.di)?' psel':''}" data-div="${cssesc(d.name)}" data-di="${d.di}"
    title="คลิกเพื่อเพิ่ม Division นี้เข้าตัวกรอง (เลือกได้หลายกลุ่ม)${pFilter.div.has(d.di)?' (คลิกซ้ำเพื่อถอนออก)':''} · คลิกที่ลูกศรเพื่อย่อ/กางเฉย ๆ">
    <td class="l"><span class="pcaret ${open?'open':''}" title="ย่อ/กางรายการ Department">&#9656;</span>${d.name}</td>
    <td class="num">${fmtActive(d.active)}</td>
-   <td class="num">${fmtPct(d.costPct)}</td><td class="num">${fmtRec(d.rec)}</td><td class="num">${fmtInc(d.inc)}</td></tr>${deptRows}`;
- }).join('') : '<tr><td colspan="5" class="pdim" style="text-align:center;padding:14px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
+   <td class="num">${fmtRec(d.rec)}</td><td class="num">${fmtInc(d.inc)}</td></tr>${deptRows}`;
+ }).join('') : '<tr><td colspan="4" class="pdim" style="text-align:center;padding:14px">ไม่พบข้อมูลตามเงื่อนไขที่กรอง</td></tr>';
  document.getElementById('structureBody').innerHTML = html;
  /* ลูกศรทำหน้าที่ย่อ/กางอย่างเดียว · คลิกที่แถวคือกรองข้ามการ์ด
     แยกสองหน้าที่ออกจากกัน เพราะแถวเดียวกันจะทำสองอย่างพร้อมกันไม่ได้ */
@@ -5667,13 +5678,13 @@ document.querySelectorAll('[data-dl]').forEach(btn=>{
       r.ethNA==null?'':r.ethNA, r.ethAll==null?'':r.ethAll,
       r.costPct==null?'':r.costPct.toFixed(2), r.rec==null?'':r.rec, r.inc==null?'':r.inc])]);
   } else if(t==='position'){
-   download('position_summary.csv', [['M_Position','Active','Personnel Cost to Sales (%)','แนะนำลดจำนวนคน','แนะนำเพิ่มจำนวนคน'],
-    ...cur.position.map(r=>[r.position, r.active, r.costPct==null?'':r.costPct.toFixed(2), r.rec==null?'':r.rec, r.inc==null?'':r.inc])]);
+   download('position_summary.csv', [['M_Position','Active','แนะนำลดจำนวนคน','แนะนำเพิ่มจำนวนคน'],
+    ...cur.position.map(r=>[r.position, r.active, r.rec==null?'':r.rec, r.inc==null?'':r.inc])]);
   } else if(t==='structure'){
-   const out=[['Division','Department','Active','Personnel Cost to Sales (%)','แนะนำลดจำนวนคน','แนะนำเพิ่มจำนวนคน']];
+   const out=[['Division','Department','Active','แนะนำลดจำนวนคน','แนะนำเพิ่มจำนวนคน']];
    cur.structure.forEach(d=>{
-    out.push([d.name,'',d.active, d.costPct==null?'':d.costPct.toFixed(2), d.rec==null?'':d.rec, d.inc==null?'':d.inc]);
-    d.depts.forEach(dp=>out.push([d.name,dp.name,dp.active, dp.costPct==null?'':dp.costPct.toFixed(2), dp.rec==null?'':dp.rec, dp.inc==null?'':dp.inc]));
+    out.push([d.name,'',d.active, d.rec==null?'':d.rec, d.inc==null?'':d.inc]);
+    d.depts.forEach(dp=>out.push([d.name,dp.name,dp.active, dp.rec==null?'':dp.rec, dp.inc==null?'':dp.inc]));
    });
    download('structure_summary.csv', out);
   }
