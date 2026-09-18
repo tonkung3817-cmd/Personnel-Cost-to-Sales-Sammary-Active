@@ -10045,7 +10045,10 @@ function mrFlash(el){
 function padCode(n){ return String(n).padStart(3,'0'); }
 function pcredTryLogin(){
  const val = document.getElementById('loginPass').value.trim();
- const cred = PCRED.find(c=>c.pass===val);
+ /* รหัสพนักงานในชุดสิทธิ์เป็นเลข 8 หลักมีศูนย์นำหน้าทุกคน (เช่น 00116372)
+    ถ้าพิมพ์/วางมาแบบศูนย์หลุด ให้เติมให้ครบ 8 หลักแล้วลองอีกครั้ง */
+ const alt = /^[0-9]+$/.test(val) && val.length < 8 ? val.padStart(8,'0') : null;
+ const cred = PCRED.find(c=>c.pass===val) || (alt ? PCRED.find(c=>c.pass===alt) : null);
  if(!cred){
   document.getElementById('loginErr').style.display='block';
   return;
@@ -10072,23 +10075,35 @@ function pcredTryLogin(){
   MPROWS.length = 0; MPROWS.push(...filteredMP);
   const filteredMB = MPBASE.filter(b=>allowed.has(padCode(MPST[b[0]][0])));
   MPBASE.length = 0; MPBASE.push(...filteredMB);
+  /* คนไทย/ต่างชาติ ของ BRANCH SUMMARY ต้องกรองตามสิทธิ์สาขาด้วย
+     ต้องอยู่ในบล็อกนี้เท่านั้น เพราะสิทธิ์เต็ม allowed เป็น null */
+  Object.keys(PETHDATA.st).forEach(c=>{ if(!allowed.has(c)) delete PETHDATA.st[c]; });
  }
  /* รายชื่อพนักงานของแถบ Manpower Reduction กรองตามสิทธิ์สาขาเดียวกัน
     แดชบอร์ดต้นฉบับใน iframe กรองตามสิทธิ์ไม่ได้เพราะห้ามแก้ไขไฟล์ที่ได้รับมา
     จึงซ่อนแถบนี้ไว้สำหรับผู้ใช้ที่ถูกจำกัดสาขา และเปิดให้เฉพาะสิทธิ์เต็ม */
- Object.keys(PETHDATA.st).forEach(c=>{ if(!allowed.has(c)) delete PETHDATA.st[c]; });
  mrBuildRows(allowed);
  document.querySelector('.pagenav button[data-pg="mr"]').style.display = allowed ? 'none' : '';
  document.getElementById('loginOverlay').style.display='none';
  document.getElementById('appRoot').style.display='';
- initSimulatorUI();
- initPersonnelUI();
- initO2OUI();
- initHFUI();
- initPAUI();
- initMPUI();
- initOTUI();
- if(!allowed) initMRUI();
+ /* รหัสถูกแล้ว แต่ถ้าขั้นตอนเตรียมหน้าพลาด ต้องบอกให้เห็น ไม่ใช่ค้างที่หน้า login เงียบ ๆ */
+ try{
+  initSimulatorUI();
+  initPersonnelUI();
+  initO2OUI();
+  initHFUI();
+  initPAUI();
+  initMPUI();
+  initOTUI();
+  if(!allowed) initMRUI();
+ }catch(err){
+  const e = document.getElementById('loginErr');
+  e.textContent = 'เข้าระบบได้ แต่เตรียมข้อมูลไม่สำเร็จ: ' + (err && err.message ? err.message : err);
+  e.style.display = 'block';
+  document.getElementById('loginOverlay').style.display='flex';
+  document.getElementById('appRoot').style.display='none';
+  throw err;
+ }
 }
 document.getElementById('loginBtn').onclick = pcredTryLogin;
 document.getElementById('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') pcredTryLogin(); });
