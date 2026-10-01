@@ -827,6 +827,39 @@ table.etbl tr.res td{background:var(--yeL)}
 .pagenav button{font:inherit;font-weight:600;font-size:13px;padding:7px 16px;border-radius:7px;border:1px solid var(--line);background:#f4f6f8;color:var(--ink2);cursor:pointer}
 .pagenav button.on{background:var(--bl);color:#fff;border-color:var(--bl)}
 
+/* ---- Vacancy SM Up (TA) · หน้าเชื่อมต่อระบบภายนอก ----
+   ใช้ปุ่ม Refresh และหัวหน้าแบบเดียวกับหน้าอื่น · กรอบฝังสูงเกือบเต็มจอ
+   ปุ่มเมนูมีลูกศร ↗ เล็ก ๆ บอกว่าเป็นระบบข้างนอก ไม่ใช่ข้อมูลในไฟล์นี้ */
+.pagenav button .pnx{font-size:10px;margin-left:5px;opacity:.7}
+#pgVac{background:var(--bg)}
+#pgVac .vwrap{max-width:1900px;margin:0 auto;padding:20px 24px 26px}
+#pgVac h1{font-size:21px;font-weight:600;letter-spacing:-.015em;margin:0;color:var(--ink)}
+#pgVac .vsub{font-size:12.5px;color:var(--ink2);margin-top:3px}
+#pgVac .vsub a{color:var(--bl);font-weight:500;text-decoration:none;border-bottom:1px solid #CFE0F4}
+#pgVac .vsub a:hover{border-bottom-color:var(--bl)}
+#pgVac .vbtns{display:flex;gap:10px;align-items:center}
+#pgVac .vopen{font:inherit;font-size:12.5px;font-weight:600;padding:7px 14px;border-radius:7px;
+ border:1px solid var(--bl);background:var(--bl);color:#fff;text-decoration:none;display:inline-flex;
+ align-items:center;gap:6px;transition:background .12s}
+#pgVac .vopen:hover{background:var(--blD);border-color:var(--blD)}
+#pgVac .vopen:focus-visible{outline:2px solid var(--bl);outline-offset:2px}
+#pgVac .vframe{position:relative;margin-top:16px;background:#fff;border:1px solid var(--line);
+ border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(18,22,28,.06),0 1px 2px rgba(18,22,28,.03)}
+#pgVac .vbar{display:flex;align-items:center;gap:8px;padding:0 14px;min-height:38px;background:var(--blD);
+ color:#fff;font-size:11.5px;font-weight:500;letter-spacing:.02em}
+#pgVac .vbar .vdot{width:7px;height:7px;border-radius:50%;background:var(--ye);flex:none}
+#pgVac .vbar .vdot.ok{background:#7FD3B1}
+#pgVac .vbar .vurl{font-family:"IBM Plex Mono",monospace;font-size:11px;opacity:.85}
+#pgVac iframe{display:block;width:100%;height:calc(100vh - 230px);min-height:560px;border:0;background:#fff}
+#pgVac .vload{position:absolute;left:0;right:0;top:38px;bottom:0;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;gap:10px;background:#fff;color:var(--ink2);font-size:13px;
+ text-align:center;padding:0 20px}
+#pgVac .vload[hidden]{display:none}
+#pgVac .vspin{width:26px;height:26px;border-radius:50%;border:3px solid var(--blL);border-top-color:var(--bl);
+ animation:rspin .8s linear infinite}
+#pgVac .vnote{margin-top:10px;font-size:11.5px;line-height:1.6;color:var(--ink3)}
+#pgVac .vnote b{color:var(--ink2)}
+
 /* ปุ่ม Refresh (ใช้ร่วมกันทั้ง 2 หน้า) */
 .refreshbtn{font:inherit;font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:7px;border:1px solid var(--bl);background:#fff;color:var(--bl);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:background .12s,color .12s,border-color .12s}
 .refreshbtn:hover{background:var(--blL)}
@@ -1269,6 +1302,7 @@ table.etbl tr.res td{background:var(--yeL)}
  <button data-pg="ot">OT</button>
  <button data-pg="mp">Manpower</button>
  <button data-pg="mr">Manpower Reduction</button>
+ <button data-pg="vac" title="เชื่อมต่อระบบ HR Tracking (เว็บภายนอก) · https://hrtracking.tacpaxtra.com">Vacancy SM Up (TA)<span class="pnx">&#8599;</span></button>
 </div>
 <div id="pgSim">
 <header><div class="wrap"><div class="refreshhd"><h1>Personnel Cost to Sales — Store Simulator</h1>
@@ -2130,6 +2164,31 @@ table.etbl tr.res td{background:var(--yeL)}
  <div class="cnote" id="mpStoNote"></div>
 </div>
 
+</div>
+</div>
+<div id="pgVac" style="display:none">
+<div class="vwrap">
+<div class="refreshhd">
+ <div><h1>Vacancy SM Up (TA)</h1>
+  <div class="vsub">ติดตามตำแหน่งว่างระดับ SM ขึ้นไป ของทีม Talent Acquisition &middot; เชื่อมต่อกับระบบ
+   <a href="https://hrtracking.tacpaxtra.com" target="_blank" rel="noopener">hrtracking.tacpaxtra.com</a></div></div>
+ <div class="vbtns">
+  <button class="refreshbtn" id="vacReload" title="โหลดหน้าเว็บปลายทางใหม่"><span class="rico">&#10227;</span>โหลดใหม่</button>
+  <a class="vopen" id="vacOpen" href="https://hrtracking.tacpaxtra.com" target="_blank" rel="noopener" title="เปิด hrtracking.tacpaxtra.com ในแท็บใหม่">เปิดในแท็บใหม่ &#8599;</a>
+ </div>
+</div>
+<div class="vframe">
+ <div class="vbar"><span class="vdot" id="vacDot"></span><span id="vacState">ยังไม่ได้เชื่อมต่อ</span>
+  <span class="vurl">&middot; https://hrtracking.tacpaxtra.com</span></div>
+ <div class="vload" id="vacLoad"><div class="vspin"></div>
+  <div>กำลังเชื่อมต่อ <b>hrtracking.tacpaxtra.com</b> &hellip;</div></div>
+ <iframe id="vacFrame" title="Vacancy SM Up (TA) · hrtracking.tacpaxtra.com"
+  referrerpolicy="strict-origin-when-cross-origin"></iframe>
+</div>
+<div class="vnote">ข้อมูลในหน้านี้มาจากระบบ HR Tracking โดยตรง ไม่ได้เก็บไว้ในไฟล์นี้ และต้องล็อกอินตามสิทธิ์ของระบบนั้น
+ &middot; <b>ถ้ากรอบด้านบนว่าง ขึ้นข้อความปฏิเสธการเชื่อมต่อ หรือล็อกอินแล้วเด้งกลับ</b> แปลว่าระบบปลายทางไม่อนุญาตให้ฝังในหน้าอื่น
+ หรือเบราว์เซอร์ไม่ส่งคุกกี้ล็อกอินให้เว็บที่ถูกฝัง ให้กด <b>เปิดในแท็บใหม่</b> แทน
+ &middot; ถ้าเปิดไม่ได้ทั้งสองทาง อาจต้องเข้าผ่านเครือข่ายบริษัทหรือ VPN</div>
 </div>
 </div>
 <div id="pgMR" style="display:none">
@@ -6205,12 +6264,56 @@ pRenderAll();
 document.querySelectorAll('.pagenav button').forEach(b=>{
  b.onclick=()=>{
   document.querySelectorAll('.pagenav button').forEach(x=>x.classList.toggle('on',x===b));
-  const PG={sim:'pgSim', personnel:'pgPersonnel', o2o:'pgO2O', ot:'pgOT', mp:'pgMP', mr:'pgMR'};
+  const PG={sim:'pgSim', personnel:'pgPersonnel', o2o:'pgO2O', ot:'pgOT', mp:'pgMP', mr:'pgMR',
+            vac:'pgVac'};
   Object.entries(PG).forEach(([pg,id])=>{
    document.getElementById(id).style.display = b.dataset.pg===pg ? '' : 'none';
   });
+  if(b.dataset.pg === 'vac') vacConnect(false);
  };
 });
+
+/* ---- Vacancy SM Up (TA) ----
+   iframe โหลดเมื่อเปิดแท็บนี้ครั้งแรกเท่านั้น ไม่เรียกเว็บปลายทางตอนเปิดไฟล์
+   เบราว์เซอร์ไม่บอกเราว่าเว็บปลายทางยอมให้ฝังหรือไม่ (โหลดไม่ได้ก็ยังยิง load)
+   จึงบอกสถานะเท่าที่รู้จริง และให้ปุ่ม เปิดในแท็บใหม่ อยู่ให้เห็นตลอด */
+const VAC_URL = 'https://hrtracking.tacpaxtra.com';
+let vacStarted = false, vacTimer = null;
+function vacState(txt, ok){
+ document.getElementById('vacState').textContent = txt;
+ document.getElementById('vacDot').classList.toggle('ok', !!ok);
+}
+function vacConnect(force){
+ const f = document.getElementById('vacFrame');
+ if(vacStarted && !force) return;
+ vacStarted = true;
+ const ld = document.getElementById('vacLoad');
+ ld.hidden = false;
+ vacState('กำลังเชื่อมต่อ…', false);
+ clearTimeout(vacTimer);
+ /* ช้ากว่า 15 วินาที มักเป็นเพราะต้องเข้าผ่านเครือข่ายบริษัท · บอกทางออกแทนการหมุนค้าง */
+ vacTimer = setTimeout(()=>{
+  ld.innerHTML = `<div>ยังเชื่อมต่อ <b>hrtracking.tacpaxtra.com</b> ไม่ได้</div>
+   <div style="font-size:12px;color:var(--ink3)">อาจต้องเข้าผ่านเครือข่ายบริษัทหรือ VPN · หรือเว็บปลายทางไม่อนุญาตให้ฝังในหน้าอื่น</div>
+   <a class="vopen" href="${VAC_URL}" target="_blank" rel="noopener">เปิดในแท็บใหม่ &#8599;</a>`;
+  vacState('เชื่อมต่อไม่สำเร็จภายในเวลาที่รอ', false);
+ }, 15000);
+ f.onload = ()=>{
+  if(!f.getAttribute('src')) return;
+  clearTimeout(vacTimer);
+  ld.hidden = true;
+  vacState('เชื่อมต่อแล้ว · ถ้ากรอบว่างให้กด เปิดในแท็บใหม่', true);
+ };
+ /* โหลดใหม่ · ล้างกรอบก่อนแล้วใส่ URL เดิมตรง ๆ ไม่เติมพารามิเตอร์ให้ URL ปลายทางเพี้ยน */
+ if(force){ f.removeAttribute('src'); setTimeout(()=>{ f.src = VAC_URL; }, 30); }
+ else f.src = VAC_URL;
+}
+document.getElementById('vacReload').onclick = ()=>
+ flashRefresh(document.getElementById('vacReload'), ()=>{
+  const ld = document.getElementById('vacLoad');
+  ld.innerHTML = `<div class="vspin"></div><div>กำลังเชื่อมต่อ <b>hrtracking.tacpaxtra.com</b> &hellip;</div>`;
+  vacConnect(true);
+ });
 
 const PCRED = [{"pass": "00119818", "name": "ทินวัฒน์ รุ่งระวีวิวรพันธุ์", "type": "store", "codes": ["001"]}, {"pass": "00043870", "name": "พินาภรณ์ กัณวเศรษฐ", "type": "store", "codes": ["002"]}, {"pass": "00004193", "name": "นริสา ถาวรพจน์", "type": "store", "codes": ["003"]}, {"pass": "00029232", "name": "นิษฐกานต์ พิมพ์ศุภาภรณ์", "type": "store", "codes": ["004"]}, {"pass": "00068162", "name": "พัชรินทร์ สุขจันทึก", "type": "store", "codes": ["005"]}, {"pass": "00038431", "name": "เสาวภาคย์ สุวรรณ์", "type": "store", "codes": ["006"]}, {"pass": "00002330", "name": "วัลภา แขค้างพลู", "type": "store", "codes": ["007"]}, {"pass": "00053200", "name": "ทัชชา ภาคบุญ", "type": "store", "codes": ["008"]}, {"pass": "00037741", "name": "พงษ์ศักดิ์ ศรีสังค์", "type": "store", "codes": ["009"]}, {"pass": "00069892", "name": "ปุณญณุช สิริหล้า", "type": "store", "codes": ["010"]}, {"pass": "00042238", "name": "เรวดี ปานพลับ", "type": "store", "codes": ["011"]}, {"pass": "00051503", "name": "มนัชญา ธรรมบุตร", "type": "store", "codes": ["012"]}, {"pass": "00012761", "name": "สุนิษา จันทร์สุวรรณ", "type": "store", "codes": ["013"]}, {"pass": "00019685", "name": "สุมาลี วิเศษหมื่น", "type": "store", "codes": ["014"]}, {"pass": "00016757", "name": "สุรัสวดี เปี่ยมพงศ์สานต์", "type": "store", "codes": ["015"]}, {"pass": "00011378", "name": "สุนิสา พวงไทย", "type": "store", "codes": ["016"]}, {"pass": "00003599", "name": "ปนัดดา แจ่มสายบัว", "type": "store", "codes": ["017"]}, {"pass": "00014447", "name": "จินตนา วานิกร", "type": "store", "codes": ["018"]}, {"pass": "00010226", "name": "นิตยา บันลือ", "type": "store", "codes": ["019"]}, {"pass": "00003932", "name": "อุมาพร เหมาะทอง", "type": "store", "codes": ["020"]}, {"pass": "00062105", "name": "สุภาพร บุญเอนก", "type": "store", "codes": ["021"]}, {"pass": "00017161", "name": "วรรณพร ตาเพชร", "type": "store", "codes": ["022"]}, {"pass": "00037389", "name": "อภิญญา วังแง่", "type": "store", "codes": ["023"]}, {"pass": "00004433", "name": "เกรียงไกร สุวรรณ", "type": "store", "codes": ["024"]}, {"pass": "00004523", "name": "ฟ้ารุ่ง เผ่าพันธุ์", "type": "store", "codes": ["025"]}, {"pass": "00004633", "name": "อภิญญา มาลาวรรณ์", "type": "store", "codes": ["026"]}, {"pass": "00027194", "name": "ขนิษฐา จันทร์เอียด", "type": "store", "codes": ["027"]}, {"pass": "00014144", "name": "ธัญญธร ดนยาอัครกุล", "type": "store", "codes": ["028"]}, {"pass": "00005116", "name": "กาญจนา แพไธสง", "type": "store", "codes": ["029"]}, {"pass": "00005220", "name": "สุพัตรา บุญเสริม", "type": "store", "codes": ["030"]}, {"pass": "00043609", "name": "จำลองลักษณ์ หิมทอง", "type": "store", "codes": ["031"]}, {"pass": "00033268", "name": "ศิรินณา ศุภนาม", "type": "store", "codes": ["032"]}, {"pass": "00050554", "name": "อรทัย สอนอาจ", "type": "store", "codes": ["033"]}, {"pass": "00014401", "name": "จารุวรรณ ตันมูลสุข", "type": "store", "codes": ["034"]}, {"pass": "00005765", "name": "ขวัญตา แดงหนำ", "type": "store", "codes": ["035"]}, {"pass": "00005951", "name": "ฐานวีร์ พันธ์สังข์", "type": "store", "codes": ["036"]}, {"pass": "00012713", "name": "ศุภการ เหง้ากอก", "type": "store", "codes": ["037"]}, {"pass": "00009871", "name": "ปาริชาติ เดชพล", "type": "store", "codes": ["038"]}, {"pass": "00033588", "name": "ลัดดาพร ช้างแรงการ", "type": "store", "codes": ["039"]}, {"pass": "00002141", "name": "มณชัย กู้เกียรติศักดิ์", "type": "store", "codes": ["040"]}, {"pass": "00055669", "name": "วารุณี จันทร์ตา", "type": "store", "codes": ["041"]}, {"pass": "00006600", "name": "ทัศมนต์ โฉมกิจ", "type": "store", "codes": ["042"]}, {"pass": "00001200", "name": "นฤมล บุญคงมาก", "type": "store", "codes": ["043"]}, {"pass": "00023496", "name": "กมลทิพย์ สุวรรณเศรษฐ์", "type": "store", "codes": ["044"]}, {"pass": "00030430", "name": "ฐิตาพร ศรีสมุทร์", "type": "store", "codes": ["045"]}, {"pass": "00007048", "name": "อุมาพร มิ่งระกูล", "type": "store", "codes": ["046"]}, {"pass": "00007090", "name": "ณัฐชานันท์ หวังงำทรัพย์", "type": "store", "codes": ["047"]}, {"pass": "00007225", "name": "ภัททิรา สุวรพันธ์", "type": "store", "codes": ["048"]}, {"pass": "00003820", "name": "โสภา ทาไว", "type": "store", "codes": ["049"]}, {"pass": "00007414", "name": "ธรรมศาสตร์ พิริยะกิจไพบูลย์", "type": "store", "codes": ["050"]}, {"pass": "00029323", "name": "ทัศนีย์ ศึกษา", "type": "store", "codes": ["051"]}, {"pass": "00007761", "name": "เฉลิมขวัญ กาศอุดม", "type": "store", "codes": ["052"]}, {"pass": "00034139", "name": "สุนิสา ปิติวุฒิ", "type": "store", "codes": ["053"]}, {"pass": "00030904", "name": "เกศิณี สิงห์วงษา", "type": "store", "codes": ["054"]}, {"pass": "00015144", "name": "อิสรียาภรณ์ ไชยยอด", "type": "store", "codes": ["055"]}, {"pass": "00015461", "name": "นันท์นภัส สีดี", "type": "store", "codes": ["056"]}, {"pass": "00038832", "name": "พิณทิพย์ แพทย์เจริญ", "type": "store", "codes": ["057"]}, {"pass": "00008529", "name": "เสาวคนธ์ จักษุกิจ", "type": "store", "codes": ["058"]}, {"pass": "00018188", "name": "รุสไลลา หลงจิ", "type": "store", "codes": ["059"]}, {"pass": "00045133", "name": "รัชนี คุณเอนก", "type": "store", "codes": ["060"]}, {"pass": "00026952", "name": "เบญญพร จันเคน", "type": "store", "codes": ["061"]}, {"pass": "00043219", "name": "เมติณี อินทร์อักษร", "type": "store", "codes": ["062"]}, {"pass": "00016896", "name": "นัตทยา อุดมเดชาเวทย์", "type": "store", "codes": ["063"]}, {"pass": "00009339", "name": "กานต์ทิตา ศรีทองกุล", "type": "store", "codes": ["064"]}, {"pass": "00081939", "name": "สุปราณีย์ กลางนอก", "type": "store", "codes": ["065"]}, {"pass": "00032360", "name": "รัตนาภรณ์ เจริญพร", "type": "store", "codes": ["066"]}, {"pass": "00010661", "name": "กัลยาณี เวียงนนท์", "type": "store", "codes": ["067"]}, {"pass": "00026244", "name": "สิริกานต์ ผิวงาม", "type": "store", "codes": ["068"]}, {"pass": "00006273", "name": "จีระพร แก้วชูศรี", "type": "store", "codes": ["069"]}, {"pass": "00012562", "name": "เปรมปรีดิ์ แก้วสลุด", "type": "store", "codes": ["070"]}, {"pass": "00045561", "name": "นูรอัยซะ ระเด่นอาหมัด", "type": "store", "codes": ["071"]}, {"pass": "00112837", "name": "ธนพงษ์ เนตรสกุล", "type": "store", "codes": ["072"]}, {"pass": "00013785", "name": "อภิษฎาภา สว่างวีระโภคิน", "type": "store", "codes": ["073"]}, {"pass": "00048417", "name": "ทาริกา กงเพ็ชร", "type": "store", "codes": ["074"]}, {"pass": "00020872", "name": "อัฑฒกร นวลนิรันดร์", "type": "store", "codes": ["075"]}, {"pass": "00021367", "name": "ธนพรรณ ทองมี", "type": "store", "codes": ["076"]}, {"pass": "00005324", "name": "ชูจิต รักแสน", "type": "store", "codes": ["077"]}, {"pass": "00086611", "name": "ณัฐนิชา ถิ่นทัพไทย", "type": "store", "codes": ["078"]}, {"pass": "00056717", "name": "เสริมศรี คงศรี", "type": "store", "codes": ["079"]}, {"pass": "00047936", "name": "จันทรัตน์ ขุนเพิก", "type": "store", "codes": ["081"]}, {"pass": "00120196", "name": "อรวรรณ บัวฝ้าย", "type": "store", "codes": ["082"]}, {"pass": "00055556", "name": "นารีรัตน์ วัดกลาง", "type": "store", "codes": ["083"]}, {"pass": "00004651", "name": "รฐาภรณ์ กระจ่างลิขิต", "type": "store", "codes": ["084"]}, {"pass": "00042735", "name": "พัชรี เจริญเร๊ะ", "type": "store", "codes": ["085"]}, {"pass": "00067741", "name": "เจนจิรา จันทร์กำเนิด", "type": "store", "codes": ["086"]}, {"pass": "00005694", "name": "วิไลพร เขียวเขื่อน", "type": "store", "codes": ["087"]}, {"pass": "00006874", "name": "สุณิสา ภมรเดชากุล", "type": "store", "codes": ["089"]}, {"pass": "00041507", "name": "หทัยทิพย์ กล่อมกล่ำนุ่ม", "type": "store", "codes": ["100"]}, {"pass": "00019561", "name": "พัชรดา ทองหลาง", "type": "store", "codes": ["101"]}, {"pass": "00053887", "name": "สุดารัตน์ เที่ยงกระโทก", "type": "store", "codes": ["102"]}, {"pass": "00064357", "name": "เอมอร สุริยะพรหม", "type": "store", "codes": ["103"]}, {"pass": "00046095", "name": "รัตนาภรณ์ ระย้า", "type": "store", "codes": ["104"]}, {"pass": "00026532", "name": "หัชชา วีรฉัตรสกุล", "type": "store", "codes": ["105"]}, {"pass": "00005599", "name": "ธีปกรณ์ มีหิริ", "type": "store", "codes": ["106"]}, {"pass": "00047335", "name": "นุชนารถ บุญประคม", "type": "store", "codes": ["107"]}, {"pass": "00006358", "name": "สุรัชดา พวงพันธ์", "type": "store", "codes": ["108"]}, {"pass": "00006750", "name": "จันทร์จิรา ลิมป์วรรณกุล", "type": "store", "codes": ["109"]}, {"pass": "00012328", "name": "พัชรี หมดทุกข์", "type": "store", "codes": ["110"]}, {"pass": "00007021", "name": "จิราวรรณ สังข์ทอง", "type": "store", "codes": ["111"]}, {"pass": "00037830", "name": "วจี ศรีแย้ม", "type": "store", "codes": ["113"]}, {"pass": "00035621", "name": "สาวิตรี มณีจันทร์", "type": "store", "codes": ["114"]}, {"pass": "00058102", "name": "ปิยนุช ทศราตรี", "type": "store", "codes": ["115"]}, {"pass": "00002364", "name": "สุดารัตน์ โคตรทะจักร", "type": "store", "codes": ["116"]}, {"pass": "00034242", "name": "กนกวรรณ แย้มมณี", "type": "store", "codes": ["117"]}, {"pass": "00058591", "name": "ปวีณา ขันทอง", "type": "store", "codes": ["118"]}, {"pass": "00030418", "name": "เบญจมาศ ไพรี", "type": "store", "codes": ["119"]}, {"pass": "00063823", "name": "นุตประวีณ์ สาไทยสงค์", "type": "store", "codes": ["120"]}, {"pass": "00120992", "name": "ปิยะดา จิตรชาตรี", "type": "store", "codes": ["120"]}, {"pass": "00064292", "name": "สุภาวรรณ กุจิรพันธ์", "type": "store", "codes": ["121"]}, {"pass": "00062129", "name": "วิลาวัณย์ เสรีกสิชน", "type": "store", "codes": ["122"]}, {"pass": "00084356", "name": "สิทธิชัย เทียนทอง", "type": "store", "codes": ["123"]}, {"pass": "00081854", "name": "กิตติภรณ์ อุตบัววงศ์", "type": "store", "codes": ["124"]}, {"pass": "00019032", "name": "ปรมะ สุจันทรา", "type": "store", "codes": ["125"]}, {"pass": "00083962", "name": "พันธ์พิมพ์ จีนประชา", "type": "store", "codes": ["126"]}, {"pass": "00063716", "name": "พัชรา ห้อยระย้า", "type": "store", "codes": ["127"]}, {"pass": "00093696", "name": "ศรีสมร กรแก้ว", "type": "store", "codes": ["128"]}, {"pass": "00064167", "name": "ณัฐรัตน์ ทรัพย์มณีวงศ์", "type": "store", "codes": ["129"]}, {"pass": "00104575", "name": "อมรรัตน์ สีเเสด", "type": "store", "codes": ["130"]}, {"pass": "00042609", "name": "สรารัตน์ สมจิต", "type": "store", "codes": ["131"]}, {"pass": "00041024", "name": "สิริรัตน์ รอดเพ็ง", "type": "store", "codes": ["132"]}, {"pass": "00081246", "name": "เบญจา อัครานนทสิทธิ์", "type": "store", "codes": ["133"]}, {"pass": "00037207", "name": "นันท์นภัส ภูรี", "type": "store", "codes": ["134"]}, {"pass": "00029298", "name": "รจนา ลักขณาพิพัฒน์", "type": "store", "codes": ["135"]}, {"pass": "00053660", "name": "นิสารัตน์ แก้วอ่อนดี", "type": "store", "codes": ["136"]}, {"pass": "00031874", "name": "สุชาดา กระจ่างจบ", "type": "store", "codes": ["137"]}, {"pass": "00041721", "name": "ศิริรัตน์ ขาวสะอาด", "type": "store", "codes": ["139"]}, {"pass": "00053838", "name": "สรชัย พันชน", "type": "store", "codes": ["140"]}, {"pass": "00059189", "name": "ธัญดา เชียงราบ", "type": "store", "codes": ["141"]}, {"pass": "00033542", "name": "พวงเงิน วงษ์สีทา", "type": "store", "codes": ["142"]}, {"pass": "00053770", "name": "จิราภรณ์ หมวดชนะ", "type": "store", "codes": ["143"]}, {"pass": "00026196", "name": "วนิดา จั่นบำรุง", "type": "store", "codes": ["144"]}, {"pass": "00026854", "name": "หทัยชนก ใจยิ้ม", "type": "store", "codes": ["146"]}, {"pass": "00079958", "name": "ฟ้าใส ไกรดีงาม", "type": "store", "codes": ["147"]}, {"pass": "00046551", "name": "ณิชนันท์ มุงเมือง", "type": "store", "codes": ["148"]}, {"pass": "00013238", "name": "ทิวาพร มนต์ประจักษ์", "type": "store", "codes": ["149"]}, {"pass": "00065795", "name": "สุรศักดิ์ วงเวียน", "type": "store", "codes": ["150"]}, {"pass": "00087413", "name": "สาริน หน่องพงษ์", "type": "store", "codes": ["151"]}, {"pass": "00021924", "name": "จุฑามาศ สุมากิจ", "type": "store", "codes": ["152"]}, {"pass": "00044252", "name": "ปานจิต อรรถพลพิพัฒน์", "type": "store", "codes": ["153"]}, {"pass": "00049303", "name": "วริศราริสา อินทยา", "type": "store", "codes": ["154"]}, {"pass": "00025515", "name": "เปรมฤดี บุญเกิด", "type": "store", "codes": ["155"]}, {"pass": "00078422", "name": "นงลักษณ์ พัดเย็น", "type": "store", "codes": ["156"]}, {"pass": "00006236", "name": "เบญจวรรณ ศิริพันธุ์", "type": "store", "codes": ["157"]}, {"pass": "00007167", "name": "วราภรณ์ โพธิ์ประจักร์", "type": "store", "codes": ["158"]}, {"pass": "00029800", "name": "เพ็ญพร สุขธิติ", "type": "store", "codes": ["159"]}, {"pass": "00013964", "name": "เบญจมาศ สุวรรณเขตสกุล", "type": "store", "codes": ["160"]}, {"pass": "00008160", "name": "สุมิตรา พรมมาวัน", "type": "store", "codes": ["161"]}, {"pass": "00055667", "name": "สุนันทา สุทธิพงษ์", "type": "store", "codes": ["162"]}, {"pass": "00002662", "name": "สุพรรณี บัวฝ้าย", "type": "store", "codes": ["163"]}, {"pass": "00034299", "name": "ศาริณี อินทร์ชูโต", "type": "store", "codes": ["164"]}, {"pass": "00054646", "name": "อรวรรณ แก้วชัยยา", "type": "store", "codes": ["165"]}, {"pass": "00086228", "name": "พิมพ์ชนก ชนะศึก", "type": "store", "codes": ["166"]}, {"pass": "00058382", "name": "พนัชกร สมณะ", "type": "store", "codes": ["167"]}, {"pass": "00109653", "name": "เบญจพร นามนนท์", "type": "store", "codes": ["168"]}, {"pass": "00028428", "name": "จุฑาทิพย์ รักษสุธากาญจน์", "type": "store", "codes": ["169"]}, {"pass": "00081088", "name": "จิตราภรณ์ นาสืบ", "type": "store", "codes": ["170"]}, {"pass": "00058397", "name": "ชยุตพงศ์ ขวัญกิจอนุพงศ์", "type": "store", "codes": ["171"]}, {"pass": "00047804", "name": "นิติธาดา วงษ์ลา", "type": "store", "codes": ["172"]}, {"pass": "00000000", "name": "Admin", "type": "admin", "codes": null}, {"pass": "00086420", "name": "ศุภกานต์ ริ้วทอง", "type": "region", "codes": ["002", "004", "017", "018", "021", "078", "083", "111", "115", "122", "127", "135", "138", "140", "145", "147", "150", "155", "165", "301"]}, {"pass": "00100744", "name": "จักรกฤษณ์ ชูติมันต์วงษ์", "type": "region", "codes": ["001", "002", "003", "004", "007", "010", "012", "017", "018", "021", "024", "032", "037", "042", "048", "055", "057", "061", "063", "065", "074", "078", "080", "083", "086", "096", "102", "107", "108", "111", "113", "115", "117", "118", "121", "122", "123", "124", "126", "127", "129", "133", "135", "136", "137", "138", "139", "140", "142", "143", "145", "147", "148", "150", "151", "155", "156", "157", "159", "161", "165", "171", "172", "301", "350", "351", "352"]}, {"pass": "00116372", "name": "ปกรณ์", "type": "admin", "codes": null}, {"pass": "00068177", "name": "ธนาวัฒน์", "type": "admin", "codes": null}, {"pass": "00020686", "name": "ประมวล", "type": "admin", "codes": null}, {"pass": "00076870", "name": "พรพรรณ", "type": "admin", "codes": null}, {"pass": "00053495", "name": "จีรกาญจน์", "type": "admin", "codes": null}, {"pass": "00116371", "name": "กรทิพย์", "type": "admin", "codes": null}, {"pass": "00000153", "name": "วาสนา", "type": "admin", "codes": null}, {"pass": "00062186", "name": "จารุเนตร", "type": "admin", "codes": null}];
 
