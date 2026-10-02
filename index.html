@@ -1368,6 +1368,10 @@ table.etbl tr.res td{background:var(--yeL)}
   <div><div style="font-weight:600;font-size:13.5px">ยอดขาย ส.ค. เทียบ ก.ย.</div>
    <div class="cap" style="margin:0 0 2px" id="dvCap"></div></div>
   <div id="dvCtl" style="display:flex;gap:9px;align-items:center;flex-wrap:wrap">
+   <span class="lbl" style="margin:0;white-space:nowrap">Region</span>
+   <select id="dvReg"></select>
+   <span class="lbl" style="margin:0;white-space:nowrap">สาขา</span>
+   <select id="dvSto" style="max-width:220px"></select>
    <div class="chips" id="dvLvl"><button class="chip on" data-v="reg">ราย Region</button><button class="chip" data-v="sto">รายสาขา</button></div>
    <div class="chips" id="dvN"><button class="chip on" data-n="10">โต/ตก 10 อันดับ</button><button class="chip" data-n="25">25</button><button class="chip" data-n="0">ทุกสาขา</button></div>
   </div>
@@ -4829,6 +4833,8 @@ const S=J.S,F=J.F,R=J.R,B=J.B,M=J.M,K=J.K,D=J.D,TEMP=new Set(J.TEMP);
 const PREVDATE=J.PREVDATE,CURDATE=J.CURDATE;
 let rkReg=-1,rkFmt=-1,rkQ='';
 let ovReg=-1,ovSto='';
+/* ตัวกรองของการ์ด ยอดขาย ส.ค. เทียบ ก.ย. · ตามตัวกรองบนเมื่อตัวบนเปลี่ยน เลือกแยกเองได้ */
+let dvReg=-1,dvSto='';
 const VN=['ปัญหาคนเกิน','ปัญหายอดขาย','เฝ้าระวัง','ปกติ'];
 const names=Object.keys(D);
 let target=250, minH=1, cur=null, cut={};
@@ -4911,7 +4917,7 @@ function overview(){
  $('ovSec').innerHTML=ss.map(([i,b,rec])=>`<div class="br"><div title="${S[i]}">${S[i].length>20?S[i].slice(0,19)+'…':S[i]}</div>
   <div class="trk"><div class="f3" style="width:${b/smx*100}%"></div></div>
   <div class="rt n">${pc(b,3)} <span style="color:var(--rdD)">/${nf(rec,0)}</span></div></div>`).join('');
- salesCmp(list);
+ salesCmp();
 }
 
 /* ---- 1b. เทียบยอดขาย ส.ค. กับ ก.ย. -----------------------------------------
@@ -4921,12 +4927,13 @@ function overview(){
    จึงวัดแถบเป็น % ที่เปลี่ยน กระจายสองข้างของเส้นศูนย์ (เทียบข้ามขนาดได้)
    แล้วพิมพ์ทั้ง ลบ. ที่เปลี่ยนและยอดจริงสองงวดในแถวเดียวกัน เพื่อไม่ให้ %
    ปิดบังขนาด · ทิศทางแถบกับเครื่องหมาย +/- บอกขึ้น-ลงอยู่แล้ว สีเป็นตัวช่วยซ้ำ */
-function salesCmp(list){
+function salesCmp(){
+ const list=dvSto?[dvSto]:(dvReg<0?names:names.filter(n=>D[n][6]===dvReg));
  /* ราย Region ได้เฉพาะตอนไม่ได้กรอง Region ไว้ ไม่งั้นจะเหลือแถวเดียว */
  const lvl=($('dvLvl').querySelector('.chip.on')||{dataset:{v:'reg'}}).dataset.v;
- const byReg = lvl==='reg' && ovReg<0 && !ovSto;
- $('dvLvl').style.display = (ovReg<0 && !ovSto) ? '' : 'none';
- $('dvN').style.display = byReg ? 'none' : '';
+ const byReg = lvl==='reg' && dvReg<0 && !dvSto;
+ $('dvLvl').style.display = (dvReg<0 && !dvSto) ? '' : 'none';
+ $('dvN').style.display = (byReg || dvSto) ? 'none' : '';
  const g=new Map();
  for(const n of list){ const d=D[n]; const k=byReg?R[d[6]]:n;
   let a=g.get(k); if(!a){a={p:0,c:0,n:0,code:byReg?'':String(d[8])};g.set(k,a);}
@@ -4953,7 +4960,8 @@ function salesCmp(list){
   `ช่อง ลบ. บอกขนาดที่เปลี่ยนจริง เพราะ % เพียว ๆ ทำให้${uMid}เล็กดูขยับแรงกว่าที่เป็น`,
   `เรียงจากโตมากสุดลงมา`,
   `ความยาวเต็มแถบ = ${nf(mx,2)}%`,
-  cut?`แสดงหัว ${lim} และท้าย ${lim} จาก ${all.length} สาขา`:''
+  cut?`แสดงหัว ${lim} และท้าย ${lim} จาก ${all.length} สาขา`:'',
+  dvSto?`สาขา ${D[dvSto][8]} ${dvSto}`:(dvReg>=0?`${R[dvReg]} ${list.length} สาขา`:'')
  ].filter(Boolean).join(' · ');
  $('dvSum').innerHTML=[
   ['ยอดขาย '+PREVDATE, mn(tp)+' ลบ.', ''],
@@ -5336,9 +5344,21 @@ function fillOvSto(){
  $('ovSto').innerHTML='<option value="">ทุกสาขา</option>'+l.map(n=>`<option value="${n}">${D[n][8]}  ${n}</option>`).join('');
  $('ovSto').value=ovSto&&l.includes(ovSto)?ovSto:'';
  if(!l.includes(ovSto))ovSto='';}
-$('ovReg').onchange=()=>{ovReg=+$('ovReg').value;fillOvSto();overview();};
-$('ovSto').onchange=()=>{ovSto=$('ovSto').value;overview();};
+function fillDvSto(){
+ const l=(dvReg<0?names:names.filter(n=>D[n][6]===dvReg)).sort((a,b)=>(D[a][8]>D[b][8]?1:-1));
+ $('dvSto').innerHTML='<option value="">ทุกสาขา</option>'+l.map(n=>`<option value="${n}">${D[n][8]}  ${n}</option>`).join('');
+ if(!l.includes(dvSto))dvSto='';
+ $('dvSto').value=dvSto;}
+/* ตัวกรองบนเปลี่ยน · การ์ดตามไปด้วย (พฤติกรรมเดิม) */
+function syncDv(){ dvReg=ovReg; dvSto=ovSto; $('dvReg').value=String(dvReg); fillDvSto(); }
+$('ovReg').onchange=()=>{ovReg=+$('ovReg').value;fillOvSto();syncDv();overview();};
+$('ovSto').onchange=()=>{ovSto=$('ovSto').value;syncDv();overview();};
 fillOvSto();
+$('dvReg').innerHTML='<option value="-1">ทั้งเครือ</option>'+R.map((x,i)=>[x,i,names.filter(n=>D[n][6]===i).length])
+ .filter(r=>r[2]>0).map(([x,i,c])=>`<option value="${i}">${x} (${c})</option>`).join('');
+$('dvReg').onchange=()=>{dvReg=+$('dvReg').value;fillDvSto();salesCmp();};
+$('dvSto').onchange=()=>{dvSto=$('dvSto').value;salesCmp();};
+fillDvSto();
 $('rkPrevH').innerHTML='% to sales<br>สิงหาคม';
 $('rkPrevH').title='% to sales รายสาขาของงวด '+PREVDATE
  +' · ใช้เทียบกับ % to sales งวดนี้ ('+CURDATE+') ว่าลดหรือเพิ่ม';
@@ -5393,7 +5413,7 @@ $('pdfAll').onclick=()=>toPdf(true);
 function simResetAll(){
  target=250;syncTgtInputs(250);
  minH=1;$('mSel').value='1';
- ovReg=-1;ovSto='';$('ovReg').value='-1';fillOvSto();
+ ovReg=-1;ovSto='';$('ovReg').value='-1';fillOvSto();syncDv();
  rkReg=-1;rkFmt=-1;rkQ='';
  $('rkReg').value='-1';$('rkFmt').value='-1';$('rkQ').value='';
  $('rkN').querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.n==='15'));
