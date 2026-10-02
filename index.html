@@ -859,6 +859,25 @@ table.etbl tr.res td{background:var(--yeL)}
  animation:rspin .8s linear infinite}
 .extpg .vnote{margin-top:10px;font-size:11.5px;line-height:1.6;color:var(--ink3)}
 .extpg .vnote b{color:var(--ink2)}
+/* การ์ดเปิดลิงก์ · ใช้กับระบบที่ไม่ยอมให้ฝังในเว็บอื่น (เช่น claude.ai) */
+.extpg .vcard{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;
+ box-shadow:0 1px 3px rgba(18,22,28,.06),0 1px 2px rgba(18,22,28,.03)}
+.extpg .vcbody{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:28px;padding:26px 28px}
+@media(max-width:980px){.extpg .vcbody{grid-template-columns:1fr}}
+.extpg .vch{font-size:17px;font-weight:600;color:var(--ink);margin:0 0 6px}
+.extpg .vcp{font-size:13px;line-height:1.65;color:var(--ink2);margin:0 0 16px}
+.extpg .vcgo{font:inherit;font-size:14px;font-weight:600;padding:11px 20px;border-radius:8px;
+ background:var(--bl);color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+ border:1px solid var(--bl);transition:background .12s}
+.extpg .vcgo:hover{background:var(--blD);border-color:var(--blD)}
+.extpg .vcgo:focus-visible{outline:2px solid var(--bl);outline-offset:2px}
+.extpg .vclist{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.extpg .vclist li{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;line-height:1.5;color:var(--ink2)}
+.extpg .vclist li::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;margin-top:6px;background:var(--gr)}
+.extpg .vclist b{color:var(--ink);font-weight:600}
+.extpg .vcacc{margin-top:18px;padding:12px 14px;border-radius:8px;background:var(--yeL);border:1px solid #F2DCA9;
+ font-size:12px;line-height:1.6;color:#6B4E0B}
+.extpg .vcacc b{color:#4D3806}
 
 /* ปุ่ม Refresh (ใช้ร่วมกันทั้ง 2 หน้า) */
 .refreshbtn{font:inherit;font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:7px;border:1px solid var(--bl);background:#fff;color:var(--bl);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:background .12s,color .12s,border-color .12s}
@@ -1304,6 +1323,7 @@ table.etbl tr.res td{background:var(--yeL)}
  <button data-pg="mr">Manpower Reduction</button>
  <button data-pg="vac" title="เชื่อมต่อระบบ HR Tracking (เว็บภายนอก) · https://hrtracking.tacpaxtra.com">Vacancy SM Up (TA)<span class="pnx">&#8599;</span></button>
  <button data-pg="apw" title="Action Plan Dashboard ของ Bangkok West (เว็บภายนอก) · https://tonkung3817-cmd.github.io/Action-Plan-BK_West/Action_Plan_Dashboard.html">Action BK West<span class="pnx">&#8599;</span></button>
+ <button data-pg="ofc" title="Picker Manpower Planning Dashboard บน claude.ai (เปิดในแท็บใหม่)">Order FC / HC<span class="pnx">&#8599;</span></button>
 </div>
 <div id="pgSim">
 <header><div class="wrap"><div class="refreshhd"><h1>Personnel Cost to Sales — Store Simulator</h1>
@@ -2215,6 +2235,41 @@ table.etbl tr.res td{background:var(--yeL)}
  ตัวเลขจึงเป็นชุดล่าสุดที่หน้านั้นเผยแพร่ไว้ทุกครั้งที่เปิด
  &middot; <b>ถ้ากรอบด้านบนว่างหรือขึ้นข้อความปฏิเสธการเชื่อมต่อ</b> ให้กด <b>เปิดในแท็บใหม่</b> แทน
  &middot; ถ้าเปิดในแท็บใหม่ก็ไม่ขึ้น อาจเป็นเพราะเครือข่ายบริษัทกั้นเว็บ github.io ไว้</div>
+</div>
+</div>
+<div id="pgOfc" class="extpg" style="display:none">
+<div class="vwrap">
+<div class="refreshhd">
+ <div><h1>Order FC / HC</h1>
+  <div class="vsub">Order Forecast เทียบกำลังคน Picker รายสาขา รายวัน &middot; Picker Manpower Planning Dashboard (ต.ค. 2569) บน Claude</div></div>
+ <div class="vbtns">
+  <a class="vopen" href="https://claude.ai/artifact/91SDkZbqNicum8iZPRTEWS?sk=uuz4N9VIVZakaf2540PEgQ" target="_blank" rel="noopener" title="เปิด Picker Manpower Planning Dashboard ในแท็บใหม่">เปิดในแท็บใหม่ &#8599;</a>
+ </div>
+</div>
+<div class="vcard">
+ <div class="vbar"><span class="vdot ok"></span><span>เปิดในแท็บใหม่บน claude.ai</span>
+  <span class="vurl">&middot; claude.ai/artifact/91SDkZbqNicum8iZPRTEWS</span></div>
+ <div class="vcbody">
+  <div>
+   <h2 class="vch">Picker Manpower Planning Dashboard</h2>
+   <p class="vcp">วิเคราะห์ว่ากำลังคน Picker พอรองรับ Order Forecast รายวันของแต่ละสาขาหรือไม่ และเทียบแผนบริหารกำลังคน
+    ทั้งปกติ OT เรียกวันหยุด ยืมข้ามแผนก และรับ Temp/Part-time พร้อมประมาณการต้นทุน
+    หน้านี้อยู่บน claude.ai ซึ่งไม่อนุญาตให้ฝังในเว็บอื่น จึงเปิดเป็นแท็บใหม่</p>
+   <a class="vcgo" href="https://claude.ai/artifact/91SDkZbqNicum8iZPRTEWS?sk=uuz4N9VIVZakaf2540PEgQ" target="_blank" rel="noopener">เปิด Order FC / HC &#8599;</a>
+   <div class="vcacc"><b>สิทธิ์การเข้าถึง</b> ลิงก์นี้แชร์ภายในองค์กร CP AXTRA เท่านั้น
+    ต้องล็อกอิน claude.ai ด้วยบัญชีขององค์กร และได้รับสิทธิ์ดูหน้านี้
+    ถ้าเปิดแล้วขึ้นว่าไม่มีสิทธิ์ ให้ขอสิทธิ์จากเจ้าของหน้า</div>
+  </div>
+  <ul class="vclist">
+   <li><span><b>Required vs Available Picker</b> รายวัน รวมทุกสาขาที่เลือก เห็นวันที่คนไม่พอทันที</span></li>
+   <li><span><b>Forecast Orders vs Capacity</b> รายวัน และ Heatmap Gap รายสาขา &times; รายวัน</span></li>
+   <li><span><b>เปรียบเทียบแผนกำลังคน 1&ndash;6</b> พร้อมแผนที่ระบบแนะนำ</span></li>
+   <li><span><b>Personnel Cost Breakdown</b> ตามพารามิเตอร์ค่าจ้าง OT และ Temp ที่ตั้งได้</span></li>
+   <li><span><b>Action Plan</b> บันทึกรายสาขา/วันที่ แชร์กันในทีม และติดตามสถานะอนุมัติ</span></li>
+  </ul>
+ </div>
+</div>
+<div class="vnote">ข้อมูลและ Action Plan เก็บอยู่บน claude.ai ไม่ได้เก็บไว้ในไฟล์นี้ ตัวเลขจึงเป็นชุดล่าสุดที่หน้านั้นมีทุกครั้งที่เปิด</div>
 </div>
 </div>
 <div id="pgMR" style="display:none">
@@ -6291,7 +6346,7 @@ document.querySelectorAll('.pagenav button').forEach(b=>{
  b.onclick=()=>{
   document.querySelectorAll('.pagenav button').forEach(x=>x.classList.toggle('on',x===b));
   const PG={sim:'pgSim', personnel:'pgPersonnel', o2o:'pgO2O', ot:'pgOT', mp:'pgMP', mr:'pgMR',
-            vac:'pgVac', apw:'pgApw'};
+            vac:'pgVac', apw:'pgApw', ofc:'pgOfc'};
   Object.entries(PG).forEach(([pg,id])=>{
    document.getElementById(id).style.display = b.dataset.pg===pg ? '' : 'none';
   });
