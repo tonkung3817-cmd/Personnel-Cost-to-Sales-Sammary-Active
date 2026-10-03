@@ -1597,7 +1597,7 @@ table.etbl tr.res td{background:var(--yeL)}
 <div class="pcard" id="cardFsMin">
  <div class="phd green"><span>FRESH MINIMUM STAFFING &middot; อัตรากำลังขั้นต่ำแผนกสด (Foodservice D / E)</span>
   <div class="pbtns"><span class="prhdcnt" id="fmHdCnt"></span>
-   <button class="piconbtn" id="fmDl" title="Export CSV ทุกสาขา × แผนก (5 แผนกสด + Cashier) ที่ผ่านตัวกรองของการ์ดนี้">&#8681;</button></div></div>
+   <button class="piconbtn" id="fmDl" title="Export CSV ทุกสาขา × แผนก (5 แผนกสด + Non Fresh + Cashier) ที่ผ่านตัวกรองของการ์ดนี้">&#8681;</button></div></div>
  <div class="prtool">
   <div><div class="pflabel">Region</div><select class="pfsel" id="fmReg" style="min-width:170px"></select></div>
   <div><div class="pflabel">Type</div><select class="pfsel" id="fmType" style="min-width:150px"></select></div>
@@ -1614,7 +1614,7 @@ table.etbl tr.res td{background:var(--yeL)}
  <div class="ptblwrap" id="fmWrap">
   <table id="fmTbl">
    <colgroup><col style="width:64px"><col style="width:190px"><col style="width:112px"><col style="width:150px">
-    <col><col><col><col><col><col><col style="width:92px"><col style="width:92px"></colgroup>
+    <col><col><col><col><col><col><col><col style="width:92px"><col style="width:92px"></colgroup>
    <thead><tr id="fmHead"></tr></thead>
    <tbody id="fmBody"></tbody>
    <tfoot id="fmFoot"></tfoot>
@@ -6360,12 +6360,15 @@ function syncArrows(cardId, sortState){
    การ์ดแยกล่างสุดของ Personnel Summary · ไม่อ่านหรือเปลี่ยนตัวกรองชุดบนของหน้า
    ที่มา PRAW/PSTORES ชุดเดียวกับตารางด้านบน (ถูกตัดตามสิทธิ์ login ไว้แล้ว)
    - เฉพาะสาขา Type Foodservice D และ E
-   - 5 แผนกสด + Cashier · แผนก AEC ที่ชื่อเดียวกันนับรวมเป็นแผนกเดียว (เช่น 34. AEC-Butchery
+   - 5 แผนกสด + Non Fresh + Cashier · แผนก AEC ที่ชื่อเดียวกันนับรวมเป็นแผนกเดียว (เช่น 34. AEC-Butchery
      รวมกับ 3. Butchery) จับคู่จากชื่อแผนกหลังตัดเลขลำดับและคำว่า AEC ออก
    - นับ Active ทุกตำแหน่ง (Staff / Supv / SM / Outsource / Temporary)
    - ขั้นต่ำเริ่มต้น 5 คน = เช้า 2 · บ่าย 2 · หยุด 1 (ปรับได้ในการ์ด)
    - ต้องเติม = ขั้นต่ำ − Active เฉพาะแผนกที่ต่ำกว่าขั้นต่ำ · แผนกที่เกินไม่นำมาหักลบ */
-const FM_DEPS = ['Butchery','F&V','Fish','Frozen','Bakery','Cashier'];
+const FM_DEPS = ['Butchery','F&V','Fish','Frozen','Bakery','Non Fresh','Cashier'];
+/* สาขา Foodservice บางแห่งลงคนของกลุ่มของแห้งไว้ใต้แผนก DF1/DF2 (ชื่อแบบสาขา Classic)
+   แทน Non Fresh เช่น 136 ขอนแก่น 2 มี Non Fresh 1 คน แต่ DF1/DF2 23 คน จึงนับรวมเป็น Non Fresh */
+const FM_ALIAS = {'DF1':'Non Fresh', 'DF2':'Non Fresh', 'Dry Food 1':'Non Fresh', 'Dry Food 2':'Non Fresh'};
 const FM_TYPES = ['Foodservice D','Foodservice E'];
 const FM_DEF = 5;
 let fmT = FM_DEF, fmReg = -1, fmType = -1, fmOnly = false, fmSort = {k:'need', dir:-1};
@@ -6373,19 +6376,21 @@ const fmKey = nm => String(nm||'').replace(/^\s*\d+\s*\.\s*/,'').replace(/^AEC\s
 let FM = null;
 function fmBuild(){
  const tIdx = FM_TYPES.map(t=>PTYPE.indexOf(t));
- const depOf = PDEPT.map(d=>FM_DEPS.indexOf(fmKey(d)));
+ const depOf = PDEPT.map(d=>{ const k = fmKey(d); return FM_DEPS.indexOf(FM_ALIAS[k] || k); });
+ const isAlias = PDEPT.map(d=>!!FM_ALIAS[fmKey(d)]);
  const st = new Map();
  PSTORES.forEach(s=>{
   const ti = tIdx.indexOf(s[5]);
   if(ti < 0) return;
   st.set(s[0], {sn:s[0], name:s[1], reg:s[2], type:ti,
-   act:FM_DEPS.map(()=>0), bud:FM_DEPS.map(()=>0), aec:FM_DEPS.map(()=>0)});
+   act:FM_DEPS.map(()=>0), bud:FM_DEPS.map(()=>0), aec:FM_DEPS.map(()=>0), df:FM_DEPS.map(()=>0)});
  });
  PRAW.forEach(r=>{
   const o = st.get(r[0]); if(!o) return;
   const di = depOf[r[2]]; if(di < 0) return;
   o.act[di] += r[4]; o.bud[di] += r[5];
   if(/AEC/i.test(PDEPT[r[2]])) o.aec[di] += r[4];
+  if(isAlias[r[2]]) o.df[di] += r[4];
  });
  FM = [...st.values()];
 }
@@ -6451,6 +6456,7 @@ function fmRender(){
    const cls = g>0 ? 'sh' : a===fmT ? 'eq' : 'ov';
    const tip = `${padCode(r.sn)} ${r.name} · ${d}\nActive ${a} คน`
     + (r.aec[i] ? ` (รวม AEC ${r.aec[i]} คน)` : '')
+    + (r.df[i] ? ` (รวม DF1/DF2 ${r.df[i]} คน)` : '')
     + `\nมีตอนนี้ ${fmShift(a)}\nขั้นต่ำ ${fmT} คน`
     + (g>0 ? ` · ขาด ${g} คน` : a>fmT ? ` · เกินขั้นต่ำ ${a-fmT} คน` : ' · พอดี')
     + `\nBudget ตามไฟล์ EM ${r.bud[i]} คน`;
@@ -6461,7 +6467,7 @@ function fmRender(){
    + `<td class="l">${FM_TYPES[r.type]}</td><td class="l">${prEsc(PREG[r.reg]||'—')}</td>${cells}`
    + `<td class="num">${nf0(r.tot)}</td>`
    + `<td class="num fmneed ${r.need?'sh':'ok'}">${r.need?nf0(r.need):'ครบ'}</td></tr>`;
- }).join('') : `<tr><td colspan="12" class="l" style="text-align:center;color:var(--pink2);padding:22px">ทุกสาขาในตัวกรองนี้มีคนครบขั้นต่ำทุกแผนก</td></tr>`;
+ }).join('') : `<tr><td colspan="13" class="l" style="text-align:center;color:var(--pink2);padding:22px">ทุกสาขาในตัวกรองนี้มีคนครบขั้นต่ำทุกแผนก</td></tr>`;
  document.getElementById('fmFoot').innerHTML = empty ? '' : `<tr><td class="l" colspan="4">รวม ${nf0(all.length)} สาขา</td>`
   + byDep.map(x=>`<td class="c">${nf0(x.act)}${x.need?`<span class="g">ขาด ${nf0(x.n)} สาขา · เติม ${nf0(x.need)}</span>`:''}</td>`).join('')
   + `<td>${nf0(all.reduce((t,r)=>t+r.tot,0))}</td><td style="color:${need?'var(--prd)':'var(--pgrD)'}">${need?nf0(need):'ครบ'}</td></tr>`;
@@ -6469,7 +6475,8 @@ function fmRender(){
   `<b>วิธีคิด</b> นับพนักงาน Active ทุกตำแหน่ง (Staff · Supv · SM · Outsource · Temporary) จากไฟล์ EM ชุดเดียวกับตารางด้านบน `
   + `เฉพาะสาขา Type Foodservice D และ E · <b>แผนก AEC นับรวมกับแผนกหลักชื่อเดียวกัน</b> `
   + `(AEC-Butchery → Butchery · AEC-F&V → F&V · AEC-Fish → Fish · AEC-Frozen → Frozen · AEC-Bakery → Bakery) `
-  + `· <b>Cashier</b> ใช้ขั้นต่ำเดียวกับแผนกสด `
+  + `· <b>Non Fresh</b> รวม AEC - Non Fresh และ DF1/DF2 (Dry Food) ที่บางสาขาใช้แทนชื่อ Non Fresh `
+  + `· <b>Non Fresh และ Cashier</b> ใช้ขั้นต่ำเดียวกับแผนกสด `
   + `· <b>ต้องเติม</b> = ขั้นต่ำ − Active เฉพาะแผนกที่ต่ำกว่าขั้นต่ำ แผนกที่เกินไม่นำมาหักลบกัน เพราะคนแผนกหนึ่งไปแทนกะอีกแผนกไม่ได้ `
   + `· ชี้ที่ช่องเพื่อดูการแบ่งกะของคนที่มีตอนนี้ และ Budget ตามไฟล์ · คลิกหัวคอลัมน์เพื่อจัดเรียง `
   + `· ตัวกรองของการ์ดนี้แยกจากตัวกรองด้านบนของหน้า`;
