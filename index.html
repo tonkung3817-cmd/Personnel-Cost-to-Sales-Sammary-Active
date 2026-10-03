@@ -423,6 +423,44 @@ table.etbl tr.res td{background:var(--yeL)}
    ใช้ปุ่ม + กล่อง checkbox เอง ไม่ใช้ <select multiple> เพราะอันนั้นต้องกด ctrl ค้าง
    จึงเลือกหลายค่าได้ ซึ่งคนใช้งานจริงบนแดชบอร์ดไม่มีทางเดาได้ และไม่มีช่องค้นหา
    ในขณะที่รายการสาขามี 169 รายการ ตำแหน่ง 20 และ Department 72 */
+/* ---- อัตรากำลังขั้นต่ำแผนกสด (Foodservice D/E) · การ์ดแยกล่างสุดของหน้า ----
+   ใช้ทรงการ์ด หัวการ์ด และตารางชุดเดียวกับการ์ดอื่น · คลาสใหม่ขึ้นต้นด้วย fm ทั้งหมด
+   สีช่อง: แดง Makro = ต่ำกว่าขั้นต่ำ · เหลือง CP AXTRA = พอดีขั้นต่ำ · เขียว Lotus = เกิน */
+#pgPersonnel #cardFsMin{margin-top:18px}
+#pgPersonnel .fmk{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;
+ padding:14px 15px;border-bottom:1px solid var(--pline)}
+@media(max-width:980px){#pgPersonnel .fmk{grid-template-columns:repeat(2,minmax(0,1fr))}}
+#pgPersonnel .fmk > div{border:1px solid var(--pline);border-radius:9px;padding:10px 13px;background:#fff}
+#pgPersonnel .fmk .k{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--pink3)}
+#pgPersonnel .fmk .v{font-size:22px;font-weight:600;letter-spacing:-.02em;margin-top:2px;
+ font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+#pgPersonnel .fmk .d{font-size:11.5px;color:var(--pink2);margin-top:1px}
+#pgPersonnel .fmk .crit{background:var(--prdL);border-color:#F3C9C6}
+#pgPersonnel .fmk .crit .v{color:var(--prd)}
+#pgPersonnel .fmrule{font-size:11.5px;color:var(--pink2);line-height:1.45;align-self:center}
+#pgPersonnel .fmrule b{color:var(--pink)}
+#pgPersonnel .fmchk{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--pink2);
+ cursor:pointer;padding:8px 0;user-select:none}
+#pgPersonnel .fmchk input{accent-color:var(--pbl);width:15px;height:15px;margin:0}
+#pgPersonnel #fmTbl tbody td.fmc{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;
+ text-align:center}
+#pgPersonnel #fmTbl td.fmc .n{font-weight:600}
+#pgPersonnel #fmTbl td.fmc .t{color:var(--pink3);font-size:11px}
+#pgPersonnel #fmTbl td.fmc .g{display:block;font-size:10.5px;font-weight:600;margin-top:1px}
+#pgPersonnel #fmTbl td.fmc.sh{background:var(--prdL);color:var(--prd)}
+#pgPersonnel #fmTbl td.fmc.sh .g{color:var(--prd)}
+#pgPersonnel #fmTbl td.fmc.eq{background:var(--pyeL)}
+#pgPersonnel #fmTbl td.fmc.ov .n{color:var(--pgrD)}
+#pgPersonnel #fmTbl td.fmneed{font-weight:600}
+#pgPersonnel #fmTbl td.fmneed.sh{color:var(--prd)}
+#pgPersonnel #fmTbl td.fmneed.ok{color:var(--pgrD);font-weight:500}
+#pgPersonnel #fmTbl thead th.c{text-align:center}
+#pgPersonnel #fmTbl tfoot td{position:sticky;bottom:0;z-index:1;background:#F7F9FB;font-weight:600;
+ border-top:1px solid var(--pline);padding:9px 10px;text-align:right;white-space:nowrap}
+#pgPersonnel #fmTbl tfoot td.l{text-align:left}
+#pgPersonnel #fmTbl tfoot td.c{text-align:center;font-family:"IBM Plex Mono",monospace}
+#pgPersonnel #fmTbl tfoot td .g{display:block;font-size:10.5px;color:var(--prd)}
+#pgPersonnel .fmempty{padding:28px 15px;text-align:center;color:var(--pink2);font-size:13px}
 #pgPersonnel .pms{position:relative}
 #pgPersonnel .pmsbtn{width:100%;box-sizing:border-box;font:inherit;font-size:12.5px;
  padding:7px 9px;border:1px solid var(--pline);border-radius:7px;background:#fff;
@@ -1554,6 +1592,35 @@ table.etbl tr.res td{background:var(--yeL)}
  </div>
  <div class="prpager" id="prPager"></div>
  <div class="pfootnote" id="prNote"></div>
+</div>
+
+<div class="pcard" id="cardFsMin">
+ <div class="phd green"><span>FRESH MINIMUM STAFFING &middot; อัตรากำลังขั้นต่ำแผนกสด (Foodservice D / E)</span>
+  <div class="pbtns"><span class="prhdcnt" id="fmHdCnt"></span>
+   <button class="piconbtn" id="fmDl" title="Export CSV ทุกสาขา × แผนกที่ผ่านตัวกรองของการ์ดนี้">&#8681;</button></div></div>
+ <div class="prtool">
+  <div><div class="pflabel">Region</div><select class="pfsel" id="fmReg" style="min-width:170px"></select></div>
+  <div><div class="pflabel">Type</div><select class="pfsel" id="fmType" style="min-width:150px"></select></div>
+  <div><div class="pflabel">ขั้นต่ำต่อแผนก (คน)</div>
+   <div class="pstep"><button id="fmTDn" title="ลดขั้นต่ำ 1 คน">&minus;</button>
+    <input id="fmTIn" type="text" value="5" inputmode="numeric">
+    <button id="fmTUp" title="เพิ่มขั้นต่ำ 1 คน">+</button></div></div>
+  <label class="fmchk"><input type="checkbox" id="fmOnly">แสดงเฉพาะสาขาที่ขาด</label>
+  <div class="prsep"></div>
+  <div class="fmrule" id="fmRule"></div>
+  <button id="fmReset" class="pghost" style="margin-left:auto">คืนค่าการ์ดนี้</button>
+ </div>
+ <div class="fmk" id="fmKpi"></div>
+ <div class="ptblwrap" id="fmWrap">
+  <table id="fmTbl">
+   <colgroup><col style="width:64px"><col style="width:190px"><col style="width:112px"><col style="width:150px">
+    <col><col><col><col><col><col style="width:92px"><col style="width:92px"></colgroup>
+   <thead><tr id="fmHead"></tr></thead>
+   <tbody id="fmBody"></tbody>
+   <tfoot id="fmFoot"></tfoot>
+  </table>
+ </div>
+ <div class="pfootnote" id="fmNote"></div>
 </div>
 </div>
 
@@ -6289,6 +6356,161 @@ function syncArrows(cardId, sortState){
   else arr.textContent='';
  });
 }
+/* ---- อัตรากำลังขั้นต่ำแผนกสด (Foodservice D/E) ---------------------------------
+   การ์ดแยกล่างสุดของ Personnel Summary · ไม่อ่านหรือเปลี่ยนตัวกรองชุดบนของหน้า
+   ที่มา PRAW/PSTORES ชุดเดียวกับตารางด้านบน (ถูกตัดตามสิทธิ์ login ไว้แล้ว)
+   - เฉพาะสาขา Type Foodservice D และ E
+   - 5 แผนกสด · แผนก AEC ที่ชื่อเดียวกันนับรวมเป็นแผนกเดียว (เช่น 34. AEC-Butchery
+     รวมกับ 3. Butchery) จับคู่จากชื่อแผนกหลังตัดเลขลำดับและคำว่า AEC ออก
+   - นับ Active ทุกตำแหน่ง (Staff / Supv / SM / Outsource / Temporary)
+   - ขั้นต่ำเริ่มต้น 5 คน = เช้า 2 · บ่าย 2 · หยุด 1 (ปรับได้ในการ์ด)
+   - ต้องเติม = ขั้นต่ำ − Active เฉพาะแผนกที่ต่ำกว่าขั้นต่ำ · แผนกที่เกินไม่นำมาหักลบ */
+const FM_DEPS = ['Butchery','F&V','Fish','Frozen','Bakery'];
+const FM_TYPES = ['Foodservice D','Foodservice E'];
+const FM_DEF = 5;
+let fmT = FM_DEF, fmReg = -1, fmType = -1, fmOnly = false, fmSort = {k:'need', dir:-1};
+const fmKey = nm => String(nm||'').replace(/^\s*\d+\s*\.\s*/,'').replace(/^AEC\s*-?\s*/i,'').trim();
+let FM = null;
+function fmBuild(){
+ const tIdx = FM_TYPES.map(t=>PTYPE.indexOf(t));
+ const depOf = PDEPT.map(d=>FM_DEPS.indexOf(fmKey(d)));
+ const st = new Map();
+ PSTORES.forEach(s=>{
+  const ti = tIdx.indexOf(s[5]);
+  if(ti < 0) return;
+  st.set(s[0], {sn:s[0], name:s[1], reg:s[2], type:ti,
+   act:FM_DEPS.map(()=>0), bud:FM_DEPS.map(()=>0), aec:FM_DEPS.map(()=>0)});
+ });
+ PRAW.forEach(r=>{
+  const o = st.get(r[0]); if(!o) return;
+  const di = depOf[r[2]]; if(di < 0) return;
+  o.act[di] += r[4]; o.bud[di] += r[5];
+  if(/AEC/i.test(PDEPT[r[2]])) o.aec[di] += r[4];
+ });
+ FM = [...st.values()];
+}
+/* แบ่งคนตามกะตามหลักที่ตั้งไว้: เติมเช้า 2 ก่อน แล้วบ่าย 2 ที่เหลือเป็นหยุด/สำรอง */
+function fmShift(n){
+ const m = Math.min(2, n), a = Math.min(2, n - m), o = n - m - a;
+ return 'เช้า ' + m + ' · บ่าย ' + a + ' · หยุด/สำรอง ' + o;
+}
+function fmRows(){
+ return FM.filter(o=>(fmReg < 0 || o.reg === fmReg) && (fmType < 0 || o.type === fmType))
+  .map(o=>{
+   const gap = o.act.map(a=>Math.max(0, fmT - a));
+   const need = gap.reduce((t,v)=>t+v, 0);
+   return {...o, gap, need, nShort:gap.filter(v=>v>0).length,
+     tot:o.act.reduce((t,v)=>t+v, 0)};
+  });
+}
+function fmSortRows(rows){
+ const k = fmSort.k, d = fmSort.dir;
+ const val = r => k==='sn' ? r.sn : k==='name' ? r.name : k==='type' ? r.type
+   : k==='reg' ? (PREG[r.reg]||'') : k==='need' ? r.need : k==='tot' ? r.tot : r.act[+k];
+ return rows.sort((a,b)=>{
+  const x = val(a), y = val(b);
+  const c = typeof x === 'string' ? x.localeCompare(y,'th') : x - y;
+  return c*d || b.need - a.need || a.sn - b.sn;
+ });
+}
+function fmRender(){
+ const all = fmRows();
+ const rows = fmSortRows(fmOnly ? all.filter(r=>r.need>0) : all.slice());
+ const nf0 = v => v.toLocaleString('en-US');
+ const hd = [['sn','ST No.','l'],['name','ST Name','l'],['type','Type','l'],['reg','Region','l'],
+   ...FM_DEPS.map((d,i)=>[String(i), d, 'c']),['tot','Active<br>รวม',''],['need','ต้องเติม<br>(คน)','']];
+ document.getElementById('fmHead').innerHTML = hd.map(([k,t,c])=>
+  `<th class="${c}" data-k="${k}">${t}<span class="parr">${fmSort.k===k?(fmSort.dir>0?'▲':'▼'):''}</span></th>`).join('');
+ document.querySelectorAll('#fmHead th').forEach(th=>th.onclick=()=>{
+  const k = th.dataset.k;
+  fmSort = fmSort.k===k ? {k, dir:-fmSort.dir} : {k, dir:(k==='sn'||k==='name'||k==='type'||k==='reg')?1:-1};
+  fmRender();
+ });
+ const empty = !FM.length;
+ document.getElementById('fmWrap').style.display = empty ? 'none' : '';
+ const shSt = all.filter(r=>r.need>0), need = all.reduce((t,r)=>t+r.need, 0);
+ const nPair = all.reduce((t,r)=>t+r.nShort, 0);
+ const byDep = FM_DEPS.map((d,i)=>({d, need:all.reduce((t,r)=>t+r.gap[i],0),
+   n:all.filter(r=>r.gap[i]>0).length, act:all.reduce((t,r)=>t+r.act[i],0)}));
+ const top = byDep.slice().sort((a,b)=>b.need-a.need)[0];
+ document.getElementById('fmHdCnt').textContent = empty ? '' : all.length + ' สาขา';
+ document.getElementById('fmKpi').innerHTML = empty
+  ? `<div class="fmempty" style="grid-column:1/-1">ไม่มีสาขา Type Foodservice D / E ในสิทธิ์ของรหัสนี้</div>`
+  : [[shSt.length?'crit':'', 'สาขาที่ต่ำกว่าขั้นต่ำ', nf0(shSt.length)+' / '+nf0(all.length), 'มีอย่างน้อย 1 แผนกสดที่คนไม่ถึง '+fmT+' คน'],
+     [nPair?'crit':'', 'แผนกที่ต่ำกว่าขั้นต่ำ', nf0(nPair), 'จาก '+nf0(all.length*FM_DEPS.length)+' แผนก (สาขา × 5 แผนกสด)'],
+     [need?'crit':'', 'ต้องเติมรวม', nf0(need)+' คน', 'ให้ทุกแผนกสดมีครบ '+fmT+' คน'],
+     ['', 'แผนกที่ขาดมากสุด', top&&top.need ? top.d : '—',
+       top&&top.need ? 'ขาด '+nf0(top.n)+' สาขา · ต้องเติม '+nf0(top.need)+' คน' : 'ทุกแผนกครบขั้นต่ำ']]
+    .map(([c,k,v,d])=>`<div class="${c}"><div class="k">${k}</div><div class="v">${v}</div><div class="d">${d}</div></div>`).join('');
+ document.getElementById('fmRule').innerHTML = fmT===FM_DEF
+  ? `ขั้นต่ำ <b>${fmT} คน</b> = เช้า 2 · บ่าย 2 · หยุด 1`
+  : `ขั้นต่ำ <b>${fmT} คน</b> (${fmShift(fmT)})`;
+ document.getElementById('fmBody').innerHTML = rows.length ? rows.map(r=>{
+  const cells = FM_DEPS.map((d,i)=>{
+   const a = r.act[i], g = r.gap[i];
+   const cls = g>0 ? 'sh' : a===fmT ? 'eq' : 'ov';
+   const tip = `${padCode(r.sn)} ${r.name} · ${d}\nActive ${a} คน`
+    + (r.aec[i] ? ` (รวม AEC ${r.aec[i]} คน)` : '')
+    + `\nมีตอนนี้ ${fmShift(a)}\nขั้นต่ำ ${fmT} คน`
+    + (g>0 ? ` · ขาด ${g} คน` : a>fmT ? ` · เกินขั้นต่ำ ${a-fmT} คน` : ' · พอดี')
+    + `\nBudget ตามไฟล์ EM ${r.bud[i]} คน`;
+   return `<td class="fmc ${cls}" title="${prEsc(tip).replace(/"/g,'&quot;')}"><span class="n">${a}</span><span class="t"> / ${fmT}</span>`
+    + (g>0 ? `<span class="g">ขาด ${g}</span>` : '') + `</td>`;
+  }).join('');
+  return `<tr><td class="l num">${padCode(r.sn)}</td><td class="l">${prEsc(r.name)}</td>`
+   + `<td class="l">${FM_TYPES[r.type]}</td><td class="l">${prEsc(PREG[r.reg]||'—')}</td>${cells}`
+   + `<td class="num">${nf0(r.tot)}</td>`
+   + `<td class="num fmneed ${r.need?'sh':'ok'}">${r.need?nf0(r.need):'ครบ'}</td></tr>`;
+ }).join('') : `<tr><td colspan="11" class="l" style="text-align:center;color:var(--pink2);padding:22px">ทุกสาขาในตัวกรองนี้มีคนครบขั้นต่ำทุกแผนกสด</td></tr>`;
+ document.getElementById('fmFoot').innerHTML = empty ? '' : `<tr><td class="l" colspan="4">รวม ${nf0(all.length)} สาขา</td>`
+  + byDep.map(x=>`<td class="c">${nf0(x.act)}${x.need?`<span class="g">ขาด ${nf0(x.n)} สาขา · เติม ${nf0(x.need)}</span>`:''}</td>`).join('')
+  + `<td>${nf0(all.reduce((t,r)=>t+r.tot,0))}</td><td style="color:${need?'var(--prd)':'var(--pgrD)'}">${need?nf0(need):'ครบ'}</td></tr>`;
+ document.getElementById('fmNote').innerHTML =
+  `<b>วิธีคิด</b> นับพนักงาน Active ทุกตำแหน่ง (Staff · Supv · SM · Outsource · Temporary) จากไฟล์ EM ชุดเดียวกับตารางด้านบน `
+  + `เฉพาะสาขา Type Foodservice D และ E · <b>แผนก AEC นับรวมกับแผนกหลักชื่อเดียวกัน</b> `
+  + `(AEC-Butchery → Butchery · AEC-F&V → F&V · AEC-Fish → Fish · AEC-Frozen → Frozen · AEC-Bakery → Bakery) `
+  + `· <b>ต้องเติม</b> = ขั้นต่ำ − Active เฉพาะแผนกที่ต่ำกว่าขั้นต่ำ แผนกที่เกินไม่นำมาหักลบกัน เพราะคนแผนกหนึ่งไปแทนกะอีกแผนกไม่ได้ `
+  + `· ชี้ที่ช่องเพื่อดูการแบ่งกะของคนที่มีตอนนี้ และ Budget ตามไฟล์ · คลิกหัวคอลัมน์เพื่อจัดเรียง `
+  + `· ตัวกรองของการ์ดนี้แยกจากตัวกรองด้านบนของหน้า`;
+}
+function fmSetT(v){
+ fmT = Math.max(1, Math.min(30, Math.round(+v) || FM_DEF));
+ document.getElementById('fmTIn').value = fmT;
+ fmRender();
+}
+function initFsMinUI(){
+ try{
+  fmBuild();
+  const regs = [...new Set(FM.map(o=>o.reg))].sort((a,b)=>(PREG[a]||'').localeCompare(PREG[b]||'','en'));
+  document.getElementById('fmReg').innerHTML = '<option value="-1">ทุก Region</option>'
+   + regs.map(i=>`<option value="${i}">${prEsc(PREG[i]||'—')} (${FM.filter(o=>o.reg===i).length})</option>`).join('');
+  document.getElementById('fmType').innerHTML = '<option value="-1">Foodservice D และ E</option>'
+   + FM_TYPES.map((t,i)=>`<option value="${i}">${t} (${FM.filter(o=>o.type===i).length})</option>`).join('');
+  document.getElementById('fmReg').onchange = e=>{ fmReg = +e.target.value; fmRender(); };
+  document.getElementById('fmType').onchange = e=>{ fmType = +e.target.value; fmRender(); };
+  document.getElementById('fmOnly').onchange = e=>{ fmOnly = e.target.checked; fmRender(); };
+  document.getElementById('fmTDn').onclick = ()=>fmSetT(fmT-1);
+  document.getElementById('fmTUp').onclick = ()=>fmSetT(fmT+1);
+  document.getElementById('fmTIn').onchange = e=>fmSetT(e.target.value);
+  document.getElementById('fmReset').onclick = ()=>{
+   fmReg = -1; fmType = -1; fmOnly = false; fmSort = {k:'need', dir:-1};
+   document.getElementById('fmReg').value = '-1'; document.getElementById('fmType').value = '-1';
+   document.getElementById('fmOnly').checked = false;
+   fmSetT(FM_DEF);
+  };
+  document.getElementById('fmDl').onclick = ()=>{
+   const out = [['ST No.','ST Name','Type','Region','แผนก','Active','ในนั้นเป็น AEC','ขั้นต่ำ','ต้องเติม','Budget (EM)']];
+   fmSortRows(fmRows()).forEach(r=>FM_DEPS.forEach((d,i)=>out.push([padCode(r.sn), r.name, FM_TYPES[r.type],
+     PREG[r.reg]||'', d, r.act[i], r.aec[i], fmT, r.gap[i], r.bud[i]])));
+   download('fresh_minimum_staffing_FS_DE.csv', out);
+  };
+  fmRender();
+ }catch(err){
+  console.error('Fresh minimum staffing', err);
+  document.getElementById('fmKpi').innerHTML = '<div class="fmempty" style="grid-column:1/-1">โหลดการ์ดนี้ไม่สำเร็จ</div>';
+ }
+}
+
 function initPersonnelUI(){
 pFillSelects();
 prWire();
@@ -10823,6 +11045,7 @@ function pcredTryLogin(){
  try{
   initSimulatorUI();
   initPersonnelUI();
+  initFsMinUI();
   initO2OUI();
   initHFUI();
   initPAUI();
