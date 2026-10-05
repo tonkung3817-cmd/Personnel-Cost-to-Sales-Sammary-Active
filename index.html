@@ -1385,6 +1385,7 @@ table.etbl tr.res td{background:var(--yeL)}
  <button data-pg="emp" title="ค้นหาพนักงาน Active และลาออก ทุกสาขา (เฉพาะสิทธิ์เต็ม)">ค้นหาพนักงาน</button>
  <button data-pg="vac" title="เชื่อมต่อระบบ HR Tracking (เว็บภายนอก) · https://hrtracking.tacpaxtra.com">Vacancy SM Up (TA)<span class="pnx">&#8599;</span></button>
  <button data-pg="apw" title="Action Plan Dashboard ของ Bangkok West (เว็บภายนอก) · https://tonkung3817-cmd.github.io/Action-Plan-BK_West/Action_Plan_Dashboard.html">Action BK West<span class="pnx">&#8599;</span></button>
+ <button data-pg="ton" title="Ton (เว็บภายนอก) · https://tonkung3817-cmd.github.io/Ton/">Ton<span class="pnx">&#8599;</span></button>
  <button data-pg="ofc" title="Picker Manpower Planning Dashboard บน claude.ai (เปิดในแท็บใหม่)">Order FC / HC<span class="pnx">&#8599;</span></button>
 </div>
 <div id="pgSim">
@@ -2330,6 +2331,28 @@ table.etbl tr.res td{background:var(--yeL)}
  ตัวเลขจึงเป็นชุดล่าสุดที่หน้านั้นเผยแพร่ไว้ทุกครั้งที่เปิด
  &middot; <b>ถ้ากรอบด้านบนว่างหรือขึ้นข้อความปฏิเสธการเชื่อมต่อ</b> ให้กด <b>เปิดในแท็บใหม่</b> แทน
  &middot; ถ้าเปิดในแท็บใหม่ก็ไม่ขึ้น อาจเป็นเพราะเครือข่ายบริษัทกั้นเว็บ github.io ไว้</div>
+</div>
+</div>
+<div id="pgTon" class="extpg" style="display:none">
+<div class="vwrap">
+<div class="refreshhd">
+ <div><h1>Ton</h1>
+  <div class="vsub">เชื่อมต่อกับ <a href="https://tonkung3817-cmd.github.io/Ton/" target="_blank" rel="noopener">https://tonkung3817-cmd.github.io/Ton/</a></div></div>
+ <div class="vbtns">
+  <button class="refreshbtn" id="tonReload" title="โหลดหน้า Ton ใหม่"><span class="rico">&#10227;</span>โหลดใหม่</button>
+  <a class="vopen" id="tonOpen" href="https://tonkung3817-cmd.github.io/Ton/" target="_blank" rel="noopener" title="เปิดหน้า Ton ในแท็บใหม่">เปิดในแท็บใหม่ &#8599;</a>
+ </div>
+</div>
+<div class="vframe">
+ <div class="vbar"><span class="vdot" id="tonDot"></span><span id="tonState">ยังไม่ได้เชื่อมต่อ</span>
+  <span class="vurl">&middot; https://tonkung3817-cmd.github.io/Ton/</span></div>
+ <div class="vload" id="tonLoad"><div class="vspin"></div>
+  <div>กำลังเชื่อมต่อ <b>tonkung3817-cmd.github.io</b> &hellip;</div></div>
+ <iframe id="tonFrame" title="Ton"
+  referrerpolicy="strict-origin-when-cross-origin"></iframe>
+</div>
+<div class="vnote">หน้านี้แสดงเว็บ Ton จาก GitHub Pages โดยตรง ไม่ได้เก็บข้อมูลไว้ในไฟล์นี้
+ &middot; <b>ถ้ากรอบด้านบนว่าง</b> ให้กด <b>เปิดในแท็บใหม่</b> แทน</div>
 </div>
 </div>
 <div id="pgOfc" class="extpg" style="display:none">
@@ -7184,7 +7207,7 @@ document.querySelectorAll('.pagenav button').forEach(b=>{
  b.onclick=()=>{
   document.querySelectorAll('.pagenav button').forEach(x=>x.classList.toggle('on',x===b));
   const PG={sim:'pgSim', personnel:'pgPersonnel', o2o:'pgO2O', ot:'pgOT', mp:'pgMP', mr:'pgMR',
-            vac:'pgVac', apw:'pgApw', ofc:'pgOfc', emp:'pgEmp'};
+            vac:'pgVac', apw:'pgApw', ton:'pgTon', ofc:'pgOfc', emp:'pgEmp'};
   Object.entries(PG).forEach(([pg,id])=>{
    document.getElementById(id).style.display = b.dataset.pg===pg ? '' : 'none';
   });
@@ -7227,6 +7250,8 @@ const EXT = {
  vac: {url:'https://hrtracking.tacpaxtra.com', host:'hrtracking.tacpaxtra.com',
        hint:'อาจต้องเข้าผ่านเครือข่ายบริษัทหรือ VPN · หรือเว็บปลายทางไม่อนุญาตให้ฝังในหน้าอื่น'},
  apw: {url:'https://tonkung3817-cmd.github.io/Action-Plan-BK_West/Action_Plan_Dashboard.html', host:'tonkung3817-cmd.github.io',
+       hint:'เครือข่ายอาจกั้นเว็บ github.io ไว้ · หรือหน้าปลายทางย้ายที่อยู่แล้ว'},
+ ton: {url:'https://tonkung3817-cmd.github.io/Ton/', host:'tonkung3817-cmd.github.io',
        hint:'เครือข่ายอาจกั้นเว็บ github.io ไว้ · หรือหน้าปลายทางย้ายที่อยู่แล้ว'}};
 Object.values(EXT).forEach(e=>{ e.started = false; e.timer = null; });
 const extEl = (key, part) => document.getElementById(key + part);
