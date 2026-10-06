@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <title>ศูนย์ช่วยเหลือผู้ประสบภัย</title>
 <style>
 :root{
@@ -57,6 +58,8 @@ textarea{min-height:80px}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .filters select,.filters input{width:auto;flex:1;min-width:130px}
 .hidden{display:none}
+#pickMap{height:300px;border-radius:10px;border:2px solid var(--blue);margin-top:8px;z-index:0}
+.hint{font-size:.82rem;color:var(--muted);margin-top:4px}
 .ok{background:var(--green);color:#fff;padding:12px;border-radius:8px;margin-top:12px}
 .sos{background:var(--red);color:#fff;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.95rem}
 .sos a{color:#fff;font-weight:700}
@@ -100,6 +103,8 @@ textarea{min-height:80px}
         <div style="display:flex;gap:6px"><input name="coords" placeholder="lat,lng"><button type="button" class="btn ghost sm" id="geo">ใช้ตำแหน่งฉัน</button></div></div>
       <div><label>จำนวนผู้ได้รับผลกระทบ (คน)</label><input name="people" type="number" min="1" value="1"></div>
     </div>
+    <div id="pickMap"></div>
+    <div class="hint" id="mapHint">👆 แตะ/คลิกบนแผนที่ตรงจุดที่ต้องการความช่วยเหลือ (ลากหมุดเพื่อปรับตำแหน่งได้)</div>
     <label>สิ่งที่ต้องการ</label>
     <div class="needs" id="needChoices"></div>
     <label>กลุ่มเปราะบางในพื้นที่</label>
@@ -165,6 +170,7 @@ textarea{min-height:80px}
 </section>
 </main>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 const KEY='disaster-help-v1';
 const DEF={
@@ -247,6 +253,7 @@ $('#nav').onclick=e=>{
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b==e.target));
   ['report','track','coord','settings'].forEach(x=>$('#tab-'+x).classList.toggle('hidden',x!=t));
   if(t=='coord')renderList();
+  if(t=='report'&&map)setTimeout(()=>map.invalidateSize(),50);
 };
 
 // ส่งคำขอ
@@ -260,13 +267,37 @@ $('#form').onsubmit=e=>{
   r.urg=urgency(r);
   r.log.push({t:Date.now(),m:'รับแจ้งเหตุเข้าระบบ'});
   db.requests.push(r);save();
-  e.target.reset();render();
+  e.target.reset();clearPin();render();
   const d=$('#done');d.classList.remove('hidden');
   d.innerHTML=`ส่งคำขอเรียบร้อย รหัสของคุณคือ <b>${r.code}</b> (ระดับ: ${uTxt[r.urg]}) — เก็บรหัสนี้ไว้ติดตามสถานะ`;
 };
+// แผนที่เลือกพิกัด (กดเพื่อปักหมุด)
+let map,pin;
+const coordsEl=()=>$('[name=coords]');
+function setPin(lat,lng,fly){
+  coordsEl().value=lat.toFixed(5)+','+lng.toFixed(5);
+  if(!map)return;
+  if(pin)pin.setLatLng([lat,lng]);
+  else{pin=L.marker([lat,lng],{draggable:true}).addTo(map);
+    pin.on('dragend',()=>{const p=pin.getLatLng();coordsEl().value=p.lat.toFixed(5)+','+p.lng.toFixed(5)});}
+  if(fly)map.setView([lat,lng],16);
+}
+function initMap(){
+  if(map)return;
+  if(typeof L==='undefined'){$('#pickMap').classList.add('hidden');$('#mapHint').textContent='โหลดแผนที่ไม่ได้ กรุณาพิมพ์พิกัดเองหรือกด "ใช้ตำแหน่งฉัน"';return;}
+  map=L.map('pickMap').setView([13.75,100.5],6);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);
+  map.on('click',e=>setPin(e.latlng.lat,e.latlng.lng));
+}
+function clearPin(){if(pin){pin.remove();pin=null;}}
+initMap();
+coordsEl().addEventListener('change',e=>{
+  const m=e.target.value.match(/(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)/);
+  if(m)setPin(+m[1],+m[3],true);
+});
 $('#geo').onclick=()=>{
   if(!navigator.geolocation)return alert('อุปกรณ์ไม่รองรับการระบุตำแหน่ง');
-  navigator.geolocation.getCurrentPosition(p=>{$('[name=coords]').value=p.coords.latitude.toFixed(5)+','+p.coords.longitude.toFixed(5)},()=>alert('ไม่สามารถอ่านตำแหน่งได้'));
+  navigator.geolocation.getCurrentPosition(p=>setPin(p.coords.latitude,p.coords.longitude,true),()=>alert('ไม่สามารถอ่านตำแหน่งได้'));
 };
 
 // ติดตามสถานะ
