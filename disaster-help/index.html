@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ศูนย์ช่วยเหลือผู้ประสบภัย</title>
+<style>
+:root{
+  --blue:#306FC7; --yellow:#F6C24A; --green:#43938F; --red:#DA3832;
+  --bg:#f5f7fb; --card:#fff; --text:#1c2433; --muted:#667085; --line:#e3e8f0;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#10151f;--card:#1a2130;--text:#e8ecf4;--muted:#9aa5b8;--line:#2b3447}
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Sarabun","Noto Sans Thai",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.5}
+header{background:var(--blue);color:#fff;padding:14px 16px}
+header h1{margin:0;font-size:1.25rem}
+header p{margin:2px 0 0;font-size:.85rem;opacity:.9}
+nav{display:flex;gap:4px;background:var(--card);border-bottom:3px solid var(--yellow);padding:0 8px;overflow-x:auto;position:sticky;top:0;z-index:5}
+nav button{border:0;background:none;padding:12px 14px;font:inherit;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;margin-bottom:-3px}
+nav button.on{color:var(--blue);font-weight:700;border-bottom-color:var(--blue)}
+main{max-width:1000px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+h2{margin:0 0 12px;font-size:1.1rem}
+label{display:block;font-size:.88rem;font-weight:600;margin:10px 0 4px}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:var(--bg);color:var(--text)}
+textarea{min-height:80px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.row{grid-template-columns:1fr}}
+.types{display:flex;flex-wrap:wrap;gap:8px}
+.types label{margin:0;font-weight:500}
+.types input{display:none}
+.types span{display:inline-block;padding:8px 14px;border:2px solid var(--line);border-radius:999px;cursor:pointer}
+.types input:checked+span{border-color:var(--blue);background:var(--blue);color:#fff}
+.needs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+.needs label{display:flex;gap:6px;align-items:center;margin:0;font-weight:500}
+.needs input{width:auto}
+.btn{border:0;border-radius:8px;padding:10px 18px;font:inherit;font-weight:700;cursor:pointer;background:var(--blue);color:#fff}
+.btn.red{background:var(--red)} .btn.green{background:var(--green)} .btn.yellow{background:var(--yellow);color:#3a2a00}
+.btn.ghost{background:none;color:var(--blue);border:1px solid var(--blue)}
+.btn.sm{padding:5px 10px;font-size:.82rem}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:8px;padding:10px 12px}
+.stat b{font-size:1.6rem;display:block}
+.stat small{color:var(--muted)}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.78rem;font-weight:700;color:#fff}
+.u3{background:var(--red)} .u2{background:var(--yellow);color:#3a2a00} .u1{background:var(--green)}
+.s-new{background:var(--red)} .s-prog{background:var(--yellow);color:#3a2a00} .s-done{background:var(--green)}
+.req{border-left:5px solid var(--line)}
+.req.u3{border-left-color:var(--red);background:var(--card);color:var(--text)}
+.req.u2{border-left-color:var(--yellow);background:var(--card);color:var(--text)}
+.req.u1{border-left-color:var(--green);background:var(--card);color:var(--text)}
+.req .meta{color:var(--muted);font-size:.85rem}
+.req .actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.req .actions select{width:auto}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filters select,.filters input{width:auto;flex:1;min-width:130px}
+.hidden{display:none}
+.ok{background:var(--green);color:#fff;padding:12px;border-radius:8px;margin-top:12px}
+.sos{background:var(--red);color:#fff;padding:10px 14px;border-radius:8px;margin-bottom:14px;font-size:.95rem}
+.sos a{color:#fff;font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--bg);border:1px solid var(--line);padding:3px 10px;border-radius:999px;font-size:.85rem}
+.chip button{border:0;background:none;color:var(--red);cursor:pointer}
+</style>
+</head>
+<body>
+<header>
+  <h1>🆘 ศูนย์ช่วยเหลือผู้ประสบภัย</h1>
+  <p>ต้นแบบระบบรับแจ้งและประสานงานความช่วยเหลือ (CP AXTRA · Lotus's · Makro)</p>
+</header>
+<nav id="nav">
+  <button data-tab="report" class="on">แจ้งขอความช่วยเหลือ</button>
+  <button data-tab="track">ติดตามสถานะ</button>
+  <button data-tab="coord">ศูนย์ประสานงาน</button>
+  <button data-tab="settings">ตั้งค่า</button>
+</nav>
+<main>
+
+<!-- ผู้ประสบภัย: แจ้งเหตุ -->
+<section id="tab-report">
+  <div class="sos">เหตุฉุกเฉินถึงชีวิต โทร <a href="tel:191">191</a> · แพทย์ฉุกเฉิน <a href="tel:1669">1669</a> · ดับเพลิง <a href="tel:199">199</a> · ปภ. <a href="tel:1784">1784</a> ก่อน แล้วค่อยกรอกแบบฟอร์มนี้</div>
+  <form id="form" class="card">
+    <h2>แจ้งขอความช่วยเหลือ</h2>
+    <label>ประเภทภัย *</label>
+    <div class="types" id="typeChoices"></div>
+    <div class="row">
+      <div><label>ชื่อผู้แจ้ง *</label><input name="name" required></div>
+      <div><label>เบอร์โทรติดต่อ *</label><input name="phone" type="tel" required pattern="[0-9\-\s]{9,12}" placeholder="08x-xxx-xxxx"></div>
+    </div>
+    <div class="row">
+      <div><label>จังหวัด *</label><input name="province" required></div>
+      <div><label>เขต/อำเภอ / ตำบล</label><input name="district"></div>
+    </div>
+    <label>ที่อยู่ / จุดสังเกต *</label>
+    <textarea name="address" required></textarea>
+    <div class="row">
+      <div><label>พิกัด (ไม่บังคับ)</label>
+        <div style="display:flex;gap:6px"><input name="coords" placeholder="lat,lng"><button type="button" class="btn ghost sm" id="geo">ใช้ตำแหน่งฉัน</button></div></div>
+      <div><label>จำนวนผู้ได้รับผลกระทบ (คน)</label><input name="people" type="number" min="1" value="1"></div>
+    </div>
+    <label>สิ่งที่ต้องการ</label>
+    <div class="needs" id="needChoices"></div>
+    <label>กลุ่มเปราะบางในพื้นที่</label>
+    <div class="needs">
+      <label><input type="checkbox" name="vul" value="ผู้สูงอายุ">ผู้สูงอายุ</label>
+      <label><input type="checkbox" name="vul" value="เด็กเล็ก">เด็กเล็ก</label>
+      <label><input type="checkbox" name="vul" value="ผู้ป่วยติดเตียง">ผู้ป่วยติดเตียง</label>
+      <label><input type="checkbox" name="vul" value="ผู้พิการ">ผู้พิการ</label>
+      <label><input type="checkbox" name="vul" value="หญิงตั้งครรภ์">หญิงตั้งครรภ์</label>
+    </div>
+    <label>รายละเอียดเพิ่มเติม</label>
+    <textarea name="detail"></textarea>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:500"><input type="checkbox" name="consent" required style="width:auto">ยินยอมให้เก็บและใช้ข้อมูลเพื่อประสานความช่วยเหลือเท่านั้น (PDPA)</label>
+    <p><button class="btn red" type="submit">ส่งคำขอความช่วยเหลือ</button></p>
+    <div id="done" class="ok hidden"></div>
+  </form>
+</section>
+
+<!-- ติดตามสถานะ -->
+<section id="tab-track" class="hidden">
+  <div class="card">
+    <h2>ติดตามสถานะคำขอ</h2>
+    <div style="display:flex;gap:8px"><input id="trackCode" placeholder="รหัสคำขอ เช่น HLP-0001 หรือเบอร์โทร"><button class="btn" id="trackBtn">ค้นหา</button></div>
+  </div>
+  <div id="trackResult"></div>
+</section>
+
+<!-- ศูนย์ประสานงาน -->
+<section id="tab-coord" class="hidden">
+  <div class="stats" id="stats"></div>
+  <div class="filters">
+    <select id="fType"></select>
+    <select id="fStatus"><option value="">ทุกสถานะ</option><option>รอรับเรื่อง</option><option>กำลังช่วยเหลือ</option><option>เสร็จสิ้น</option></select>
+    <select id="fUrg"><option value="">ทุกระดับความเร่งด่วน</option><option value="3">เร่งด่วนมาก</option><option value="2">ปานกลาง</option><option value="1">ทั่วไป</option></select>
+    <input id="fQ" placeholder="ค้นหา ชื่อ/จังหวัด/ที่อยู่">
+    <button class="btn ghost sm" id="csv">ส่งออก CSV</button>
+  </div>
+  <div id="list"></div>
+</section>
+
+<!-- ตั้งค่า -->
+<section id="tab-settings" class="hidden">
+  <div class="card">
+    <h2>ประเภทภัย</h2>
+    <div class="chips" id="typeChips"></div>
+    <div style="display:flex;gap:8px;margin-top:10px"><input id="newType" placeholder="เช่น 🌪️ พายุ"><button class="btn green" id="addType">เพิ่ม</button></div>
+  </div>
+  <div class="card">
+    <h2>ประเภทสิ่งที่ต้องการ</h2>
+    <div class="chips" id="needChips"></div>
+    <div style="display:flex;gap:8px;margin-top:10px"><input id="newNeed" placeholder="เช่น ถุงยังชีพ"><button class="btn green" id="addNeed">เพิ่ม</button></div>
+  </div>
+  <div class="card">
+    <h2>หน่วยงานที่รับเรื่อง</h2>
+    <div class="chips" id="orgChips"></div>
+    <div style="display:flex;gap:8px;margin-top:10px"><input id="newOrg" placeholder="ชื่อหน่วยงาน/สาขา"><button class="btn green" id="addOrg">เพิ่ม</button></div>
+  </div>
+  <div class="card">
+    <h2>ข้อมูลตัวอย่าง</h2>
+    <button class="btn yellow" id="seed">โหลดข้อมูลตัวอย่าง</button>
+    <button class="btn ghost" id="reset">ล้างข้อมูลทั้งหมด</button>
+  </div>
+</section>
+</main>
+
+<script>
+const KEY='disaster-help-v1';
+const DEF={
+  types:['🌊 น้ำท่วม','🔥 ไฟไหม้','🏚️ แผ่นดินไหว','❓ อื่นๆ'],
+  needs:['อาหาร/น้ำดื่ม','ที่พักชั่วคราว','ยา/แพทย์','อพยพ/เรือ','ผ้าห่ม/เสื้อผ้า','ไฟฟ้า/แบตสำรอง','ค้นหา/กู้ภัย','เงินช่วยเหลือเร่งด่วน'],
+  orgs:['CP AXTRA ส่วนกลาง','Lotus\'s','Makro','มูลนิธิ/ภาคีเครือข่าย'],
+  requests:[], seq:0
+};
+let db;
+try{db=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!db||!db.types)db=structuredClone(DEF);
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const STATUS=['รอรับเรื่อง','กำลังช่วยเหลือ','เสร็จสิ้น'];
+const sCls={'รอรับเรื่อง':'s-new','กำลังช่วยเหลือ':'s-prog','เสร็จสิ้น':'s-done'};
+const uTxt={3:'เร่งด่วนมาก',2:'ปานกลาง',1:'ทั่วไป'};
+
+// ความเร่งด่วนคำนวณอัตโนมัติจากความเสี่ยง
+function urgency(r){
+  let s=0;
+  if(r.needs.includes('ค้นหา/กู้ภัย')||r.needs.includes('อพยพ/เรือ')||r.needs.includes('ยา/แพทย์'))s+=3;
+  s+=Math.min(r.vul.length,3);
+  if(r.people>=10)s+=2; else if(r.people>=4)s+=1;
+  if(/ไฟไหม้|แผ่นดินไหว/.test(r.type))s+=1;
+  return s>=5?3:s>=2?2:1;
+}
+
+function render(){
+  // ฟอร์ม
+  $('#typeChoices').innerHTML=db.types.map((t,i)=>`<label><input type="radio" name="type" value="${esc(t)}" ${i==0?'required':''}><span>${esc(t)}</span></label>`).join('');
+  $('#needChoices').innerHTML=db.needs.map(n=>`<label><input type="checkbox" name="need" value="${esc(n)}">${esc(n)}</label>`).join('');
+  // ตัวกรอง
+  const ft=$('#fType'),cur=ft.value;
+  ft.innerHTML='<option value="">ทุกประเภทภัย</option>'+db.types.map(t=>`<option>${esc(t)}</option>`).join('');
+  ft.value=cur;
+  // ตั้งค่า
+  chips('#typeChips','types');chips('#needChips','needs');chips('#orgChips','orgs');
+  renderList();
+}
+function chips(sel,k){
+  $(sel).innerHTML=db[k].map((v,i)=>`<span class="chip">${esc(v)} <button data-k="${k}" data-i="${i}" title="ลบ">✕</button></span>`).join('');
+}
+function renderList(){
+  const q=$('#fQ').value.trim().toLowerCase(),ty=$('#fType').value,st=$('#fStatus').value,ug=$('#fUrg').value;
+  const all=db.requests;
+  $('#stats').innerHTML=[
+    ['ทั้งหมด',all.length,'var(--blue)'],
+    ['รอรับเรื่อง',all.filter(r=>r.status==STATUS[0]).length,'var(--red)'],
+    ['กำลังช่วยเหลือ',all.filter(r=>r.status==STATUS[1]).length,'var(--yellow)'],
+    ['เสร็จสิ้น',all.filter(r=>r.status==STATUS[2]).length,'var(--green)'],
+    ['ผู้ได้รับผลกระทบ',all.reduce((a,r)=>a+(+r.people||0),0),'var(--blue)']
+  ].map(([l,n,c])=>`<div class="stat" style="border-left-color:${c}"><b>${n}</b><small>${l}</small></div>`).join('');
+  const rows=all.filter(r=>(!ty||r.type==ty)&&(!st||r.status==st)&&(!ug||r.urg==ug)&&
+    (!q||(r.name+r.province+r.district+r.address+r.code).toLowerCase().includes(q)))
+    .sort((a,b)=>(a.status==STATUS[2])-(b.status==STATUS[2])||b.urg-a.urg||b.ts-a.ts);
+  $('#list').innerHTML=rows.length?rows.map(card).join(''):'<div class="card">ยังไม่มีคำขอความช่วยเหลือ</div>';
+}
+function card(r){
+  const map=r.coords?`<a href="https://www.google.com/maps?q=${encodeURIComponent(r.coords)}" target="_blank" rel="noopener">แผนที่</a>`:'';
+  return `<div class="card req u${r.urg}" data-id="${r.code}">
+    <div><b>${esc(r.code)}</b> · ${esc(r.type)} <span class="tag u${r.urg}">${uTxt[r.urg]}</span> <span class="tag ${sCls[r.status]}">${r.status}</span></div>
+    <div>${esc(r.name)} · <a href="tel:${esc(r.phone)}">${esc(r.phone)}</a> · ${esc(r.people)} คน</div>
+    <div class="meta">${esc(r.province)} ${esc(r.district)} — ${esc(r.address)} ${map}</div>
+    <div class="meta">ต้องการ: ${esc(r.needs.join(', ')||'-')}${r.vul.length?' · กลุ่มเปราะบาง: '+esc(r.vul.join(', ')):''}</div>
+    ${r.detail?`<div class="meta">${esc(r.detail)}</div>`:''}
+    <div class="meta">แจ้งเมื่อ ${new Date(r.ts).toLocaleString('th-TH')}${r.org?' · ผู้รับผิดชอบ: '+esc(r.org):''}</div>
+    <div class="actions">
+      <select data-act="org"><option value="">มอบหมายหน่วยงาน…</option>${db.orgs.map(o=>`<option ${o==r.org?'selected':''}>${esc(o)}</option>`).join('')}</select>
+      <select data-act="status">${STATUS.map(s=>`<option ${s==r.status?'selected':''}>${s}</option>`).join('')}</select>
+      <input data-act="note" placeholder="บันทึกการดำเนินงาน" style="flex:1;min-width:140px">
+    </div>
+    ${r.log.length?`<details><summary class="meta">ประวัติ (${r.log.length})</summary>${r.log.map(l=>`<div class="meta">${new Date(l.t).toLocaleString('th-TH')} — ${esc(l.m)}</div>`).join('')}</details>`:''}
+  </div>`;
+}
+
+// แท็บ
+$('#nav').onclick=e=>{
+  const t=e.target.dataset.tab;if(!t)return;
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b==e.target));
+  ['report','track','coord','settings'].forEach(x=>$('#tab-'+x).classList.toggle('hidden',x!=t));
+  if(t=='coord')renderList();
+};
+
+// ส่งคำขอ
+$('#form').onsubmit=e=>{
+  e.preventDefault();
+  const f=new FormData(e.target);
+  const r={code:'HLP-'+String(++db.seq).padStart(4,'0'),ts:Date.now(),status:STATUS[0],org:'',
+    type:f.get('type'),name:f.get('name'),phone:f.get('phone'),province:f.get('province'),district:f.get('district'),
+    address:f.get('address'),coords:f.get('coords'),people:+f.get('people')||1,detail:f.get('detail'),
+    needs:f.getAll('need'),vul:f.getAll('vul'),log:[]};
+  r.urg=urgency(r);
+  r.log.push({t:Date.now(),m:'รับแจ้งเหตุเข้าระบบ'});
+  db.requests.push(r);save();
+  e.target.reset();render();
+  const d=$('#done');d.classList.remove('hidden');
+  d.innerHTML=`ส่งคำขอเรียบร้อย รหัสของคุณคือ <b>${r.code}</b> (ระดับ: ${uTxt[r.urg]}) — เก็บรหัสนี้ไว้ติดตามสถานะ`;
+};
+$('#geo').onclick=()=>{
+  if(!navigator.geolocation)return alert('อุปกรณ์ไม่รองรับการระบุตำแหน่ง');
+  navigator.geolocation.getCurrentPosition(p=>{$('[name=coords]').value=p.coords.latitude.toFixed(5)+','+p.coords.longitude.toFixed(5)},()=>alert('ไม่สามารถอ่านตำแหน่งได้'));
+};
+
+// ติดตามสถานะ
+$('#trackBtn').onclick=()=>{
+  const q=$('#trackCode').value.trim().toLowerCase();
+  const rs=q?db.requests.filter(r=>r.code.toLowerCase()==q||r.phone.replace(/\D/g,'')==q.replace(/\D/g,'')):[];
+  $('#trackResult').innerHTML=rs.length?rs.map(r=>`<div class="card"><b>${r.code}</b> ${esc(r.type)} <span class="tag ${sCls[r.status]}">${r.status}</span>
+    <div class="meta">ผู้รับผิดชอบ: ${esc(r.org||'รอมอบหมาย')}</div>
+    ${r.log.map(l=>`<div class="meta">${new Date(l.t).toLocaleString('th-TH')} — ${esc(l.m)}</div>`).join('')}</div>`).join(''):'<div class="card">ไม่พบข้อมูล</div>';
+};
+
+// ศูนย์ประสานงาน
+$('#list').addEventListener('change',e=>{
+  const act=e.target.dataset.act;if(!act)return;
+  const r=db.requests.find(x=>x.code==e.target.closest('.req').dataset.id);
+  if(act=='org'){r.org=e.target.value;r.log.push({t:Date.now(),m:'มอบหมายให้ '+r.org});}
+  if(act=='status'){r.status=e.target.value;r.log.push({t:Date.now(),m:'เปลี่ยนสถานะเป็น '+r.status});}
+  if(act=='note'&&e.target.value.trim()){r.log.push({t:Date.now(),m:e.target.value.trim()});}
+  save();renderList();
+});
+['fType','fStatus','fUrg'].forEach(i=>$('#'+i).onchange=renderList);
+$('#fQ').oninput=renderList;
+$('#csv').onclick=()=>{
+  const h=['รหัส','เวลา','ประเภทภัย','ความเร่งด่วน','สถานะ','ชื่อ','โทร','จังหวัด','ที่อยู่','จำนวนคน','ความต้องการ','หน่วยงาน'];
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const rows=db.requests.map(r=>[r.code,new Date(r.ts).toISOString(),r.type,uTxt[r.urg],r.status,r.name,r.phone,r.province,r.address,r.people,r.needs.join('; '),r.org].map(q).join(','));
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['﻿'+[h.map(q).join(','),...rows].join('\n')],{type:'text/csv'}));
+  a.download='help-requests.csv';a.click();
+};
+
+// ตั้งค่า
+document.body.addEventListener('click',e=>{
+  const b=e.target.closest('.chip button');
+  if(b){db[b.dataset.k].splice(+b.dataset.i,1);save();render();}
+});
+[['Type','types'],['Need','needs'],['Org','orgs']].forEach(([n,k])=>$('#add'+n).onclick=()=>{
+  const v=$('#new'+n).value.trim();if(!v)return;db[k].push(v);$('#new'+n).value='';save();render();
+});
+$('#seed').onclick=()=>{
+  const S=[['🌊 น้ำท่วม','สมชาย ใจดี','0811111111','นครสวรรค์','น้ำท่วมสูง 1.5 ม. ติดอยู่ชั้น 2',['อพยพ/เรือ','อาหาร/น้ำดื่ม'],['ผู้สูงอายุ','เด็กเล็ก'],6],
+    ['🔥 ไฟไหม้','มาลี สุขสันต์','0822222222','เชียงใหม่','บ้านไหม้ทั้งหลัง ไม่มีที่พัก',['ที่พักชั่วคราว','ผ้าห่ม/เสื้อผ้า'],[],4],
+    ['🏚️ แผ่นดินไหว','ประยุทธ์ มั่นคง','0833333333','เชียงราย','อาคารร้าวหนัก มีผู้ติดค้าง',['ค้นหา/กู้ภัย','ยา/แพทย์'],['ผู้ป่วยติดเตียง'],3]];
+  S.forEach(s=>{const r={code:'HLP-'+String(++db.seq).padStart(4,'0'),ts:Date.now()-db.seq*3600e3,status:STATUS[0],org:'',type:s[0],name:s[1],phone:s[2],province:s[3],district:'',address:s[4],coords:'',people:s[7],detail:'',needs:s[5],vul:s[6],log:[{t:Date.now(),m:'รับแจ้งเหตุเข้าระบบ'}]};r.urg=urgency(r);db.requests.push(r);});
+  save();render();
+};
+$('#reset').onclick=()=>{if(confirm('ล้างข้อมูลทั้งหมด?')){db=structuredClone(DEF);save();render();}};
+render();
+</script>
+</body>
+</html>
