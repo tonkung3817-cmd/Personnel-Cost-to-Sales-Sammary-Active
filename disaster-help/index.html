@@ -108,7 +108,7 @@ footer{text-align:center;color:var(--muted);font-size:.78rem;padding:0 16px 30px
 .impbox{background:rgba(218,56,50,.08);border:1.5px solid var(--red);padding:10px 14px;border-radius:10px;margin-bottom:10px;font-size:.9rem}
 table{width:100%;border-collapse:collapse;font-size:.86rem}
 th,td{padding:8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
-th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2),th:nth-child(3),td:nth-child(3){text-align:left}
 th{position:sticky;top:0;background:var(--card);cursor:pointer}
 tr.row:hover{background:rgba(48,111,199,.08);cursor:pointer}
 .scroll{max-height:420px;overflow:auto}
@@ -224,7 +224,10 @@ tr.row:hover{background:rgba(48,111,199,.08);cursor:pointer}
   <div class="stats" id="sStats"></div>
   <div class="card">
     <div class="bar">
-      <select id="fReg"><option value="">ทุกภาค</option></select>
+      <select id="fReg"><option value="">ทุกภาค (Regional)</option></select>
+      <select id="fZone"><option value="">ทุกเขต (Region)</option></select>
+      <input id="fSq" type="text" placeholder="🔍 ค้นหารหัสสาขา / ชื่อสาขา" style="min-width:220px">
+      <button class="btn ghost sm" id="fClear">ล้างตัวกรอง</button>
       <select id="fBr"><option value="">ทุกสาขา (ภาพรวม)</option></select>
       <label class="chk"><input type="checkbox" id="impOn"> 🎯 โหมดประเมินผลกระทบ</label>
       <label class="chk">รัศมี <input type="range" id="impR" min="1" max="200" value="30"> <b id="impRv">30</b> กม.</label>
@@ -472,6 +475,7 @@ let branches=[],emps=[],rows=[],map,layer,sortKey='n',sortDir=-1;
 function hav(a,b,c,d){const R=6371,r=x=>x*Math.PI/180,dl=r(c-a),dn=r(d-b);
   const h=Math.sin(dl/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
 const norm=s=>String(s??'').toLowerCase().replace(/\s+|branch|สาขา/g,'');
+const pickX=(o,n)=>{for(const k of Object.keys(o))if(k.toLowerCase().replace(/\s+/g,'')===n)return o[k];};
 const pick=(o,names)=>{for(const k of Object.keys(o)){const n=k.toLowerCase().replace(/\s+/g,'');if(names.some(x=>n===x||n.includes(x)))return o[k];}return undefined;};
 function parseLL(v){if(v==null)return null;const m=String(v).match(/(-?\d+(\.\d+)?)\s*[, ]\s*(-?\d+(\.\d+)?)/);if(!m)return null;const a=+m[1],b=+m[3];
   return (a>=5&&a<=21&&b>=97&&b<=106)?[a,b]:(b>=5&&b<=21&&a>=97&&a<=106?[b,a]:null);}
@@ -481,7 +485,7 @@ $('#fileB').onchange=async e=>{
   const rs=await readFile(e.target.files[0]);
   branches=rs.map(r=>{
     const id=pick(r,['location']),th=pick(r,['description(tha)','ชื่อสาขา']),en=pick(r,['description']);
-    return {id:String(id).replace(/\.0$/,''),th:String(th||'').trim(),en:String(en||'').trim(),reg:pick(r,['regional','region'])||'-',prov:pick(r,['province(th)','จังหวัด'])||'-',ll:parseLL(pick(r,['lat/long','latlong','พิกัด']))};
+    return {id:String(id).replace(/\.0$/,''),th:String(th||'').trim(),en:String(en||'').trim(),reg:pickX(r,'regional')||pickX(r,'region')||'-',zone:pickX(r,'region')||'-',prov:pick(r,['province(th)','จังหวัด'])||'-',ll:parseLL(pick(r,['lat/long','latlong','พิกัด']))};
   }).filter(b=>b.id&&(b.th||b.en));
   const ok=branches.filter(b=>b.ll).length;
   $('#stB').textContent=`อ่านได้ ${branches.length} สาขา · มีพิกัด ${ok} · ไม่มีพิกัด ${branches.length-ok}`;
@@ -542,14 +546,24 @@ function compute(){
   });
   $('#result').classList.remove('hidden');
   const regs=[...new Set(branches.map(b=>b.reg))].sort();
-  $('#fReg').innerHTML='<option value="">ทุกภาค</option>'+regs.map(r=>`<option>${esc(r)}</option>`).join('');
-  fillBr();initMap();render();
+  $('#fReg').innerHTML='<option value="">ทุกภาค (Regional)</option>'+regs.map(r=>`<option>${esc(r)}</option>`).join('');
+  fillZone();fillBr();initMap();render();
 }
-function fillBr(){const rg=$('#fReg').value;
-  $('#fBr').innerHTML='<option value="">ทุกสาขา (ภาพรวม)</option>'+branches.filter(b=>b.ll&&(!rg||b.reg==rg)).map(b=>`<option value="${esc(b.id)}">${esc(b.th||b.en)}</option>`).join('');}
+function fillZone(){const rg=$('#fReg').value,cur=$('#fZone').value;
+  const zs=[...new Set(branches.filter(b=>!rg||b.reg==rg).map(b=>b.zone))].filter(z=>z&&z!='-').sort();
+  $('#fZone').innerHTML='<option value="">ทุกเขต (Region)</option>'+zs.map(z=>`<option>${esc(z)}</option>`).join('');$('#fZone').value=zs.includes(cur)?cur:'';}
+function matchB(b){const rg=$('#fReg').value,zn=$('#fZone').value,q=norm($('#fSq').value);
+  return (!rg||b.reg==rg)&&(!zn||b.zone==zn)&&(!q||norm(b.id).includes(q)||norm(b.th).includes(q)||norm(b.en).includes(q));}
+function fillBr(){const cur=$('#fBr').value;
+  $('#fBr').innerHTML='<option value="">ทุกสาขา (ภาพรวม)</option>'+branches.filter(b=>b.ll&&matchB(b)).map(b=>`<option value="${esc(b.id)}">${esc(b.id)} · ${esc(b.th||b.en)}</option>`).join('');
+  $('#fBr').value=cur;}
 function initMap(){if(map){bindImpact();return;}map=L.map('sMap').setView([13.0,101.0],6);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(map);layer=L.layerGroup().addTo(map);bindImpact();}
-$('#fReg').onchange=()=>{fillBr();render()};$('#fBr').onchange=render;
+$('#fReg').onchange=()=>{$('#fBr').value='';fillZone();fillBr();render()};
+$('#fZone').onchange=()=>{$('#fBr').value='';fillBr();render()};
+$('#fSq').oninput=()=>{$('#fBr').value='';fillBr();render()};
+$('#fClear').onclick=()=>{$('#fReg').value='';$('#fZone').value='';fillZone();$('#fSq').value='';$('#fBr').value='';fillBr();render()};
+$('#fBr').onchange=render;
 
 function summarize(){
   const m=new Map();
@@ -559,7 +573,7 @@ function summarize(){
 }
 function render(){
   const rg=$('#fReg').value,bid=$('#fBr').value;
-  const sel=rows.filter(r=>(!rg||r.b.reg==rg)&&(!bid||r.b.id==bid));
+  const sel=rows.filter(r=>matchB(r.b)&&(!bid||r.b.id==bid));
   const n=sel.length,c=[0,0,0,0];sel.forEach(r=>c[r.bd]++);
   const avg=n?sel.reduce((a,r)=>a+r.d,0)/n:0;
   $('#sStats').innerHTML=[['พนักงานที่คำนวณได้',n,'var(--blue)'],['ระยะเฉลี่ย (กม.)',avg.toFixed(1),'var(--blue)'],['≤5 กม.',c[0],BANDS[0].c],['5–20 กม.',c[1],BANDS[1].c],['20–50 กม.',c[2],BANDS[2].c],['>50 กม. (ต้องดูแลพิเศษ)',c[3],BANDS[3].c],['คำนวณไม่ได้',bad.length,'#64708a']]
@@ -572,7 +586,7 @@ function render(){
       L.polyline([b.ll,r.ll],{color:BANDS[r.bd].c,weight:1,opacity:.5}).addTo(layer);pts.push(r.ll);});
     L.marker(b.ll).bindTooltip(b.th||b.en,{permanent:true,direction:'top'}).addTo(layer);pts.push(b.ll);
   }else{
-    const S=summarize().filter(s=>!rg||s.b.reg==rg);
+    const S=summarize().filter(s=>matchB(s.b));
     S.forEach(s=>{const worst=s.c[3]?3:s.c[2]?2:s.c[1]?1:0;
       L.circleMarker(s.b.ll,{radius:6+Math.min(s.n,30)/3,color:'#fff',weight:1.5,fillColor:BANDS[worst].c,fillOpacity:.9})
        .bindTooltip(`${esc(s.b.th||s.b.en)}<br>${s.n} คน · >50กม. ${s.c[3]} คน`).on('click',()=>{$('#fBr').value=s.b.id;render();}).addTo(layer);pts.push(s.b.ll);});
@@ -580,11 +594,11 @@ function render(){
   if(pts.length&&!$('#impOn').checked)map.fitBounds(pts,{padding:[30,30],maxZoom:14});
   impact();
   // table
-  const cols=[['th','สาขา'],['reg','ภาค'],['n','พนักงาน'],['c0','≤5'],['c1','5–20'],['c2','20–50'],['c3','>50'],['avg','เฉลี่ย กม.'],['max','ไกลสุด กม.']];
+  const cols=[['id','รหัส'],['th','สาขา'],['reg','ภาค'],['n','พนักงาน'],['c0','≤5'],['c1','5–20'],['c2','20–50'],['c3','>50'],['avg','เฉลี่ย กม.'],['max','ไกลสุด กม.']];
   $('#thead').innerHTML=cols.map(([k,t])=>`<th data-k="${k}">${t}${sortKey==k?(sortDir>0?' ▲':' ▼'):''}</th>`).join('');
-  const val=(s,k)=>k=='th'?(s.b.th||s.b.en):k=='reg'?s.b.reg:k=='avg'?s.sum/s.n:k=='max'?s.max:k[0]=='c'&&k.length==2?s.c[+k[1]]:s.n;
-  const S=summarize().filter(s=>!rg||s.b.reg==rg).sort((a,b)=>{const x=val(a,sortKey),y=val(b,sortKey);return (x>y?1:x<y?-1:0)*sortDir});
-  $('#tbody').innerHTML=S.map(s=>`<tr class="row" data-id="${esc(s.b.id)}"><td>${esc(s.b.th||s.b.en)}</td><td>${esc(s.b.reg)}</td><td>${s.n}</td>${s.c.map(x=>`<td>${x}</td>`).join('')}<td>${(s.sum/s.n).toFixed(1)}</td><td>${s.max.toFixed(1)}</td></tr>`).join('');
+  const val=(s,k)=>k=='id'?(+s.b.id||s.b.id):k=='th'?(s.b.th||s.b.en):k=='reg'?s.b.reg:k=='avg'?s.sum/s.n:k=='max'?s.max:k[0]=='c'&&k.length==2?s.c[+k[1]]:s.n;
+  const S=summarize().filter(s=>matchB(s.b)).sort((a,b)=>{const x=val(a,sortKey),y=val(b,sortKey);return (x>y?1:x<y?-1:0)*sortDir});
+  $('#tbody').innerHTML=S.map(s=>`<tr class="row" data-id="${esc(s.b.id)}"><td>${esc(s.b.id)}</td><td>${esc(s.b.th||s.b.en)}</td><td>${esc(s.b.reg)}</td><td>${s.n}</td>${s.c.map(x=>`<td>${x}</td>`).join('')}<td>${(s.sum/s.n).toFixed(1)}</td><td>${s.max.toFixed(1)}</td></tr>`).join('');
   $('#missCard').classList.toggle('hidden',!bad.length);
   $('#miss').innerHTML=bad.slice(0,200).map(b=>`<tr><td>${esc(b[0])}</td><td>${esc(b[1])}</td><td>${esc(b[2])}</td></tr>`).join('');
 }
