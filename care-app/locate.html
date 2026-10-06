@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>หาพิกัดของฉัน</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#306FC7;--green:#43938F;--red:#DA3832;--yellow:#F6C24A;--bg:#f3f6fb;--card:#fff;--fg:#17202f;--muted:#64708a;--line:#e2e8f2}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1420;--card:#171f2f;--fg:#e8ecf4;--muted:#93a0b8;--line:#2a3449}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans Thai",system-ui,sans-serif;line-height:1.6;padding:0 16px 40px}
+.stripe{height:5px;margin:0 -16px 24px;background:linear-gradient(90deg,var(--blue) 0 40%,var(--yellow) 40% 60%,var(--green) 60% 80%,var(--red) 80%)}
+main{max-width:460px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 6px 20px rgba(20,40,80,.08)}
+h1{margin:0 0 6px;font-size:1.3rem}.sub{color:var(--muted);font-size:.9rem;margin:0 0 18px}
+button{width:100%;border:0;border-radius:12px;padding:16px;font:inherit;font-weight:700;font-size:1.1rem;cursor:pointer;background:var(--blue);color:#fff}
+button.g{background:var(--green)}button:disabled{opacity:.6}
+.out{margin-top:18px}
+.coord{font-size:1.5rem;font-weight:700;text-align:center;padding:14px;border-radius:12px;background:rgba(48,111,199,.1);border:2px solid var(--blue);user-select:all;overflow-wrap:anywhere}
+.msg{margin-top:12px;font-size:.9rem;color:var(--muted)}
+.err{margin-top:14px;padding:12px;border-radius:10px;border:1.5px solid var(--red);background:rgba(218,56,50,.1);font-size:.9rem}
+.steps{margin:18px 0 0;padding-left:20px;color:var(--muted);font-size:.88rem}
+a{color:var(--blue)}
+</style>
+</head>
+<body>
+<div class="stripe"></div>
+<main><div class="card">
+  <h1>📍 หาพิกัดของฉัน</h1>
+  <p class="sub">กดปุ่มเดียวเพื่ออ่านตำแหน่งปัจจุบัน แล้วคัดลอกไปวางในแบบสำรวจ (กรุณาอยู่ที่บ้านพักของคุณตอนกด)</p>
+  <button id="go">ขอตำแหน่งของฉัน</button>
+  <div id="out" class="out" hidden>
+    <div class="coord" id="coord"></div>
+    <button id="copy" class="g" style="margin-top:12px">คัดลอกพิกัด</button>
+    <div class="msg" id="acc"></div>
+    <div class="msg"><a id="map" target="_blank" rel="noopener">ตรวจสอบตำแหน่งบนแผนที่</a></div>
+  </div>
+  <div id="err" class="err" hidden></div>
+  <ol class="steps"><li>กด "ขอตำแหน่งของฉัน" แล้วเลือก "อนุญาต"</li><li>กด "คัดลอกพิกัด"</li><li>กลับไปที่แบบสำรวจ แล้ววางในช่องพิกัดที่พัก</li></ol>
+</div></main>
+<script>
+const $=s=>document.querySelector(s);
+let text='';
+$('#go').onclick=()=>{
+  $('#err').hidden=true;
+  if(!navigator.geolocation){return fail('อุปกรณ์หรือเบราว์เซอร์นี้ไม่รองรับการอ่านตำแหน่ง');}
+  $('#go').disabled=true;$('#go').textContent='กำลังอ่านตำแหน่ง…';
+  navigator.geolocation.getCurrentPosition(p=>{
+    const la=p.coords.latitude.toFixed(5),ln=p.coords.longitude.toFixed(5);text=la+','+ln;
+    $('#coord').textContent=text;$('#acc').textContent='ความแม่นยำประมาณ '+Math.round(p.coords.accuracy)+' เมตร'+(p.coords.accuracy>100?' (ค่อนข้างหยาบ ลองเปิด GPS หรือออกที่โล่งแล้วกดใหม่)':'');
+    $('#map').href='https://www.google.com/maps?q='+text;$('#out').hidden=false;
+    $('#go').disabled=false;$('#go').textContent='อ่านตำแหน่งใหม่';
+  },e=>{$('#go').disabled=false;$('#go').textContent='ขอตำแหน่งของฉัน';
+    fail(e.code==1?'คุณไม่ได้อนุญาตให้เข้าถึงตำแหน่ง กรุณาเปิดสิทธิ์ตำแหน่งให้เบราว์เซอร์ในการตั้งค่าเครื่อง แล้วลองใหม่':'อ่านตำแหน่งไม่ได้ กรุณาเปิด GPS แล้วลองใหม่');},
+  {enableHighAccuracy:true,timeout:20000});
+};
+function fail(m){$('#err').textContent=m;$('#err').hidden=false;}
+$('#copy').onclick=async()=>{
+  try{await navigator.clipboard.writeText(text);$('#copy').textContent='✓ คัดลอกแล้ว';}
+  catch(e){const r=document.createRange();r.selectNodeContents($('#coord'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('#copy').textContent='แตะค้างที่พิกัดเพื่อคัดลอก';}
+};
+</script>
+</body>
+</html>
