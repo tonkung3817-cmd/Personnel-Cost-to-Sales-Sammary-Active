@@ -7818,6 +7818,10 @@ let otM = 'h';                                        // หน่วยวั�
 /* เดือนในชุดข้อมูล (เก่า -> ใหม่) · ชุดเก่าที่ยังไม่มี months ถือเป็นเดือนเดียว */
 const OTMON = OTDATA.months || [OTDATA.meta];
 const OT_DEF_MON = OTMON.length - 1;                  // ค่าเริ่มต้น = เดือนล่าสุด
+/* ชื่อเดือนภาษาไทย ปี พ.ศ. · ตัวกรองแสดงครบ 12 เดือนของทุกปีที่มีข้อมูล เดือนที่ยังไม่มีไฟล์จะเลือกไม่ได้ */
+const OT_TH_MON = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+                   'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const otMonTh = m => { const [y,mm] = m.from.split('-').map(Number); return OT_TH_MON[mm-1]+' '+(y+543); };
 let otF = {mon:OT_DEF_MON, reg:-1, sto:-1, dep:-1, sta:-1, win:-1, from:'', to:''};
 let otT = {reg:-1, sto:-1};                           // filter เฉพาะตาราง
 let otSort = {k:'baht', dir:-1};
@@ -7828,7 +7832,7 @@ const OTASOF = OTDATA.meta.asof;
 const otMonOf = d => { for(let i=OTMON.length-1;i>=0;i--) if(d>=OTMON[i].from) return i; return 0; };
 const otIsPast = d => d <= OTMON[otMonOf(d)].asof;
 const otAsofTxt = () => otF.mon>=0 ? OTMON[otF.mon].asof
-  : OTMON.map(m=>m.month+' '+m.asof).join(' · ');
+  : OTMON.map(m=>otMonTh(m)+' '+m.asof).join(' · ');
 
 function otRow(r){
  const h = (r[14]||0) + (r[15]||0), b = (r[16]||0) + (r[17]||0);
@@ -8139,8 +8143,8 @@ function otRenderSub(){
  const m = otF.mon>=0 ? OTMON[otF.mon] : null;
  const n = OTROWS.filter(r=>otF.mon<0 || (r[18]===undefined?OT_DEF_MON:r[18])===otF.mon).length;
  document.getElementById('otSub').innerHTML = m
-  ? `${m.month} · ข้อมูล ณ ${m.asof} · ช่วงที่ดึง ${m.from} ถึง ${m.thru} · ${n} รายการ · ที่มา ${m.src}`
-  : `ทุกเดือน (${OTMON.map(x=>x.month).join(' · ')}) · ข้อมูล ณ ${otAsofTxt()} · ${n} รายการ`;
+  ? `${otMonTh(m)} · ข้อมูล ณ ${m.asof} · ช่วงที่ดึง ${m.from} ถึง ${m.thru} · ${n} รายการ · ที่มา ${m.src}`
+  : `ทุกเดือน (${OTMON.map(otMonTh).join(' · ')}) · ข้อมูล ณ ${otAsofTxt()} · ${n} รายการ`;
 }
 /* dropdown Region / แผนก / สถานะ และช่วงวันที่ ตามเดือนที่เลือก */
 function otFillMainSelects(){
@@ -9493,9 +9497,14 @@ function initPAUI(){
 function initOTUI(){
  const on=(id,ev,fn)=>document.getElementById(id).addEventListener(ev,fn);
  const monCnt = i => OTROWS.filter(r=>(r[18]===undefined?OT_DEF_MON:r[18])===i).length;
+ const years = [...new Set(OTMON.map(x=>+x.from.slice(0,4)))].sort();
  document.getElementById('otMon').innerHTML =
-  OTMON.map((x,i)=>[x,i]).reverse().map(([x,i])=>`<option value="${i}">${x.month} · ณ ${x.asof} (${monCnt(i)})</option>`).join('')
-  + (OTMON.length>1 ? `<option value="-1">ทุกเดือน (${OTROWS.length})</option>` : '');
+  (OTMON.length>1 ? `<option value="-1">ทุกเดือนที่มีข้อมูล (${OTROWS.length})</option>` : '')
+  + years.map(y=>`<optgroup label="ปี ${y+543}">` + OT_TH_MON.map((th,k)=>{
+     const i = OTMON.findIndex(x=>x.from.slice(0,7)===y+'-'+String(k+1).padStart(2,'0'));
+     return i>=0 ? `<option value="${i}">${th} ${y+543} · ณ ${OTMON[i].asof} (${monCnt(i)})</option>`
+                 : `<option value="x" disabled>${th} ${y+543} · ยังไม่มีข้อมูล</option>`;
+    }).join('') + `</optgroup>`).join('');
  document.getElementById('otMon').value = otF.mon;
  otFillMainSelects();
  otRenderSub();
